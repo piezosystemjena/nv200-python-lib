@@ -1,32 +1,83 @@
-import asyncio, telnetlib3
+import asyncio
+import telnetlib3
+from abc import ABC, abstractmethod
 import aioserial
 import serial.tools.list_ports
 import lantronix_device_discovery_async as ldd
-from abc import ABC, abstractmethod
 
-# Abstract Base Class for Transport Protocols
+
+
 class TransportProtocol(ABC):
     """
     Abstract base class representing a transport protocol interface for a device.
     """
     @abstractmethod
     async def connect(self):
-        pass
+        """
+        Establishes an asynchronous connection to the NV200 device.
+
+        This method is intended to handle the initialization of a connection
+        to the NV200 device. The implementation should include the necessary
+        steps to ensure the connection is successfully established.
+
+        Raises:
+            Exception: If the connection fails or encounters an error.
+        """
 
     @abstractmethod
     async def write(self, cmd: str):
-        pass
+        """
+        Sends a command to the NV200 device asynchronously.
+
+        Args:
+            cmd (str): The command string to be sent to the device.
+
+        Raises:
+            Exception: If there is an error while sending the command.
+        """
 
     @abstractmethod
     async def read(self, cmd: str) -> str:
-        pass
+        """
+        Sends a command to the device and reads the response asynchronously.
+
+        Args:
+            cmd (str): The command string to send to the device.
+
+        Returns:
+            str: The response received from the device.
+        """
+
 
     @abstractmethod
     async def close(self):
-        pass
+        """
+        Asynchronously closes the connection or resource associated with this instance.
+
+        This method should be used to release any resources or connections
+        that were opened during the lifetime of the instance. Ensure that this
+        method is called to avoid resource leaks.
+
+        Raises:
+            Exception: If an error occurs while attempting to close the resource.
+        """
+
+    async def detect_device(self) -> bool:
+        """
+        Detects if the connected device is an NV200.
+
+        This asynchronous method sends a command to the device and checks the response
+        to determine if the device is an NV200. The detection is based on whether the
+        response starts with the byte sequence "NV200".
+
+        Returns:
+            bool: True if the device is detected as an NV200, False otherwise.
+        """
+        response = await self.read('\r')
+        return response.startswith(b"NV200")
 
 
-# Telnet Transport Implementation
+
 class TelnetTransport(TransportProtocol):
     """
     TelnetTransport is a class that implements a transport protocol for communicating
@@ -94,15 +145,51 @@ class TelnetTransport(TransportProtocol):
             self.writer.close()
             self.reader.close()
 
-# Serial Transport Implementation
+
+
 class SerialTransport(TransportProtocol):
+    """
+    A class to handle serial communication with an NV200 device using the AioSerial library.
+    Attributes:
+        port (str): The serial port to connect to. Defaults to None. If port is None, the class
+        will try to auto detect rthe port.
+        xonxoff (bool): Whether to enable software flow control. Defaults to True.
+        baudrate (int): The baud rate for the serial connection. Defaults to 115200.
+        serial (AioSerial): The AioSerial instance for asynchronous serial communication.
+    """
+    
     def __init__(self, port = None, xonxoff = True, baudrate = 115200):
+        """
+        Initializes the NV200 driver with the specified serial port settings.
+
+        Args:
+            port (str, optional): The serial port to connect to. Defaults to None.
+            If port is None, the class will try to auto detect rthe port.
+            xonxoff (bool, optional): Enables or disables software flow control (XON/XOFF). Defaults to True.
+            baudrate (int, optional): The baud rate for the serial connection. Defaults to 115200.
+        """
         self.serial = None
         self.port = port
         self.xonxoff = xonxoff
         self.baudrate = baudrate
 
+
     async def detect_port(self):
+        """
+        Asynchronously detects and configures the serial port for the NV200 device.
+
+        This method scans through all available serial ports to find one with a 
+        manufacturer matching "FTDI". If such a port is found, it attempts to 
+        communicate with the device to verify if it is an NV200 device. If the 
+        device is successfully detected, the port is configured and returned.
+
+        Returns:
+            str: The device name of the detected port if successful, otherwise None.
+
+        Raises:
+            Any exceptions raised during serial communication or port configuration 
+            are not explicitly handled and will propagate to the caller.
+        """
         ports = serial.tools.list_ports.comports()
         for port in ports:
             if port.manufacturer != "FTDI":
@@ -110,15 +197,23 @@ class SerialTransport(TransportProtocol):
             self.serial.close()
             self.serial.port = port.device
             self.serial.open()
-            response = await self.read('\r')
-            if response.startswith(b"NV200"):
-                self.port = port.device
+            if self.detect_device():
                 return self.port
             else:
-              self.serial.close()
-            return None
+                self.serial.close()
+        return None
 
     async def connect(self):
+        """
+        Establishes an asynchronous connection to the NV200 device using the specified serial port settings.
+
+        This method initializes the serial connection with the given port, baud rate, and flow control settings.
+        If the port is not specified, it attempts to automatically detect the NV200 device's port. If the device
+        cannot be found, a RuntimeError is raised.
+
+        Raises:
+            RuntimeError: If the NV200 device cannot be detected or connected to.
+        """
         self.serial = aioserial.AioSerial(port=self.port, xonxoff=self.xonxoff, baudrate=self.baudrate)
         if self.port is None:
             self.port = await self.detect_port()

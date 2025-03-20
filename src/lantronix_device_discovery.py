@@ -1,5 +1,7 @@
 import socket
 from typing import List, Tuple, Dict, Optional
+from eth_utils import get_active_ethernet_ips
+
 
 # Define constants
 BROADCAST_IP = '255.255.255.255'
@@ -8,7 +10,7 @@ TELNET_PORT = 23  # Telnet Port (default: 23)
 TIMEOUT = 0.4  # Timeout for UDP response
 
 
-def send_udp_broadcast() -> List[Tuple[bytes, Tuple[str, int]]]:
+def send_udp_broadcast(local_ip : str) -> List[Tuple[bytes, Tuple[str, int]]]:
     """
     Sends a UDP broadcast to discover devices on the network. It sends a broadcast message
     and listens for responses within a specified timeout period.
@@ -22,6 +24,8 @@ def send_udp_broadcast() -> List[Tuple[bytes, Tuple[str, int]]]:
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind((local_ip, UDP_PORT))
     s.settimeout(TIMEOUT)
 
     try:
@@ -95,12 +99,8 @@ def find_device_by_mac(device_list: List[Dict[str, str]], target_mac: str) -> Op
 
 def discover_lantronix_devices() -> List[Dict[str, str]]:
     """
-    Discovers Lantronix devices on the network by sending a UDP broadcast
-    and parsing the responses.
-
-    This function sends a UDP broadcast to detect Lantronix devices
-    available on the network. It collects the responses and processes
-    them to extract relevant device information.
+    Discovers Lantronix devices on the network by sending UDP broadcast messages
+    from all active Ethernet interfaces and parsing their responses.
 
     Returns:
         List[Dict[str, str]]:
@@ -108,11 +108,11 @@ def discover_lantronix_devices() -> List[Dict[str, str]]:
             - 'MAC' (str): The MAC address of the responding device.
             - 'IP' (str): The IP address of the responding device.
     """
-    device_responses = send_udp_broadcast()
-    if not device_responses:
-        print("Timeout occurred, no response to broadcast.")
-        return None
-    return parse_responses(device_responses)
+    for interface, ip in get_active_ethernet_ips():
+        device_responses = send_udp_broadcast(ip)
+        if device_responses:
+            return parse_responses(device_responses)
+    return []
 
 
 def discover_lantronix_device(target_mac: str) -> Optional[str]:

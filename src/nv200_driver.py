@@ -6,7 +6,6 @@ import serial.tools.list_ports
 import lantronix_device_discovery_async as ldd
 
 
-
 class TransportProtocol(ABC):
     """
     Abstract base class representing a transport protocol interface for a device.
@@ -84,6 +83,9 @@ class TelnetTransport(TransportProtocol):
     with piezosystem devices over Telnet. It provides methods to establish a connection,
     send commands, read responses, and close the connection.
     """
+    __host : str
+    __MAC : str
+    __port : int
     
     def __init__(self, host: str = None, port: int = 23, MAC: str = None):
         """
@@ -94,11 +96,11 @@ class TelnetTransport(TransportProtocol):
             port (int, optional): The port number to connect to. Defaults to 23.
             MAC (str, optional): The MAC address of the NV200 device. Defaults to None.
         """
-        self.host = host
-        self.port = port
-        self.MAC = MAC
-        self.reader = None
-        self.writer = None
+        self.__host = host
+        self.__port = port
+        self.__MAC = MAC
+        self.__reader = None
+        self.__writer = None
 
     async def connect(self):
         """
@@ -121,29 +123,29 @@ class TelnetTransport(TransportProtocol):
         Returns:
             None
         """
-        if self.host is None and self.MAC is not None:
-            self.host = await ldd.discover_lantronix_device(self.MAC)
-            if self.host is None:
-                raise RuntimeError(f"Device with MAC address {self.MAC} not found")
-        elif self.host is None and self.MAC is None:
+        if self.__host is None and self.__MAC is not None:
+            self.__host = await ldd.discover_lantronix_device(self.__MAC)
+            if self.__host is None:
+                raise RuntimeError(f"Device with MAC address {self.__MAC} not found")
+        elif self.__host is None and self.__MAC is None:
             devices = await ldd.discover_lantronix_devices()
             if not devices:
                 raise RuntimeError("No devices found")
-            self.host = devices[0]['IP']
-            self.MAC = devices[0]['MAC']
-        self.reader, self.writer = await telnetlib3.open_connection(self.host, self.port)
+            self.__host = devices[0]['IP']
+            self.__MAC = devices[0]['MAC']
+        self.__reader, self.__writer = await telnetlib3.open_connection(self.__host, self.__port)
 
     async def write(self, cmd: str):
-        self.writer.write(cmd)
+        self.__writer.write(cmd)
 
     async def read(self, cmd: str) -> str:
-        self.writer.write(cmd)
-        return await self.reader.readuntil(b'\n')
+        self.__writer.write(cmd)
+        return await self.__reader.readuntil(b'\n')
 
     async def close(self):
-        if self.writer:
-            self.writer.close()
-            self.reader.close()
+        if self.__writer:
+            self.__writer.close()
+            self.__reader.close()
 
 
 
@@ -198,7 +200,7 @@ class SerialTransport(TransportProtocol):
             self.serial.port = port.device
             self.serial.open()
             if self.detect_device():
-                return self.port
+                return port.device
             else:
                 self.serial.close()
         return None
@@ -251,8 +253,8 @@ class DeviceClient:
 
 
 async def client_telnet():
-    #transport = TelnetTransport(MAC="00:80:A3:79:C6:18")
-    transport = TelnetTransport()
+    transport = TelnetTransport(MAC="00:80:A3:79:C6:18")
+    #transport = TelnetTransport()
     client = DeviceClient(transport)
     await client.connect()
 
@@ -284,4 +286,4 @@ async def client_serial():
 
 
 asyncio.run(client_telnet())
-asyncio.run(client_serial())
+#asyncio.run(client_serial())

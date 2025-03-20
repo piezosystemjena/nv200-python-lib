@@ -1,15 +1,16 @@
 import asyncio
 import socket
 from typing import List, Tuple, Dict, Optional
+from eth_utils import get_active_ethernet_ips
 
 # Define constants
 BROADCAST_IP = '255.255.255.255'
 UDP_PORT = 30718  # Lantronix Discovery Protocol port
 TELNET_PORT = 23  # Telnet Port (default: 23)
-TIMEOUT = 3  # Timeout for UDP response
+TIMEOUT = 0.4  # Timeout for UDP response
 
 
-async def send_udp_broadcast() -> List[Tuple[bytes, Tuple[str, int]]]:
+async def send_udp_broadcast(local_ip : str) -> List[Tuple[bytes, Tuple[str, int]]]:
     """
     Asynchronously sends a UDP broadcast to discover devices on the network. It sends a broadcast message
     and listens for responses within a specified timeout period.
@@ -25,6 +26,8 @@ async def send_udp_broadcast() -> List[Tuple[bytes, Tuple[str, int]]]:
     loop = asyncio.get_event_loop()
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind((local_ip, UDP_PORT))
     s.setblocking(False)  # Non-blocking mode
 
     # List to store responses
@@ -37,15 +40,13 @@ async def send_udp_broadcast() -> List[Tuple[bytes, Tuple[str, int]]]:
         # Timeout for receiving responses
         async def receive_response():
             while True:
-                try:
-                    received_data = await loop.sock_recvfrom(s, 65565)
-                    broadcast_responses.append(received_data)
-                except asyncio.TimeoutError:
-                    break
-                return
+                received_data = await loop.sock_recvfrom(s, 65565)
+                broadcast_responses.append(received_data)
 
         # Use asyncio's event loop to wait for responses
         await asyncio.wait_for(receive_response(), timeout=TIMEOUT)
+    except asyncio.TimeoutError:
+        pass
     except (ValueError, IndexError) as e:
         print(f"Error sending UDP broadcast: {e}")
         broadcast_responses = []
@@ -105,12 +106,8 @@ def find_device_by_mac(device_list: List[Dict[str, str]], target_mac: str) -> Op
 
 async def discover_lantronix_devices() -> List[Dict[str, str]]:
     """
-    Discovers Lantronix devices on the network by sending a UDP broadcast
-    and parsing the responses.
-
-    This function sends a UDP broadcast to detect Lantronix devices
-    available on the network. It collects the responses and processes
-    them to extract relevant device information.
+    Discovers Lantronix devices on the network by sending UDP broadcast messages
+    from all active Ethernet interfaces and parsing their responses.
 
     Returns:
         List[Dict[str, str]]:
@@ -118,13 +115,11 @@ async def discover_lantronix_devices() -> List[Dict[str, str]]:
             - 'MAC' (str): The MAC address of the responding device.
             - 'IP' (str): The IP address of the responding device.
     """
-    device_responses = await send_udp_broadcast()
-    if not device_responses:
-        print("Timeout occurred, no response to broadcast.")
-        return []
-    
-    devices = parse_responses(device_responses)
-    return devices
+    for interface, ip in get_active_ethernet_ips():
+        device_responses = await send_udp_broadcast(ip)
+        if device_responses:
+            return parse_responses(device_responses)
+    return []
 
 
 async def discover_lantronix_device(target_mac: str) -> Optional[str]:

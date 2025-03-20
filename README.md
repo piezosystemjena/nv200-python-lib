@@ -5,3 +5,12 @@
 The NV200 Python library allow you to control the NV200 device from piezosystem Jena
 from Python. The library supports the ethernet interface as well as the
 USB interface.
+
+## Installation
+
+Create and activate virtual environment and then install the required dependencies
+from `requirements.txt` via:
+
+```shell
+pip install -r requirements.txt`
+```

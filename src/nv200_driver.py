@@ -147,6 +147,20 @@ class TelnetTransport(TransportProtocol):
             self.__writer.close()
             self.__reader.close()
 
+    @property
+    def host(self) -> str:
+        """
+        Returns the host address.
+        """
+        return self.__host
+    
+    @property
+    def MAC(self) -> str:
+        """
+        Returns the MAC address.
+        """
+        return self.__MAC
+
 
 
 class SerialTransport(TransportProtocol):
@@ -159,8 +173,11 @@ class SerialTransport(TransportProtocol):
         baudrate (int): The baud rate for the serial connection. Defaults to 115200.
         serial (AioSerial): The AioSerial instance for asynchronous serial communication.
     """
+    __port : str
+    __xonxoff : bool
+    __baudrate : int
     
-    def __init__(self, port = None, xonxoff = True, baudrate = 115200):
+    def __init__(self, port : str = None, xonxoff : bool = True, baudrate : int = 115200):
         """
         Initializes the NV200 driver with the specified serial port settings.
 
@@ -170,10 +187,10 @@ class SerialTransport(TransportProtocol):
             xonxoff (bool, optional): Enables or disables software flow control (XON/XOFF). Defaults to True.
             baudrate (int, optional): The baud rate for the serial connection. Defaults to 115200.
         """
-        self.serial = None
-        self.port = port
-        self.xonxoff = xonxoff
-        self.baudrate = baudrate
+        self.__serial = None
+        self.__port = port
+        self.__xonxoff = xonxoff
+        self.__baudrate = baudrate
 
 
     async def detect_port(self):
@@ -196,13 +213,13 @@ class SerialTransport(TransportProtocol):
         for port in ports:
             if port.manufacturer != "FTDI":
                 continue
-            self.serial.close()
-            self.serial.port = port.device
-            self.serial.open()
-            if self.detect_device():
+            self.__serial.close()
+            self.__serial.port = port.device
+            self.__serial.open()
+            if await self.detect_device():
                 return port.device
             else:
-                self.serial.close()
+                self.__serial.close()
         return None
 
     async def connect(self):
@@ -216,47 +233,100 @@ class SerialTransport(TransportProtocol):
         Raises:
             RuntimeError: If the NV200 device cannot be detected or connected to.
         """
-        self.serial = aioserial.AioSerial(port=self.port, xonxoff=self.xonxoff, baudrate=self.baudrate)
-        if self.port is None:
-            self.port = await self.detect_port()
-        if self.port is None:
+        self.__serial = aioserial.AioSerial(port=self.__port, xonxoff=self.__xonxoff, baudrate=self.__baudrate)
+        if self.__port is None:
+            self.__port = await self.detect_port()
+        if self.__port is None:
             raise RuntimeError("NV200 device not found")
 
 
     async def write(self, cmd: str):
-        await self.serial.write_async(cmd.encode('utf-8'))
+        await self.__serial.write_async(cmd.encode('utf-8'))
 
     async def read(self, cmd: str) -> str:
-        await self.serial.write_async(cmd.encode('utf-8'))
-        return await self.serial.readline_async()
+        await self.__serial.write_async(cmd.encode('utf-8'))
+        return await self.__serial.readline_async()
 
     async def close(self):
-        if self.serial:
-            self.serial.close()
+        if self.__serial:
+            self.__serial.close()
+
+    @property
+    def port(self) -> str:
+        """
+        Returns the serial port the device is connected to
+        """
+        return self.__port
 
 
 class DeviceClient:
+    """
+    A client for communicating with a NV200 device using a specified transport protocol.
+    Attributes:
+        transport (TransportProtocol): The transport protocol used for communication.
+    """
     def __init__(self, transport: TransportProtocol):
         self.transport = transport
 
     async def connect(self):
+        """
+        Establishes a connection using the transport layer.
+
+        This asynchronous method initiates the connection process by calling
+        the `connect` method of the transport instance.
+
+        Raises:
+            Exception: If the connection fails, an exception may be raised
+            depending on the implementation of the transport layer.
+        """
         await self.transport.connect()
 
     async def write(self, cmd: str):
+        """
+        Sends a command to the transport layer.
+
+        This asynchronous method writes a command string followed by a carriage return
+        ("\r") to the transport layer.
+
+        Args:
+            cmd (str): The command string to be sent. No carriage return is needed.
+        """
         await self.transport.write(cmd + "\r")
 
     async def read(self, cmd: str) -> str:
+        """
+        Sends a command to the transport layer and reads the response asynchronously.
+
+        Args:
+            cmd (str): The command string to be sent.
+
+        Returns:
+            str: The response received from the transport layer.
+        """
         return await self.transport.read(cmd + "\r")
 
     async def close(self):
+        """
+        Asynchronously closes the transport connection.
+
+        This method ensures that the transport layer is properly closed,
+        releasing any resources associated with it.
+        """
         await self.transport.close()
 
 
-async def client_telnet():
+async def client_telnet_test():
+    """
+    Asynchronous function to test a Telnet connection to a device using the `TelnetTransport` 
+    and `DeviceClient` classes.
+    This function establishes a connection to a device, sends a series of commands, 
+    reads responses, and then closes the connection.
+    """
     transport = TelnetTransport(MAC="00:80:A3:79:C6:18")
     #transport = TelnetTransport()
     client = DeviceClient(transport)
     await client.connect()
+    print(f"Connected to device with IP: {transport.host}")
 
     response = await client.read('')
     print(f"Telnet - Server response: {response}")    
@@ -269,10 +339,16 @@ async def client_telnet():
     await client.close()
 
 
-async def client_serial():
+async def client_serial_test():
+    """
+    Asynchronous function to test serial communication with a device client.
+    This function establishes a connection to a device using a serial transport,
+    sends a series of commands, and retrieves responses from the device.
+    """
     transport = SerialTransport()
     client = DeviceClient(transport)
     await client.connect()
+    print(f"Connected to device on serial port: {transport.port}")
 
     response = await client.read('')
     print(f"Serial - Server response: {response}")    
@@ -285,5 +361,6 @@ async def client_serial():
     await client.close()
 
 
-asyncio.run(client_telnet())
-#asyncio.run(client_serial())
+if __name__ == "__main__":
+    #asyncio.run(client_telnet_test())
+    asyncio.run(client_serial_test())

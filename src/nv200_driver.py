@@ -432,7 +432,13 @@ class DeviceClient:
         """
         await self.transport.write(cmd + "\r")
         return await self._read_response()
+   
+   
+    async def read_values(self, cmd: str) -> tuple:
+        response = await self.read(cmd)
+        return self._parse_response(response)
 
+    
     async def close(self):
         """
         Asynchronously closes the transport connection.
@@ -448,9 +454,7 @@ class DeviceClient:
 
     async def get_pid_mode(self) -> PidLoopMode:
         """Retrieves the current PID mode of the device."""
-        response = await self.read('cl')
-        parameters = self._parse_response(response)[1]
-        return PidLoopMode(int(parameters[0]))
+        return PidLoopMode(int((await self.read_values('cl'))[1][0]))
     
     async def set_setpoint(self, setpoint: float):
         """Sets the setpoint value for the device."""
@@ -458,9 +462,7 @@ class DeviceClient:
 
     async def get_setpoint(self) -> float:
         """Retrieves the current setpoint of the device."""
-        response = await self.read('set')
-        parameters = self._parse_response(response)[1]
-        return float(parameters[0])
+        return float((await self.read_values('set'))[1][0])
     
     async def move_to_position(self, position: float):
         """Moves the device to the specified position in closed loop"""
@@ -478,9 +480,7 @@ class DeviceClient:
         For actuators with sensor: Position in actuator units (μm or mrad)
         For actuators without sensor: Piezo voltage in V
         """
-        response = await self.read('meas')
-        parameters = self._parse_response(response)[1]
-        return float(parameters[0])
+        return float((await self.read_values('meas'))[1][0])
 
 
 async def run_tests(client: DeviceClient):

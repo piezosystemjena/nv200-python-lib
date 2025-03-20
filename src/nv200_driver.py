@@ -444,16 +444,43 @@ class DeviceClient:
         
     async def set_pid_mode(self, mode: PidLoopMode):
         """Sets the PID mode of the device to either open loop or closed loop."""
-        # Construct the command string using the enum's value
-        cmd = f"cl,{mode.value}"
-        # Send the command to the device
-        await self.write(cmd)
+        await self.write(f"cl,{mode.value}")
 
     async def get_pid_mode(self) -> PidLoopMode:
         """Retrieves the current PID mode of the device."""
         response = await self.read('cl')
-        command, parameters = self._parse_response(response)
+        parameters = self._parse_response(response)[1]
         return PidLoopMode(int(parameters[0]))
+    
+    async def set_setpoint(self, setpoint: float):
+        """Sets the setpoint value for the device."""
+        await self.write(f"set,{setpoint}")
+
+    async def get_setpoint(self) -> float:
+        """Retrieves the current setpoint of the device."""
+        response = await self.read('set')
+        parameters = self._parse_response(response)[1]
+        return float(parameters[0])
+    
+    async def move_to_position(self, position: float):
+        """Moves the device to the specified position in closed loop"""
+        await self.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+        await self.set_setpoint(position)
+
+    async def move_to_voltage(self, voltage: float):
+        """Moves the device to the specified voltage in open loop"""
+        await self.set_pid_mode(PidLoopMode.OPEN_LOOP)
+        await self.set_setpoint(voltage)
+
+    async def get_current_position(self) -> float:
+        """
+        Retrieves the current position of the device.
+        For actuators with sensor: Position in actuator units (μm or mrad)
+        For actuators without sensor: Piezo voltage in V
+        """
+        response = await self.read('meas')
+        parameters = self._parse_response(response)[1]
+        return float(parameters[0])
 
 
 async def run_tests(client: DeviceClient):
@@ -467,10 +494,15 @@ async def run_tests(client: DeviceClient):
     print(f"Server response: {response}")
     response = await client.read('cl')
     print(f"Server response: {response}")
+    print("Current position:", await client.get_current_position())
     await client.set_pid_mode(PidLoopMode.CLOSED_LOOP)
     await client.set_pid_mode(PidLoopMode.OPEN_LOOP)
     value = await client.get_pid_mode()
     print("PID mode:", value)
+    await client.set_setpoint(0)
+    setpoint = await client.get_setpoint()
+    print("Setpoint:", setpoint)
+    print("Current position:", await client.get_current_position())
     await client.close()
 
 

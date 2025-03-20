@@ -4,6 +4,91 @@ from abc import ABC, abstractmethod
 import aioserial
 import serial.tools.list_ports
 import lantronix_device_discovery_async as ldd
+from enum import Enum
+
+
+class PidLoopMode(Enum):
+    """
+    PidLoopMode is an enumeration that defines the modes of operation for a PID control loop.
+
+    Attributes:
+        OPEN_LOOP (int): Represents an open-loop mode where the system operates without feedback.
+        CLOSED_LOOP (int): Represents a closed-loop mode where the system operates with feedback.
+    """
+    OPEN_LOOP = 0
+    CLOSED_LOOP = 1
+
+class ErrorCode(Enum):
+    """
+    ErrorCode(Enum):
+        An enumeration representing various error codes and their corresponding descriptions.
+    """
+    ERROR_NOT_SPECIFIED = 1
+    UNKNOWN_COMMAND = 2
+    PARAMETER_MISSING = 3
+    ADMISSIBLE_PARAMETER_RANGE_EXCEEDED = 4
+    COMMAND_PARAMETER_COUNT_EXCEEDED = 5
+    PARAMETER_LOCKED_OR_READ_ONLY = 6
+    UNDERLOAD = 7
+    OVERLOAD = 8
+    PARAMETER_TOO_LOW = 9
+    PARAMETER_TOO_HIGH = 10
+
+    @classmethod
+    def from_value(cls, value : int):
+        """Convert an integer into an ErrorCode enum member."""
+        if value in cls._value2member_map_:
+            return cls(value)
+        else:
+            return cls.ERROR_NOT_SPECIFIED  # Default error if value is invalid
+
+    # Method to get the error description based on the error code
+    @classmethod
+    def get_description(cls, error_code):
+        """
+        Retrieves a human-readable description for a given error code.
+
+        Args:
+            error_code (int): The error code for which the description is requested.
+
+        Returns:
+            str: A string describing the error associated with the provided error code.
+                 If the error code is not recognized, "Unknown error" is returned.
+        """
+        descriptions = {
+            cls.ERROR_NOT_SPECIFIED: "Error not specified",
+            cls.UNKNOWN_COMMAND: "Unknown command",
+            cls.PARAMETER_MISSING: "Parameter missing",
+            cls.ADMISSIBLE_PARAMETER_RANGE_EXCEEDED: "Admissible parameter range exceeded",
+            cls.COMMAND_PARAMETER_COUNT_EXCEEDED: "Command's parameter count exceeded",
+            cls.PARAMETER_LOCKED_OR_READ_ONLY: "Parameter is locked or read only",
+            cls.UNDERLOAD: "Underload",
+            cls.OVERLOAD: "Overload",
+            cls.PARAMETER_TOO_LOW: "Parameter too low",
+            cls.PARAMETER_TOO_HIGH: "Parameter too high"
+        }
+        return descriptions.get(error_code, "Unknown error")
+
+
+class DeviceError(Exception):
+    """
+    Custom exception class for handling device-related errors.
+
+    Attributes:
+        error_code (ErrorCode): The error code associated with the exception.
+        description (str): A human-readable description of the error.
+
+    Args:
+        error_code (ErrorCode): An instance of the ErrorCode enum representing the error.
+
+    Raises:
+        ValueError: If the provided error_code is not a valid instance of the ErrorCode enum.
+    """
+    def __init__(self, error_code : ErrorCode):
+        self.error_code = error_code
+        self.description = ErrorCode.get_description(error_code)
+        # Call the base class constructor with the formatted error message
+        super().__init__(f"Error {self.error_code.value}: {self.description}")
 
 
 class TransportProtocol(ABC):
@@ -24,6 +109,15 @@ class TransportProtocol(ABC):
         """
 
     @abstractmethod
+    async def read_response(self) -> str:
+        """
+        Asynchronously reads and returns a response as a string.
+
+        Returns:
+            str: The response read from the source.
+        """
+
+    @abstractmethod
     async def write(self, cmd: str):
         """
         Sends a command to the NV200 device asynchronously.
@@ -34,19 +128,6 @@ class TransportProtocol(ABC):
         Raises:
             Exception: If there is an error while sending the command.
         """
-
-    @abstractmethod
-    async def read(self, cmd: str) -> str:
-        """
-        Sends a command to the device and reads the response asynchronously.
-
-        Args:
-            cmd (str): The command string to send to the device.
-
-        Returns:
-            str: The response received from the device.
-        """
-
 
     @abstractmethod
     async def close(self):
@@ -72,7 +153,8 @@ class TransportProtocol(ABC):
         Returns:
             bool: True if the device is detected as an NV200, False otherwise.
         """
-        response = await self.read('\r')
+        await self.write('\r')
+        response = await self.read_response()
         return response.startswith(b"NV200")
 
 
@@ -134,12 +216,11 @@ class TelnetTransport(TransportProtocol):
             self.__host = devices[0]['IP']
             self.__MAC = devices[0]['MAC']
         self.__reader, self.__writer = await telnetlib3.open_connection(self.__host, self.__port)
-
+    
     async def write(self, cmd: str):
         self.__writer.write(cmd)
-
-    async def read(self, cmd: str) -> str:
-        self.__writer.write(cmd)
+        
+    async def read_response(self) -> str:
         return await self.__reader.readuntil(b'\n')
 
     async def close(self):
@@ -243,8 +324,7 @@ class SerialTransport(TransportProtocol):
     async def write(self, cmd: str):
         await self.__serial.write_async(cmd.encode('utf-8'))
 
-    async def read(self, cmd: str) -> str:
-        await self.__serial.write_async(cmd.encode('utf-8'))
+    async def read_response(self) -> str:
         return await self.__serial.readline_async()
 
     async def close(self):
@@ -267,6 +347,48 @@ class DeviceClient:
     """
     def __init__(self, transport: TransportProtocol):
         self.transport = transport
+
+    async def _read_response(self, timeout_param : float = 0.4) -> str:
+        """
+        Asynchronously reads a response from the transport layer with a specified timeout.
+        """
+        return await asyncio.wait_for(self.transport.read_response(), timeout=timeout_param)
+        
+
+    def _parse_response(self, response_param: bytes) -> tuple:
+        """
+        Parses the response from the device and extracts the command and parameters.
+        If the response indicates an error (starts with "error"), it raises a DeviceError
+        with the corresponding error code. If the error code is invalid or unspecified,
+        a default error code of 1 is used.
+        Args:
+            response (bytes): The response received from the device as a byte string.
+        Returns:
+            tuple: A tuple containing the command (str) and a list of parameters (list of str).
+        Raises:
+            DeviceError: If the response indicates an error.
+        """
+        # Check if the response indicates an error
+        response = response_param.decode('utf-8')
+        if response.startswith("error"):
+            parts = response.split(',', 1)
+            if len(parts) > 1:
+                try:
+                    error_code = int(parts[1].strip("\x01\n\r\x00"))
+                    # Raise a DeviceError with the error code
+                    raise DeviceError(ErrorCode.from_value(error_code))
+                except ValueError:
+                    # In case the error code isn't valid
+                    raise DeviceError(1)  # Default error: Error not specified
+        else:
+            # Normal response, split the command and parameters
+            parts = response.split(',', 1)
+            command = parts[0].strip()
+            parameters = []
+            if len(parts) > 1:
+                parameters = [param.strip("\x01\n\r\x00") for param in parts[1].split(',')]
+            return command, parameters
+        
 
     async def connect(self):
         """
@@ -292,6 +414,11 @@ class DeviceClient:
             cmd (str): The command string to be sent. No carriage return is needed.
         """
         await self.transport.write(cmd + "\r")
+        try:
+            response = await asyncio.wait_for(self.transport.read_response(), timeout=0.1)
+            return self._parse_response(response)
+        except asyncio.TimeoutError:
+            return None  # Or handle it differently
 
     async def read(self, cmd: str) -> str:
         """
@@ -303,7 +430,8 @@ class DeviceClient:
         Returns:
             str: The response received from the transport layer.
         """
-        return await self.transport.read(cmd + "\r")
+        await self.transport.write(cmd + "\r")
+        return await self._read_response()
 
     async def close(self):
         """
@@ -313,6 +441,37 @@ class DeviceClient:
         releasing any resources associated with it.
         """
         await self.transport.close()
+        
+    async def set_pid_mode(self, mode: PidLoopMode):
+        """Sets the PID mode of the device to either open loop or closed loop."""
+        # Construct the command string using the enum's value
+        cmd = f"cl,{mode.value}"
+        # Send the command to the device
+        await self.write(cmd)
+
+    async def get_pid_mode(self) -> PidLoopMode:
+        """Retrieves the current PID mode of the device."""
+        response = await self.read('cl')
+        command, parameters = self._parse_response(response)
+        return PidLoopMode(int(parameters[0]))
+
+
+async def run_tests(client: DeviceClient):
+    response = await client.read('')
+    print(f"Server response: {response}")    
+    await client.write('modsrc,0')
+    await client.write('cl,1')
+    await client.write('set,40')
+    await asyncio.sleep(0.1)
+    response = await client.read('meas')
+    print(f"Server response: {response}")
+    response = await client.read('cl')
+    print(f"Server response: {response}")
+    await client.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+    await client.set_pid_mode(PidLoopMode.OPEN_LOOP)
+    value = await client.get_pid_mode()
+    print("PID mode:", value)
+    await client.close()
 
 
 async def client_telnet_test():
@@ -327,16 +486,8 @@ async def client_telnet_test():
     client = DeviceClient(transport)
     await client.connect()
     print(f"Connected to device with IP: {transport.host}")
+    await run_tests(client)
 
-    response = await client.read('')
-    print(f"Telnet - Server response: {response}")    
-    await client.write('modsrc,0')
-    await client.write('cl,1')
-    await client.write('set,40')
-    await asyncio.sleep(0.1)
-    response = await client.read('meas')
-    print(f"Telnet - Server response: {response}")
-    await client.close()
 
 
 async def client_serial_test():
@@ -349,18 +500,9 @@ async def client_serial_test():
     client = DeviceClient(transport)
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
-
-    response = await client.read('')
-    print(f"Serial - Server response: {response}")    
-    await client.write('modsrc,0')
-    await client.write('cl,1')
-    await client.write('set,40')
-    await asyncio.sleep(0.1)
-    response = await client.read('meas')
-    print(f"Serial - Server response: {response}")
-    await client.close()
+    await run_tests(client)
 
 
 if __name__ == "__main__":
-    #asyncio.run(client_telnet_test())
-    asyncio.run(client_serial_test())
+    asyncio.run(client_telnet_test())
+    #asyncio.run(client_serial_test())

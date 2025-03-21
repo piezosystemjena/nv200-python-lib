@@ -2,6 +2,7 @@ import asyncio
 import socket
 from typing import List, Tuple, Dict, Optional
 from eth_utils import get_active_ethernet_ips
+from lantronix_utils import parse_responses
 
 # Define constants
 BROADCAST_IP = '255.255.255.255'
@@ -56,34 +57,6 @@ async def send_udp_broadcast(local_ip : str) -> List[Tuple[bytes, Tuple[str, int
     return broadcast_responses
 
 
-def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[Dict[str, str]]:
-    """
-    Parses the received responses from the devices to extract their MAC and IP addresses.
-
-    Args:
-        responses (List[Tuple[bytes, Tuple[str, int]]]):
-            A list of tuples, each containing:
-            - The raw data (bytes) received from the device.
-            - The sender's address, which is a tuple containing IP (str) and port (int).
-
-    Returns:
-        List[Dict[str, str]]:
-            A list of dictionaries where each dictionary contains:
-            - 'MAC' (str): The MAC address of the responding device.
-            - 'IP' (str): The IP address of the responding device.
-    """
-    parsed_devices = []
-    for data, address in response_list:
-        try:
-            mac_hex = data.hex()
-            mac_address = ':'.join(mac_hex[48:60][i:i + 2] for i in range(0, 12, 2)).upper()
-            parsed_devices.append({'MAC': mac_address, 'IP': address[0]})
-        except Exception as e:
-            print(f"Error parsing response: {e}")
-
-    return parsed_devices
-
-
 def find_device_by_mac(device_list: List[Dict[str, str]], target_mac: str) -> Optional[str]:
     """
     Searches for a device by its MAC address in the list of discovered devices.
@@ -115,10 +88,13 @@ async def discover_lantronix_devices() -> List[Dict[str, str]]:
             - 'MAC' (str): The MAC address of the responding device.
             - 'IP' (str): The IP address of the responding device.
     """
-    for interface, ip in get_active_ethernet_ips():
+    for _, ip in get_active_ethernet_ips():
         device_responses = await send_udp_broadcast(ip)
-        if device_responses:
-            return parse_responses(device_responses)
+        if not device_responses:
+            continue
+        device_list = parse_responses(device_responses)
+        if device_list:
+            return device_list
     return []
 
 

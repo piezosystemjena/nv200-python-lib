@@ -54,7 +54,7 @@ Once the virtual environment is created, activate it.
 
 - **For Windows:**
 
-```bash
+```shell
 .venv\Scripts\activate
 ```
 

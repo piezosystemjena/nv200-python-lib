@@ -1,6 +1,6 @@
 import asyncio
 from enum import Enum
-from transport_protocols import TelnetTransport, SerialTransport, TransportProtocol
+from transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
 
 
 class PidLoopMode(Enum):
@@ -94,13 +94,27 @@ class DeviceClient:
         transport (TransportProtocol): The transport protocol used for communication.
     """
     def __init__(self, transport: TransportProtocol):
-        self.transport = transport
+        self._transport = transport
+
+    @property
+    def serial_protocol(self) -> SerialProtocol:
+        """Returns the transport as SerialProtocol or raises TypeError."""
+        if isinstance(self._transport, SerialProtocol):
+            return self._transport
+        raise TypeError("Transport is not a SerialTransport")
+
+    @property
+    def ethernet_protocol(self) -> TelnetProtocol:
+        """Returns the transport as TelnetProtocol or raises TypeError."""
+        if isinstance(self._transport, TelnetProtocol):
+            return self._transport
+        raise TypeError("Transport is not a TelnetTransport")
 
     async def _read_response(self, timeout_param : float = 0.4) -> str:
         """
         Asynchronously reads a response from the transport layer with a specified timeout.
         """
-        return await asyncio.wait_for(self.transport.read_response(), timeout=timeout_param)
+        return await asyncio.wait_for(self._transport.read_response(), timeout=timeout_param)
         
 
     def _parse_response(self, response_param: bytes) -> tuple:
@@ -149,7 +163,7 @@ class DeviceClient:
             Exception: If the connection fails, an exception may be raised
             depending on the implementation of the transport layer.
         """
-        await self.transport.connect()
+        await self._transport.connect()
 
     async def write(self, cmd: str):
         """
@@ -161,9 +175,9 @@ class DeviceClient:
         Args:
             cmd (str): The command string to be sent. No carriage return is needed.
         """
-        await self.transport.write(cmd + "\r")
+        await self._transport.write(cmd + "\r")
         try:
-            response = await asyncio.wait_for(self.transport.read_response(), timeout=0.1)
+            response = await asyncio.wait_for(self._transport.read_response(), timeout=0.1)
             return self._parse_response(response)
         except asyncio.TimeoutError:
             return None  # Or handle it differently
@@ -178,7 +192,7 @@ class DeviceClient:
         Returns:
             str: The response received from the transport layer.
         """
-        await self.transport.write(cmd + "\r")
+        await self._transport.write(cmd + "\r")
         return await self._read_response()
    
    
@@ -194,7 +208,7 @@ class DeviceClient:
         This method ensures that the transport layer is properly closed,
         releasing any resources associated with it.
         """
-        await self.transport.close()
+        await self._transport.close()
         
     async def set_pid_mode(self, mode: PidLoopMode):
         """Sets the PID mode of the device to either open loop or closed loop."""
@@ -261,7 +275,7 @@ async def client_telnet_test():
     This function establishes a connection to a device, sends a series of commands, 
     reads responses, and then closes the connection.
     """
-    transport = TelnetTransport(MAC="00:80:A3:79:C6:18")
+    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")
     #transport = TelnetTransport()
     client = DeviceClient(transport)
     await client.connect()
@@ -276,7 +290,7 @@ async def client_serial_test():
     This function establishes a connection to a device using a serial transport,
     sends a series of commands, and retrieves responses from the device.
     """
-    transport = SerialTransport()
+    transport = SerialProtocol()
     client = DeviceClient(transport)
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
@@ -285,4 +299,4 @@ async def client_serial_test():
 
 if __name__ == "__main__":
     asyncio.run(client_telnet_test())
-    #asyncio.run(client_serial_test())
+    asyncio.run(client_serial_test())

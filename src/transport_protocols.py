@@ -72,7 +72,7 @@ class TransportProtocol(ABC):
 
 
 
-class TelnetTransport(TransportProtocol):
+class TelnetProtocol(TransportProtocol):
     """
     TelnetTransport is a class that implements a transport protocol for communicating
     with piezosystem devices over Telnet. It provides methods to establish a connection,
@@ -157,7 +157,7 @@ class TelnetTransport(TransportProtocol):
 
 
 
-class SerialTransport(TransportProtocol):
+class SerialProtocol(TransportProtocol):
     """
     A class to handle serial communication with an NV200 device using the AioSerial library.
     Attributes:

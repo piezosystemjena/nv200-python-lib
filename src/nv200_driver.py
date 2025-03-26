@@ -1,5 +1,5 @@
 import asyncio
-from enum import Enum
+from enum import Enum, IntFlag
 from transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
 
 
@@ -64,6 +64,84 @@ class ErrorCode(Enum):
             cls.PARAMETER_TOO_HIGH: "Parameter too high"
         }
         return descriptions.get(error_code, "Unknown error")
+    
+class StatusFlags(IntFlag):
+    """
+    Enum representing the individual status flags within a 16-bit status register.
+    """
+    ACTUATOR_CONNECTED = 1 << 0
+    SENSOR_TYPE_0 = 1 << 1
+    SENSOR_TYPE_1 = 1 << 2
+    CLOSED_LOOP_MODE = 1 << 3
+    LOW_PASS_FILTER_ON = 1 << 4
+    NOTCH_FILTER_ON = 1 << 5
+    SIGNAL_PROCESSING_ACTIVE = 1 << 7
+    AMPLIFIER_CHANNELS_BRIDGED = 1 << 8
+    TEMPERATURE_TOO_HIGH = 1 << 10
+    ACTUATOR_ERROR = 1 << 11
+    HARDWARE_ERROR = 1 << 12
+    I2C_ERROR = 1 << 13
+    LOWER_CONTROL_LIMIT_REACHED = 1 << 14
+    UPPER_CONTROL_LIMIT_REACHED = 1 << 15
+
+    @staticmethod
+    def get_sensor_type(value):
+        """
+        Determines the type of sensor based on the sensor bits in the status register.
+        
+        :param value: The 16-bit status register value.
+        :return: A string describing the sensor type.
+        """
+        sensor_bits = (value & (StatusFlags.SENSOR_TYPE_0 | StatusFlags.SENSOR_TYPE_1)) >> 1
+        sensor_types = {
+            0b00: "No position sensor",
+            0b01: "Strain gauge sensor",
+            0b10: "Capacitive sensor"
+        }
+        return sensor_types.get(sensor_bits, "Unknown")
+
+class StatusRegister:
+    """
+    A class representing the 16-bit status register of an actuator or amplifier.
+    """
+    def __init__(self, value: int):
+        """
+        Initializes the StatusRegister with a given 16-bit value.
+        
+        :param value: The 16-bit status register value.
+        """
+        self.flags = StatusFlags(value)
+        self.value = value
+
+    def has_flag(self, flag: StatusFlags):
+        """
+        Checks if a given status flag is set in the register.
+        
+        :param flag: A StatusFlags enum value to check.
+        :return: True if the flag is set, False otherwise.
+        """
+        return bool(self.flags & flag)
+
+    def __repr__(self):
+        """
+        Provides a string representation of the status register with human-readable information.
+        
+        :return: A formatted string showing the status register details.
+        """
+        return (f"StatusRegister(value={self.value:#06x}):\n"
+                f"\tActuator Connected={self.has_flag(StatusFlags.ACTUATOR_CONNECTED)}\n"
+                f"\tSensor={StatusFlags.get_sensor_type(self.value)}\n"
+                f"\tClosed Loop Mode={self.has_flag(StatusFlags.CLOSED_LOOP_MODE)}\n"
+                f"\tLow Pass Filter={self.has_flag(StatusFlags.LOW_PASS_FILTER_ON)}\n"
+                f"\tNotch Filter={self.has_flag(StatusFlags.NOTCH_FILTER_ON)}\n"
+                f"\tSignal Processing={self.has_flag(StatusFlags.SIGNAL_PROCESSING_ACTIVE)}\n"
+                f"\tBridged Amplifier={self.has_flag(StatusFlags.AMPLIFIER_CHANNELS_BRIDGED)}\n"
+                f"\tTemp High={self.has_flag(StatusFlags.TEMPERATURE_TOO_HIGH)}\n"
+                f"\tActuator Error={self.has_flag(StatusFlags.ACTUATOR_ERROR)}\n"
+                f"\tHardware Error={self.has_flag(StatusFlags.HARDWARE_ERROR)}\n"
+                f"\tI2C Error={self.has_flag(StatusFlags.I2C_ERROR)}\n"
+                f"\tLower Limit Reached={self.has_flag(StatusFlags.LOWER_CONTROL_LIMIT_REACHED)}\n"
+                f"\tUpper Limit Reached={self.has_flag(StatusFlags.UPPER_CONTROL_LIMIT_REACHED)}")
 
 
 class DeviceError(Exception):
@@ -196,11 +274,59 @@ class DeviceClient:
         return await self._read_response()
    
    
-    async def read_values(self, cmd: str) -> tuple:
+    async def read_response(self, cmd: str) -> tuple:
+        """
+        Asynchronously sends a command to read values and parses the response.
+
+        Args:
+            cmd (str): The command string to be sent.
+
+        Returns:
+            tuple: A tuple containing the command (str) and a list of parameters (list of str)..
+        """
         response = await self.read(cmd)
         return self._parse_response(response)
 
-    
+
+    async def read_values(self, cmd: str) -> list[str]:
+        """
+        Asynchronously sends a command and returns the values as a list of strings
+
+        Args:
+            cmd (str): The command string to be sent.
+
+        Returns:
+            A list of values (list of str)..
+        """
+        return (await self.read_response(cmd))[1]
+
+
+    async def read_float_value(self, cmd: str) -> float:
+        """
+        Asynchronously reads a single float value from device
+
+        Args:
+            cmd (str): The command string to be sent.
+
+        Returns:
+            float: The value as a floating-point number.
+        """
+        return float((await self.read_values(cmd))[0])
+
+
+    async def read_int_value(self, cmd: str) -> int:
+        """
+        Asynchronously reads a single float value from device
+
+        Args:
+            cmd (str): The command string to be sent.
+
+        Returns:
+            float: The value as a floating-point number.
+        """
+        return int((await self.read_values(cmd))[0])
+
+
     async def close(self):
         """
         Asynchronously closes the transport connection.
@@ -216,7 +342,7 @@ class DeviceClient:
 
     async def get_pid_mode(self) -> PidLoopMode:
         """Retrieves the current PID mode of the device."""
-        return PidLoopMode(int((await self.read_values('cl'))[1][0]))
+        return PidLoopMode(await self.read_int_value('cl'))
     
     async def set_setpoint(self, setpoint: float):
         """Sets the setpoint value for the device."""
@@ -224,7 +350,7 @@ class DeviceClient:
 
     async def get_setpoint(self) -> float:
         """Retrieves the current setpoint of the device."""
-        return float((await self.read_values('set'))[1][0])
+        return await self.read_float_value('set')
     
     async def move_to_position(self, position: float):
         """Moves the device to the specified position in closed loop"""
@@ -242,10 +368,37 @@ class DeviceClient:
         For actuators with sensor: Position in actuator units (μm or mrad)
         For actuators without sensor: Piezo voltage in V
         """
-        return float((await self.read_values('meas'))[1][0])
+        return await self.read_float_value('meas')
+
+    async def get_heat_sink_temperature(self) -> float:
+        """
+        Retrieves the heat sink temperature in degrees Celsius.
+        """
+        return await self.read_float_value('temp')
+
+    async def get_status_register(self) -> StatusRegister:
+        """
+        Retrieves the status register of the device.
+        """
+        return StatusRegister(await self.read_int_value('stat'))
+
+    async def is_status_flag_set(self, flag: StatusFlags) -> bool:
+        """
+        Checks if a specific status flag is set in the status register.
+        """
+        status_reg = await self.get_status_register()
+        return status_reg.has_flag(flag)
 
 
 async def run_tests(client: DeviceClient):
+    """
+    Asynchronously runs a series of tests on a DeviceClient instance.
+
+    This function performs various operations such as reading and writing 
+    to the client, setting and retrieving PID modes, and querying the 
+    device's status and position. It is designed to test the functionality 
+    of the DeviceClient and ensure proper communication with the server.
+    """
     response = await client.read('')
     print(f"Server response: {response}")    
     await client.write('modsrc,0')
@@ -265,6 +418,9 @@ async def run_tests(client: DeviceClient):
     setpoint = await client.get_setpoint()
     print("Setpoint:", setpoint)
     print("Current position:", await client.get_current_position())
+    print("Heat sink temperature:", await client.get_heat_sink_temperature())
+    print(await client.get_status_register())
+    print("Is status flag ACTUATOR_CONNECTED set: ", await client.is_status_flag_set(StatusFlags.ACTUATOR_CONNECTED))
     await client.close()
 
 
@@ -299,4 +455,4 @@ async def client_serial_test():
 
 if __name__ == "__main__":
     asyncio.run(client_telnet_test())
-    asyncio.run(client_serial_test())
+    #asyncio.run(client_serial_test())

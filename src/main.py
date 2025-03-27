@@ -45,6 +45,7 @@ def plot_recorded_data(rec_data: list[DataRecorder.ChannelRecordingData], sample
     Plots recorded data from an NV200 Data Recorder.
     This function takes a list of channel recording data and a sample rate, 
     computes the time axis, and plots the data using a dark background style.
+
     Args:
         rec_data (list[DataRecorder.ChannelRecordingData]): 
             A list containing channel recording data objects. Each object 
@@ -52,6 +53,7 @@ def plot_recorded_data(rec_data: list[DataRecorder.ChannelRecordingData], sample
             `source` attribute (label for the data source).
         sample_rate (float): 
             The sampling rate of the recorded data in Hz.
+
     Behavior:
         - Computes the time axis in milliseconds based on the sample rate.
         - Plots the data for the first two channels in the list with distinct 
@@ -59,6 +61,7 @@ def plot_recorded_data(rec_data: list[DataRecorder.ChannelRecordingData], sample
         - Applies a dark background style with customized grid, ticks, and 
           spines for better visualization.
         - Displays the plot with appropriate labels, title, and legend.
+        
     Note:
         Ensure that `rec_data` contains at least two channels of data for 
         proper plotting.

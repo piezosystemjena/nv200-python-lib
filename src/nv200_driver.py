@@ -6,10 +6,6 @@ from transport_protocols import TelnetProtocol, SerialProtocol, TransportProtoco
 class PidLoopMode(Enum):
     """
     PidLoopMode is an enumeration that defines the modes of operation for a PID control loop.
-
-    Attributes:
-        OPEN_LOOP (int): Represents an open-loop mode where the system operates without feedback.
-        CLOSED_LOOP (int): Represents a closed-loop mode where the system operates with feedback.
     """
     OPEN_LOOP = 0
     CLOSED_LOOP = 1
@@ -168,6 +164,7 @@ class DeviceError(Exception):
 class DeviceClient:
     """
     A client for communicating with a NV200 device using a specified transport protocol.
+
     Attributes:
         transport (TransportProtocol): The transport protocol used for communication.
     """
@@ -241,7 +238,7 @@ class DeviceClient:
 
         Raises:
             Exception: If the connection fails, an exception may be raised
-            depending on the implementation of the transport layer.
+                       depending on the implementation of the transport layer.
         """
         await self._transport.connect()
 
@@ -250,10 +247,10 @@ class DeviceClient:
         Sends a command to the transport layer.
 
         This asynchronous method writes a command string followed by a carriage return
-        ("\r") to the transport layer.
+        to the transport layer.
 
         Args:
-            cmd (str): The command string to be sent. No carriage return is needed.
+            cmd (str): The command string to be sent. No carriage return is needed.  
         """
         print(f"Writing command: {cmd}")
         await self._transport.write(cmd + "\r")
@@ -267,7 +264,9 @@ class DeviceClient:
         """
         Sends a command to the transport layer and reads the response asynchronously.
 
+        Args:
             cmd (str): The command string to be sent.
+            timeout: The timeout for reading the response in seconds.
 
         Returns:
             str: The response received from the transport layer.

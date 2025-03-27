@@ -7,6 +7,7 @@ def get_active_ethernet_ips():
     This function checks the network interfaces on the system and identifies those
     that are active (UP). It then collects the IPv4 addresses associated with these
     active interfaces.
+    
     Returns:
         list of tuple: A list of tuples where each tuple contains the interface name (str)
         and its corresponding IPv4 address (str).

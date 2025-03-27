@@ -1,3 +1,6 @@
+"""
+This module provides access to the NV200 data recorder functionality.
+"""
 import nv200_driver	
 import math
 from typing import List

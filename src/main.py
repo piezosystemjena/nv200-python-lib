@@ -1,9 +1,17 @@
 import asyncio
+import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
+import numpy as np
 from nv200_driver import DeviceClient, PidLoopMode, StatusFlags, TelnetProtocol, SerialProtocol
 from data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 
 
+
+
 async def basic_tests(client: DeviceClient):
+    """
+    Performs a series of basic tests on the provided DeviceClient instance.
+    """
     response = await client.read('')
     print(f"Server response: {response}")    
     await client.write('modsrc,0')
@@ -32,22 +40,84 @@ async def basic_tests(client: DeviceClient):
     print("avmax:", await client.read_float_value('avmax'))
 
 
+def plot_recorded_data(rec_data: list[DataRecorder.ChannelRecordingData], sample_rate: float):
+    """
+    Plots recorded data from an NV200 Data Recorder.
+    This function takes a list of channel recording data and a sample rate, 
+    computes the time axis, and plots the data using a dark background style.
+    Args:
+        rec_data (list[DataRecorder.ChannelRecordingData]): 
+            A list containing channel recording data objects. Each object 
+            should have a `data` attribute (list of recorded values) and a 
+            `source` attribute (label for the data source).
+        sample_rate (float): 
+            The sampling rate of the recorded data in Hz.
+    Behavior:
+        - Computes the time axis in milliseconds based on the sample rate.
+        - Plots the data for the first two channels in the list with distinct 
+          colors and labels.
+        - Applies a dark background style with customized grid, ticks, and 
+          spines for better visualization.
+        - Displays the plot with appropriate labels, title, and legend.
+    Note:
+        Ensure that `rec_data` contains at least two channels of data for 
+        proper plotting.
+    """
+    # Compute time axis
+    N = len(rec_data[0].data)
+    t = np.arange(N) / sample_rate * 1000 # Time values in ms
+    
+    # use dark background
+    plt.style.use('dark_background')
+
+    # Plot the data
+    plt.plot(t, rec_data[0].data, linestyle='-', color='orange', label=rec_data[0].source)
+    plt.plot(t, rec_data[1].data, linestyle='-', color='green', label=rec_data[1].source)
+
+    # Labels and title
+    plt.xlabel("Time (ms)")
+    plt.ylabel("Value")
+    plt.title("Sampled Data from NV200 Data Recorder")
+
+    # Show grid and legend
+    plt.grid(True, color='darkgray', linestyle='--', linewidth=0.5)
+    plt.minorticks_on()
+    plt.grid(which='minor', color='darkgray', linestyle=':', linewidth=0.5)
+    plt.legend(facecolor='darkgray', edgecolor='darkgray', frameon=True, loc='best', fontsize=10)
+
+    ax = plt.gca()
+    ax.spines['top'].set_color('darkgray')
+    ax.spines['right'].set_color('darkgray')
+    ax.spines['bottom'].set_color('darkgray')
+    ax.spines['left'].set_color('darkgray')
+
+    # Set tick parameters for dark grey color
+    ax.tick_params(axis='x', colors='darkgray')
+    ax.tick_params(axis='y', colors='darkgray')
+
+    # Display the plot
+    plt.show()
+
+
 async def data_recorder_tests(device: DeviceClient):
     """
     Asynchronous function to test the functionality of the DataRecorder with a given device.
     """
-    recorder = DataRecorder(device)
-    await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
-    await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
-    await recorder.set_recording_duration_ms(307)
-
     await device.move_to_position(0)
     await asyncio.sleep(0.4)
+
+    recorder = DataRecorder(device)
+    await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
+    await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
+    await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
+    rec_param = await recorder.set_recording_duration_ms(307)
+
     await recorder.start_recording()
     await device.move_to_position(80)
     await asyncio.sleep(0.4)
-    data = await recorder.read_recorded_data(0)
-    print("Data: " , data) 
+    print("Reading recorded data of both channels...")
+    rec_data = await recorder.read_recorded_data()
+    plot_recorded_data(rec_data, rec_param.sample_freq)
 
 
 async def run_tests(client: DeviceClient):

@@ -1,5 +1,6 @@
 import nv200_driver	
 import math
+from typing import List
 from enum import Enum
 from collections import namedtuple
 
@@ -91,7 +92,10 @@ class DataRecorder:
     NV200_RECORDER_BUFFER_SIZE = 6144  # Size of a single NV200 data recorder buffer
     INFINITE_RECORDING_DURATION = 0  # Infinite recording duration
     BUFFER_READ_TIMEOUT_SECS = 6  # Timeout for reading data from the recorder buffer - it needs to be higher because it may take some time
+    ALL_CHANNELS = -1  # Number of data recorder channels
     RecorderParam = namedtuple('RecorderParam', ['bufsize', 'stride', 'sample_freq'])
+    ChannelRecordingData = namedtuple('ChannelRecordingData', ['source', 'data'])
+    _dev : nv200_driver.DeviceClient
 
     def __init__(self, device: nv200_driver.DeviceClient):
         self._dev = device
@@ -165,10 +169,37 @@ class DataRecorder:
         """
         await self.start_recording(False)
 
-    async def read_recorded_data(self, channel : int) -> list[float]:
+    async def read_recorded_data_of_channel(self, channel : int) -> ChannelRecordingData:
         """
-        Reads the recorded data from the data recorder.
+        Asynchronously reads recorded data from a specified channel.
+
+        Args:
+            channel (int): The channel number from which to read the recorded data.
+
+        Returns:
+            ChannelRecordingData: An object containing the recording source as a string 
+            and a list of floating-point numbers representing the recorded data.
+
+        Raises:
+            Any exceptions raised by the underlying device communication methods.
         """
+        recsrc = DataRecorderSource(await self._dev.read_int_value(f"recsrc,{channel}"))
         number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
-        return [float(num) for num in number_strings]
+        return self.ChannelRecordingData(str(recsrc), [float(num) for num in number_strings])
+    
+    async def read_recorded_data(self) -> List[ChannelRecordingData]:
+        """
+        Asynchronously reads recorded data for two channels and returns it as a list.
+
+        This method retrieves the recorded data for channel 0 and channel 1 by 
+        calling `read_recorded_data_of_channel` for each channel. The results are 
+        returned as a list of `ChannelRecordingData` objects.
+
+        Returns:
+            List[ChannelRecordingData]: A list containing the recorded data for 
+            channel 0 and channel 1.
+        """
+        chan_data0 = await self.read_recorded_data_of_channel(0)
+        chan_data1 = await self.read_recorded_data_of_channel(1)
+        return [chan_data0, chan_data1]
 

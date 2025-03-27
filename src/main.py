@@ -32,29 +32,22 @@ async def basic_tests(client: DeviceClient):
     print("avmax:", await client.read_float_value('avmax'))
 
 
-async def data_recorder_tests(client: DeviceClient):
-    recorder = DataRecorder(client)
-    # await recorder.set_data_source(1, DataRecorderSource.PIEZO_POSITION)
-    # await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
-    # await recorder.set_recorder_stride(1)
-    # await recorder.start_recording()
-    #data = await recorder.read_recorded_data(0)
-    #print("Data: " , data) 
-    await recorder.set_recording_duration(308)
-    # await data_recorder.set_data_source(1, DataRecorderSource.SETPOINT)
-    # await data_recorder.set_data_source(2, DataRecorderSource.PIEZO_VOLTAGE)
-    # await data_recorder.set_data_source(3, DataRecorderSource.POSITION_ERROR)
-    # await data_recorder.set_data_source(4, DataRecorderSource.ABS_POSITION_ERROR)
-    # await data_recorder.set_data_source(5, DataRecorderSource.PIEZO_CURRENT_1)
-    # await data_recorder.set_data_source(6, DataRecorderSource.PIEZO_CURRENT_2)
-    # await data_recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
-    # await data_recorder.set_recording_interval(1000)
-    # await data_recorder.set_recording_duration(10000)
-    # await data_recorder.start_recording()
-    # await asyncio.sleep(10)
-    # await data_recorder.stop_recording()
-    # await data_recorder.download_data("data.csv")
+async def data_recorder_tests(device: DeviceClient):
+    """
+    Asynchronous function to test the functionality of the DataRecorder with a given device.
+    """
+    recorder = DataRecorder(device)
+    await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
+    await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
+    await recorder.set_recording_duration_ms(307)
 
+    await device.move_to_position(0)
+    await asyncio.sleep(0.4)
+    await recorder.start_recording()
+    await device.move_to_position(80)
+    await asyncio.sleep(0.4)
+    data = await recorder.read_recorded_data(0)
+    print("Data: " , data) 
 
 
 async def run_tests(client: DeviceClient):

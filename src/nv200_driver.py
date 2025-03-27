@@ -171,6 +171,8 @@ class DeviceClient:
     Attributes:
         transport (TransportProtocol): The transport protocol used for communication.
     """
+    DEFAULT_TIMEOUT_SECS = 0.4
+    
     def __init__(self, transport: TransportProtocol):
         self._transport = transport
 
@@ -188,7 +190,7 @@ class DeviceClient:
             return self._transport
         raise TypeError("Transport is not a TelnetTransport")
 
-    async def _read_response(self, timeout_param : float = 0.4) -> str:
+    async def _read_response(self, timeout_param : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
         Asynchronously reads a response from the transport layer with a specified timeout.
         """
@@ -261,21 +263,20 @@ class DeviceClient:
         except asyncio.TimeoutError:
             return None  # Or handle it differently
 
-    async def read(self, cmd: str) -> str:
+    async def read(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
         Sends a command to the transport layer and reads the response asynchronously.
 
-        Args:
             cmd (str): The command string to be sent.
 
         Returns:
             str: The response received from the transport layer.
         """
         await self._transport.write(cmd + "\r")
-        return await self._read_response()
+        return await self._read_response(timeout)
    
    
-    async def read_response(self, cmd: str) -> tuple:
+    async def read_response(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> tuple:
         """
         Asynchronously sends a command to read values and parses the response.
 
@@ -285,11 +286,11 @@ class DeviceClient:
         Returns:
             tuple: A tuple containing the command (str) and a list of parameters (list of str)..
         """
-        response = await self.read(cmd)
+        response = await self.read(cmd, timeout)
         return self._parse_response(response)
 
 
-    async def read_values(self, cmd: str) -> list[str]:
+    async def read_values(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> list[str]:
         """
         Asynchronously sends a command and returns the values as a list of strings
 
@@ -299,7 +300,7 @@ class DeviceClient:
         Returns:
             A list of values (list of str)..
         """
-        return (await self.read_response(cmd))[1]
+        return (await self.read_response(cmd, timeout))[1]
 
 
     async def read_float_value(self, cmd: str) -> float:

@@ -1,6 +1,7 @@
 import nv200_driver	
 import math
 from enum import Enum
+from collections import namedtuple
 
 
 class DataRecorderSource(Enum):
@@ -30,7 +31,29 @@ class DataRecorderSource(Enum):
         raise ValueError(f"Invalid recsrc value: {value}")
 
     def __repr__(self):
-        return f"RecSrc(SRC{self.src})"
+        """
+        Return a string representation of the DataRecorderSource enum member for debugging.
+        """
+        return f"DataRecorderSource({self.name})"
+    
+    def __str__(self):
+        """
+        Return a human-readable string for the DataRecorderSource enum member.
+
+        This method is used to provide a more user-friendly string representation for display,
+        such as in a user interface or logs.
+        """
+        # Dictionary mapping enum names to human-readable strings
+        human_readable = {
+            "PIEZO_POSITION": "Piezo Position (μm or mrad)",
+            "SETPOINT": "Setpoint (μm or mrad)",
+            "PIEZO_VOLTAGE": "Piezo Voltage (V)",
+            "POSITION_ERROR": "Position Error",
+            "ABS_POSITION_ERROR": "Absolute Position Error",
+            "PIEZO_CURRENT_1": "Piezo Current 1 (A)",
+            "PIEZO_CURRENT_2": "Piezo Current 2 (A)"
+        }
+        return human_readable.get(self.name, self.name)  # Default to the enum name if not found
     
 
 class RecorderAutoStartMode(Enum):
@@ -67,7 +90,8 @@ class DataRecorder:
     NV200_RECORDER_SAMPLE_RATE_HZ = 20000  # Sample frequency of the NV200 data recorder in Hz
     NV200_RECORDER_BUFFER_SIZE = 6144  # Size of a single NV200 data recorder buffer
     INFINITE_RECORDING_DURATION = 0  # Infinite recording duration
-    BUFFER_READ_TIMEOUT_SECS = 4  # Timeout for reading data from the recorder buffer - it needs to be higher because it may take some time
+    BUFFER_READ_TIMEOUT_SECS = 6  # Timeout for reading data from the recorder buffer - it needs to be higher because it may take some time
+    RecorderParam = namedtuple('RecorderParam', ['bufsize', 'stride', 'sample_freq'])
 
     def __init__(self, device: nv200_driver.DeviceClient):
         self._dev = device
@@ -102,24 +126,22 @@ class DataRecorder:
             raise ValueError(f"buffer_size must be between 0 and {self.NV200_RECORDER_BUFFER_SIZE}, got {buffer_size}")
         await self._dev.write(f"reclen,{buffer_size}")
 
-    async def set_recording_duration_ms(self, milliseconds: float):
+    async def set_recording_duration_ms(self, milliseconds: float) -> RecorderParam:
         """
-        Sets the recording duration in milliseconds.
+        Sets the recording duration in milliseconds and adjusts the recorder parameters accordingly.
 
-        This method calculates the appropriate stride and buffer length based on the 
-        desired recording duration and the recorder's sample rate and buffer size. 
-        It then configures the recorder with these calculated values.
+        This method calculates the appropriate stride, sample rate, and buffer size based on the 
+        specified recording duration and the recorder's configuration. It then updates the recorder 
+        settings to match these calculated values.
 
         Args:
             milliseconds (float): The desired recording duration in milliseconds.
 
-        Raises:
-            ValueError: If the calculated buffer length exceeds the maximum buffer size.
+        Returns:
+            RecorderParam: An object containing the updated buffer length, stride, and sample rate.
 
-        Notes:
-            - The stride determines how often the recorder processes data.
-            - The buffer length is the number of samples to store for the given duration.
-            - The method ensures the buffer length does not exceed the recorder's maximum buffer size.
+        Raises:
+            ValueError: If the calculated buffer size or stride is invalid.
         """
         duration_s = milliseconds / 1000.0
         buffer_duration_s = 1 / self.NV200_RECORDER_SAMPLE_RATE_HZ * self.NV200_RECORDER_BUFFER_SIZE
@@ -129,6 +151,7 @@ class DataRecorder:
         buflen = min(buflen, self.NV200_RECORDER_BUFFER_SIZE)
         await self.set_recorder_stride(stride)
         await self.set_sample_buffer_size(buflen)
+        return self.RecorderParam(buflen, stride, sample_rate)
 
     async def start_recording(self, start : bool = True):
         """
@@ -148,3 +171,4 @@ class DataRecorder:
         """
         number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
         return [float(num) for num in number_strings]
+

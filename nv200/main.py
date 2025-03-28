@@ -2,7 +2,7 @@ import asyncio
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 import numpy as np
-from nv200_driver import DeviceClient, PidLoopMode, StatusFlags, TelnetProtocol, SerialProtocol
+from device_interface import DeviceClient, PidLoopMode, StatusFlags, TelnetProtocol, SerialProtocol
 from data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 
 
@@ -61,7 +61,7 @@ def plot_recorded_data(rec_data: list[DataRecorder.ChannelRecordingData], sample
         - Applies a dark background style with customized grid, ticks, and 
           spines for better visualization.
         - Displays the plot with appropriate labels, title, and legend.
-        
+
     Note:
         Ensure that `rec_data` contains at least two channels of data for 
         proper plotting.
@@ -113,7 +113,7 @@ async def data_recorder_tests(device: DeviceClient):
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
-    rec_param = await recorder.set_recording_duration_ms(307)
+    rec_param = await recorder.set_recording_duration_ms(100)
 
     await recorder.start_recording()
     await device.move_to_position(80)

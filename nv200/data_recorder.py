@@ -1,7 +1,7 @@
 """
 This module provides access to the NV200 data recorder functionality.
 """
-import nv200_driver	
+from device_interface import DeviceClient
 import math
 from typing import List
 from enum import Enum
@@ -98,9 +98,9 @@ class DataRecorder:
     ALL_CHANNELS = -1  # Number of data recorder channels
     RecorderParam = namedtuple('RecorderParam', ['bufsize', 'stride', 'sample_freq'])
     ChannelRecordingData = namedtuple('ChannelRecordingData', ['source', 'data'])
-    _dev : nv200_driver.DeviceClient
+    _dev : DeviceClient
 
-    def __init__(self, device: nv200_driver.DeviceClient):
+    def __init__(self, device: DeviceClient):
         self._dev = device
 
 

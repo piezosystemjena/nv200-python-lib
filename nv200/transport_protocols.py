@@ -114,9 +114,6 @@ class TelnetProtocol(TransportProtocol):
 
         Raises:
             RuntimeError: If no devices are found during discovery.
-
-        Returns:
-            None
         """
         if self.__host is None and self.__MAC is not None:
             self.__host = await ldd.discover_lantronix_device(self.__MAC)
@@ -177,7 +174,7 @@ class SerialProtocol(TransportProtocol):
 
         Args:
             port (str, optional): The serial port to connect to. Defaults to None.
-            If port is None, the class will try to auto detect rthe port.
+                                  If port is None, the class will try to auto detect the port.
             xonxoff (bool, optional): Enables or disables software flow control (XON/XOFF). Defaults to True.
             baudrate (int, optional): The baud rate for the serial connection. Defaults to 115200.
         """
@@ -187,7 +184,7 @@ class SerialProtocol(TransportProtocol):
         self.__baudrate = baudrate
 
 
-    async def detect_port(self):
+    async def detect_port(self)-> str | None:
         """
         Asynchronously detects and configures the serial port for the NV200 device.
 
@@ -198,10 +195,6 @@ class SerialProtocol(TransportProtocol):
 
         Returns:
             str: The device name of the detected port if successful, otherwise None.
-
-        Raises:
-            Any exceptions raised during serial communication or port configuration 
-            are not explicitly handled and will propagate to the caller.
         """
         ports = serial.tools.list_ports.comports()
         for port in ports:

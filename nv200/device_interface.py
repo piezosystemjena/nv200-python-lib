@@ -36,7 +36,7 @@ class ErrorCode(Enum):
 
     # Method to get the error description based on the error code
     @classmethod
-    def get_description(cls, error_code):
+    def get_description(cls, error_code) -> str:
         """
         Retrieves a human-readable description for a given error code.
 
@@ -175,7 +175,12 @@ class DeviceClient:
 
     @property
     def serial_protocol(self) -> SerialProtocol:
-        """Returns the transport as SerialProtocol or raises TypeError."""
+        """
+        Returns the transport as SerialProtocol or raises TypeError.
+        
+        Returns:
+            SerialProtocol: The transport instance as SerialProtocol.
+        """
         if isinstance(self._transport, SerialProtocol):
             return self._transport
         raise TypeError("Transport is not a SerialTransport")

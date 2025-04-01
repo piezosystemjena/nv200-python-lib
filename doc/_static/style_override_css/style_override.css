@@ -345,3 +345,8 @@ html[data-theme='dark'] .rst-content .kbd {
     font-weight: bold;
     font-family: 'arial';
 }
+
+.py.class {
+  border-top: 2px solid #68B27e;
+  margin-top: 80px;
+}

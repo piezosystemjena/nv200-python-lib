@@ -6,14 +6,7 @@ NV200 Python Library documentation
    :caption: Contents:
 
    intro.rst
-   _api/data_recorder.rst
-   _api/device_interface
-   eth_utils
-   lantronix_device_discovery
-   lantronix_device_discovery_async
-   lantronix_utils
-   main
-   transport_protocols
+   api.rst
 
 Indices and tables
 ==================

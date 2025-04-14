@@ -13,6 +13,7 @@ import sphinx_fontawesome
 import os
 import sys
 from sphinx.roles import MenuSelection
+
 sys.path.insert(0, os.path.abspath('../nv200'))
 
 
@@ -45,6 +46,7 @@ default_dark_mode = False
 
 add_module_names = False
 autodoc_class_signature = 'separated'
+toc_object_entries_show_parents = "hide"
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
@@ -129,3 +131,4 @@ highlight_language = 'python'
 source_suffix = ['.rst', '.md']
 
 suppress_warnings = ['autosectionlabel.*']
+

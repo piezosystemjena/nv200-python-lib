@@ -139,6 +139,11 @@ body > div.wy-grid-for-nav > nav > div > div.wy-menu.wy-menu-vertical > p > span
     color: #68B27e !important;
 }
 
+body > div.wy-grid-for-nav > nav > div > div.wy-menu.wy-menu-vertical code {
+  font-family: "pathway_extreme";
+  font-size: 11.5px;
+}
+
 /* Use "Brand dark blue" for top of sidebar */
 .wy-side-nav-search {
     background-color: #298043 !important;

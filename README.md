@@ -1,4 +1,4 @@
-![logo](docs/images/piezosystem_logo.svg)
+![logo](doc/_static/piezosystem_logo.svg)
 
 # NV200 Python Lib
 

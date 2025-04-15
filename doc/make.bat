@@ -3,7 +3,7 @@
 pushd %~dp0
 
 REM Command file for Sphinx documentation
-sphinx-apidoc -o _api/ ../src
+sphinx-apidoc -o _api/ ../nv200
 
 if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build

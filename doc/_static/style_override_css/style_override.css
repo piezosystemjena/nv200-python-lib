@@ -3,7 +3,7 @@
     src: url('fonts/pathway-extreme-latin-400-normal.woff');
     font-weight: 200;
     font-style: normal;
-    font-feature-settings: "lnum", "pnum";
+    font-display:swap;
   }
 
   @font-face {
@@ -32,7 +32,7 @@
     font-variant-position: normal;
     font-language-override: normal;
     font-feature-settings: "lnum", "pnum";
-    font-variation-settings: normal;    
+    font-variation-settings: normal;   
   }
   
 
@@ -85,40 +85,39 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend {
 
 .rst-content h1 {
   font-size: 42px;
-  margin-bottom: 21px;
+  margin-bottom: 0.5em;
 }
 
 .rst-content h2 {
   font-size: 32px;
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .rst-content h3 {
   font-size: 26px;
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .rst-content h4 {
   font-family: 'pathway_extreme';
   font-size: 19px;
-  margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .rst-content h5 {
   font-family: 'pathway_extreme';
   font-size: 17px;
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .rst-content h6 {
   font-family: 'pathway_extreme';
   font-size: 15px;
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .rst-content li {
@@ -355,3 +354,11 @@ html[data-theme='dark'] .rst-content .kbd {
   border-top: 2px solid #68B27e;
   margin-top: 80px;
 }
+
+.rst-content p {
+
+  font-size: 16px;
+  line-height: 1.4;
+  font-stretch: normal;
+}
+

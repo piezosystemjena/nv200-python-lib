@@ -1,8 +1,8 @@
 import asyncio
 import socket
 from typing import List, Tuple, Dict, Optional
-from eth_utils import get_active_ethernet_ips
-from lantronix_utils import parse_responses
+from nv200.eth_utils import get_active_ethernet_ips
+from nv200.lantronix_utils import parse_responses
 
 # Define constants
 BROADCAST_IP = '255.255.255.255'

@@ -1,7 +1,7 @@
 """
 This module provides access to the NV200 data recorder functionality.
 """
-from device_interface import DeviceClient
+from nv200.device_interface import DeviceClient
 import math
 from typing import List
 from enum import Enum

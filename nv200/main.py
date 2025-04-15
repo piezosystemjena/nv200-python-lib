@@ -2,8 +2,9 @@ import asyncio
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 import numpy as np
-from device_interface import DeviceClient, PidLoopMode, StatusFlags, TelnetProtocol, SerialProtocol
-from data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
+from nv200.device_interface import DeviceClient, PidLoopMode, StatusFlags
+from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
+from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 
 
 
@@ -161,14 +162,14 @@ async def client_serial_test():
     This function establishes a connection to a device using a serial transport,
     sends a series of commands, and retrieves responses from the device.
     """
-    transport = SerialProtocol()
+    transport = SerialProtocol(port="COM3")
     client = DeviceClient(transport)
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
-    await run_tests(client)
+    #await run_tests(client)
     await client.close()
 
 
 if __name__ == "__main__":
-    asyncio.run(client_telnet_test())
-    #asyncio.run(client_serial_test())
+    #asyncio.run(client_telnet_test())
+    asyncio.run(client_serial_test())

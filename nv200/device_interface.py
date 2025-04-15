@@ -1,6 +1,6 @@
 import asyncio
 from enum import Enum, IntFlag
-from transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
+from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
 
 
 class PidLoopMode(Enum):

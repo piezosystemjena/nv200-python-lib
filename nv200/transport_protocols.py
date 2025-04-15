@@ -2,7 +2,7 @@ import telnetlib3
 from abc import ABC, abstractmethod
 import aioserial
 import serial.tools.list_ports
-import lantronix_device_discovery_async as ldd
+import nv200.lantronix_device_discovery_async as ldd
 
 class TransportProtocol(ABC):
     """

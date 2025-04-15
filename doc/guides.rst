@@ -98,3 +98,60 @@ UDP device discovery protocol. The function returns as soon as a device is found
 
     if __name__ == "__main__":
         asyncio.run(ethernet_auto_detect())
+
+
+Ethernet connection to a specific MAC address
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to connect to a device with a specific MAC address, 
+you can do so by specifying the MAC address in the constructor of 
+the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
+This is useful if you have multiple devices connected to your network and
+want to connect to a specific one.
+
+The following example shows this:
+
+.. code-block:: python
+
+    import asyncio
+    from nv200.device_interface import DeviceClient
+    from nv200.transport_protocols import TelnetProtocol
+
+
+    async def ethernet_connect_to_mac():
+        transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")
+        client = DeviceClient(transport)
+        await client.connect()
+        print(f"Connected to device with IP: {transport.host}")
+        await client.close()
+
+
+    if __name__ == "__main__":
+        asyncio.run(ethernet_connect_to_mac())
+
+    
+Ethernet connection to a specific IP address
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to connect to a device with a specific IP address,
+you can do so by specifying the IP address in the constructor of 
+the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
+
+.. code-block:: python
+
+    import asyncio
+    from nv200.device_interface import DeviceClient
+    from nv200.transport_protocols import TelnetProtocol
+
+
+    async def ethernet_connect_to_ip():
+        transport = TelnetProtocol(host="192.168.10.182")
+        client = DeviceClient(transport)
+        await client.connect()
+        print(f"Connected to device with IP: {transport.host}")
+        await client.close()
+
+
+    if __name__ == "__main__":
+        asyncio.run(thernet_connect_to_ip())
+    

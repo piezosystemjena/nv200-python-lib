@@ -1,4 +1,5 @@
 import telnetlib3
+import asyncio
 from abc import ABC, abstractmethod
 import aioserial
 import serial.tools.list_ports
@@ -125,7 +126,13 @@ class TelnetProtocol(TransportProtocol):
                 raise RuntimeError("No devices found")
             self.__host = devices[0]['IP']
             self.__MAC = devices[0]['MAC']
-        self.__reader, self.__writer = await telnetlib3.open_connection(self.__host, self.__port)
+        try:
+            self.__reader, self.__writer = await asyncio.wait_for(
+                telnetlib3.open_connection(self.__host, self.__port),
+                timeout=5
+            )
+        except asyncio.TimeoutError as exc:
+            raise RuntimeError(f"Device with host address {self.__host} not found") from exc
     
     async def write(self, cmd: str):
         self.__writer.write(cmd)

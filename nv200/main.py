@@ -146,7 +146,8 @@ async def client_telnet_test():
     This function establishes a connection to a device, sends a series of commands, 
     reads responses, and then closes the connection.
     """
-    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")
+    print(await TelnetProtocol.discover_devices())
+    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
     #transport = TelnetTransport()
     client = DeviceClient(transport)
     await client.connect()
@@ -162,14 +163,15 @@ async def client_serial_test():
     This function establishes a connection to a device using a serial transport,
     sends a series of commands, and retrieves responses from the device.
     """
+    print(await SerialProtocol.discover_devices())
     transport = SerialProtocol(port="COM3")
     client = DeviceClient(transport)
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
-    #await run_tests(client)
+    await run_tests(client)
     await client.close()
 
 
 if __name__ == "__main__":
-    #asyncio.run(client_telnet_test())
-    asyncio.run(client_serial_test())
+    asyncio.run(client_telnet_test())
+    #asyncio.run(client_serial_test())

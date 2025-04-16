@@ -1,9 +1,11 @@
-import telnetlib3
 import asyncio
+from typing import List, Dict
 from abc import ABC, abstractmethod
+import telnetlib3
 import aioserial
 import serial.tools.list_ports
 import nv200.lantronix_device_discovery_async as ldd
+
 
 class TransportProtocol(ABC):
     """
@@ -158,6 +160,16 @@ class TelnetProtocol(TransportProtocol):
         Returns the MAC address.
         """
         return self.__MAC
+    
+    @staticmethod
+    async def discover_devices()  -> List[Dict[str, str]]:
+        """
+        Asynchronously discovers all devices connected via ethernet interface
+
+        Returns:
+            list: A list of dictionaries containing device information (IP and MAC addresses).
+        """
+        return await ldd.discover_lantronix_devices()
 
 
 
@@ -215,6 +227,34 @@ class SerialProtocol(TransportProtocol):
             else:
                 self.__serial.close()
         return None
+    
+
+    @staticmethod
+    async def discover_devices()  -> List[str]:
+        """
+        Asynchronously discovers all devices connected via serial interface.
+
+        Returns:
+            list: A list of serial port strings where a device has been detected.
+        """
+        ports = serial.tools.list_ports.comports()
+        valid_ports = [p.device for p in ports if p.manufacturer == "FTDI"]
+
+        async def detect_on_port(port_name: str) -> str | None:
+            protocol = SerialProtocol(port_name)
+            await protocol.connect()
+            try:
+                detected = await protocol.detect_device()
+                return port_name if detected else None
+            finally:
+                protocol.close()
+
+        # Run all detections concurrently
+        tasks = [detect_on_port(port) for port in valid_ports]
+        results = await asyncio.gather(*tasks)
+
+        # Filter out Nones
+        return [port for port in results if port]
 
     async def connect(self):
         """

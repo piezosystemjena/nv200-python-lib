@@ -1,4 +1,4 @@
-Guides
+Connecting to device
 ==================================
 
 This section contains guides for how to use the NV200 library.

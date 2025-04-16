@@ -6,7 +6,8 @@ NV200 Python Library documentation
    :caption: Contents:
 
    intro.rst
-   guides.rst
+   connecting.rst
+   data_recorder.rst
    api.rst
 
 Indices and tables

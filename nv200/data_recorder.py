@@ -12,14 +12,28 @@ class DataRecorderSource(Enum):
     """
     Enum representing the source of data to be stored in the data recorder channel,
     ignoring the buffer (A or B) distinction.
+
     """
-    PIEZO_POSITION = 0  # Piezo position (μm or mrad)
-    SETPOINT = 1        # Setpoint (μm or mrad)
-    PIEZO_VOLTAGE = 2   # Piezo voltage (V)
-    POSITION_ERROR = 3  # Position error
-    ABS_POSITION_ERROR = 4  # Absolute position error
-    PIEZO_CURRENT_1 = 6  # Piezo current 1 (A)
-    PIEZO_CURRENT_2 = 7  # Piezo current 2 (A)
+    PIEZO_POSITION = 0 
+    "Piezo position (μm or mrad)"
+
+    SETPOINT = 1        
+    "Setpoint (μm or mrad)"
+
+    PIEZO_VOLTAGE = 2
+    "Piezo voltage (V)"
+
+    POSITION_ERROR = 3
+    "Position error"
+
+    ABS_POSITION_ERROR = 4
+    "Absolute position error"
+
+    PIEZO_CURRENT_1 = 6
+    "Piezo current 1 (A)"
+
+    PIEZO_CURRENT_2 = 7
+    "Piezo current 2 (A)"
 
     def __init__(self, src: int):
         self.src = src
@@ -64,9 +78,14 @@ class RecorderAutoStartMode(Enum):
     """
     Enum representing the autostart mode of the data recorder.
     """
-    OFF = 0               # Autostart off
-    START_ON_SET_COMMAND = 1  # Start on set-command
-    START_ON_GRUN_COMMAND = 2  # Start on grun-command
+    OFF = 0
+    "Autostart off"
+
+    START_ON_SET_COMMAND = 1
+    "Start on set-command"
+    
+    START_ON_GRUN_COMMAND = 2
+    "Start on grun-command"
 
     def __init__(self, mode: int):
         self.mode = mode
@@ -100,6 +119,13 @@ class DataRecorder:
     ChannelRecordingData = namedtuple('ChannelRecordingData', ['source', 'data'])
     _dev : DeviceClient
 
+    @property
+    def max_sample_buffer_size(self) -> int:
+        """
+        Read-only property to get the maximum sample buffer size for the data recorder.
+        """
+        return self.NV200_RECORDER_BUFFER_SIZE
+
     def __init__(self, device: DeviceClient):
         self._dev = device
 
@@ -128,6 +154,7 @@ class DataRecorder:
         Sets the sample buffer size for each of the two data recorder channels (0..6144)
         A value of 0 means infinite loop over maximum length until recorder is stopped manually.
         If you would like to have an infinite loop, use the constant `INFINITE_RECORDING_DURATION`.
+        You can get the maximum buffer size using the `max_sample_buffer_size` property.
         """
         if not 1 <= buffer_size <= self.NV200_RECORDER_BUFFER_SIZE:
             raise ValueError(f"buffer_size must be between 0 and {self.NV200_RECORDER_BUFFER_SIZE}, got {buffer_size}")

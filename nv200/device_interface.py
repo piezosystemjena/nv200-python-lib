@@ -95,6 +95,17 @@ class StatusFlags(IntFlag):
             0b10: "Capacitive sensor"
         }
         return sensor_types.get(sensor_bits, "Unknown")
+    
+
+class ModulationSource(Enum):
+    """
+    Enumeration for setpoint modulation source.
+    """
+    USB_ETHERNET: int = 0
+    ANALOG_IN: int = 1
+    SPI: int = 2
+    WAVEFORM_GENERATOR: int = 3
+
 
 class StatusRegister:
     """
@@ -260,7 +271,7 @@ class DeviceClient:
         print(f"Writing command: {cmd}")
         await self._transport.write(cmd + "\r")
         try:
-            response = await asyncio.wait_for(self._transport.read_response(), timeout=0.1)
+            response = await asyncio.wait_for(self._transport.read_response(), timeout=0.4)
             return self._parse_response(response)
         except asyncio.TimeoutError:
             return None  # Or handle it differently
@@ -349,6 +360,14 @@ class DeviceClient:
     async def get_pid_mode(self) -> PidLoopMode:
         """Retrieves the current PID mode of the device."""
         return PidLoopMode(await self.read_int_value('cl'))
+    
+    async def set_modulation_source(self, source: ModulationSource):
+        """Sets the setpoint modulation source."""
+        await self.write(f"modsrc,{source.value}")
+
+    async def get_modulation_source(self) -> ModulationSource:
+        """Retrieves the current setpoint modulation source."""
+        return ModulationSource(await self.read_int_value('modsrc'))
     
     async def set_setpoint(self, setpoint: float):
         """Sets the setpoint value for the device."""

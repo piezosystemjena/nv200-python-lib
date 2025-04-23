@@ -187,7 +187,7 @@ async def waveform_generator_test():
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_GRUN_COMMAND)
-    rec_param = await recorder.set_recording_duration_ms(sine.cycle_time_ms * 1.2)
+    #await recorder.set_recording_duration_ms(sine.cycle_time_ms * 1.2)
     await recorder.start_recording()
 
     print("Starting waveform generator...")
@@ -196,10 +196,8 @@ async def waveform_generator_test():
 
     print("Reading recorded data of both channels...")
     rec_data = await recorder.read_recorded_data()
-    N = len(rec_data[0].data)
-    t = np.arange(N) / rec_param.sample_freq * 1000 # Time values in ms
-    plt.plot(t, rec_data[0].data, linestyle='-', color='purple', label=rec_data[0].source)
-    plt.plot(t, rec_data[1].data, linestyle='-', color='green', label=rec_data[1].source) 
+    plt.plot(rec_data[0].sample_times_ms, rec_data[0].values, linestyle='-', color='purple', label=rec_data[0].source)
+    plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source) 
 
     # Display the plot
     await client.close()

@@ -2,6 +2,7 @@
 This module provides access to the NV200 data recorder functionality.
 """
 from nv200.device_interface import DeviceClient
+from nv200.utils import TimeSeries
 import math
 from typing import List
 from enum import Enum
@@ -116,8 +117,42 @@ class DataRecorder:
     BUFFER_READ_TIMEOUT_SECS = 6  # Timeout for reading data from the recorder buffer - it needs to be higher because it may take some time
     ALL_CHANNELS = -1  # Number of data recorder channels
     RecorderParam = namedtuple('RecorderParam', ['bufsize', 'stride', 'sample_freq'])
-    ChannelRecordingData = namedtuple('ChannelRecordingData', ['source', 'data'])
+
+    class ChannelRecordingData(TimeSeries):
+        """
+        WaveformData is a NamedTuple that represents waveform data.
+
+        Attributes:
+            x_time (List[float]): A list of time values (in seconds) corresponding to the waveform.
+            y_values (List[float]): A list of amplitude values corresponding to the waveform.
+            sample_time_us (int): The sampling time in microseconds.
+            sample_factor (int): A factor used to calculate the sample time from the base sample time.
+        """
+        _source : DataRecorderSource = None
+
+        def __init__(self, values: list, sample_time_ms: int, source: DataRecorderSource):
+            """
+            Initialize the ChannelData instance with amplitude values, sample time, and source.
+            
+            Args:
+                values (list): The amplitude values corresponding to the waveform.
+                sample_time_ms (int): The sample time in milliseconds (sampling interval).
+                source (str): The data recorder source
+            """
+            # Call the parent constructor (TimeSeries) to initialize the values and sample time
+            super().__init__(values, sample_time_ms)
+            self._source = source  # Private member for source
+        
+        @property
+        def source(self) -> DataRecorderSource:
+            """
+            Read-only property to get the maximum sample buffer size for the data recorder.
+            """
+            return self._source
+
+
     _dev : DeviceClient
+    _sample_rate : int = None
 
     @property
     def max_sample_buffer_size(self) -> int:
@@ -148,6 +183,7 @@ class DataRecorder:
         Sets the recorder stride.
         """
         await self._dev.write(f"recstr,{stride}")
+        self._sample_rate = self.NV200_RECORDER_SAMPLE_RATE_HZ / stride
 
     async def set_sample_buffer_size(self, buffer_size: int):
         """
@@ -215,7 +251,10 @@ class DataRecorder:
         """
         recsrc = DataRecorderSource(await self._dev.read_int_value(f"recsrc,{channel}"))
         number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
-        return self.ChannelRecordingData(str(recsrc), [float(num) for num in number_strings])
+        if self._sample_rate is None:
+            stride = await self._dev.read_int_value("recstr")
+            self._sample_rate = self.NV200_RECORDER_SAMPLE_RATE_HZ / stride
+        return self.ChannelRecordingData([float(num) for num in number_strings], 1000 / self._sample_rate, recsrc)
     
     async def read_recorded_data(self) -> List[ChannelRecordingData]:
         """

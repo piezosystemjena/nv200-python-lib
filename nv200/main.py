@@ -9,6 +9,7 @@ from nv200.device_interface import DeviceClient, PidLoopMode, StatusFlags
 from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
+from nv200.utils import wait_until
 
 
 
@@ -175,8 +176,12 @@ async def waveform_generator_test():
     client = DeviceClient(transport)
     await client.connect()
 
+    await client.write('setlpf,200')
+    await client.write('setlpon,0')
+    await client.write('poslpf,1000')
+    await client.write('poslpon,1')
     waveform_generator = WaveformGenerator(client)
-    sine = waveform_generator.generate_sine_wave(freq_hz=0.1, low_level=0, high_level=80)
+    sine = waveform_generator.generate_sine_wave(freq_hz=0.25, low_level=0, high_level=80)
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
@@ -187,17 +192,21 @@ async def waveform_generator_test():
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_GRUN_COMMAND)
-    #await recorder.set_recording_duration_ms(sine.cycle_time_ms * 1.2)
+    await recorder.set_recording_duration_ms(sine.cycle_time_ms * 1.2)
     await recorder.start_recording()
 
     print("Starting waveform generator...")
     await waveform_generator.start(cycles=1, start_index=0)
-    await asyncio.sleep(sine.cycle_time_ms * 1.2 / 1000)
+    print(f"Is running: {await waveform_generator.is_running()}")
+    #await waveform_generator.wait_until_finished()
+    await recorder.wait_until_finished()
+    print(f"Is running: {await waveform_generator.is_running()}")
 
     print("Reading recorded data of both channels...")
     rec_data = await recorder.read_recorded_data()
     plt.plot(rec_data[0].sample_times_ms, rec_data[0].values, linestyle='-', color='purple', label=rec_data[0].source)
     plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source) 
+    print(f"rec_data[1].source: {rec_data[1].source}")
 
     # Display the plot
     await client.close()

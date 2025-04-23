@@ -318,30 +318,32 @@ class DeviceClient:
         return (await self.read_response(cmd, timeout))[1]
 
 
-    async def read_float_value(self, cmd: str) -> float:
+    async def read_float_value(self, cmd: str, param_index : int = 0) -> float:
         """
         Asynchronously reads a single float value from device
 
         Args:
             cmd (str): The command string to be sent.
+            param_index (int): Parameter index (default 0) to read from the response.
 
         Returns:
             float: The value as a floating-point number.
         """
-        return float((await self.read_values(cmd))[0])
+        return float((await self.read_values(cmd))[param_index])
 
 
-    async def read_int_value(self, cmd: str) -> int:
+    async def read_int_value(self, cmd: str, param_index : int = 0) -> int:
         """
         Asynchronously reads a single float value from device
 
         Args:
             cmd (str): The command string to be sent.
+            param_index (int): Parameter index (default 0) to read from the response
 
         Returns:
             float: The value as a floating-point number.
         """
-        return int((await self.read_values(cmd))[0])
+        return int((await self.read_values(cmd))[param_index])
 
 
     async def close(self):

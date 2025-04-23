@@ -5,7 +5,7 @@ import math
 from typing import List, Tuple, NamedTuple
 
 from nv200.device_interface import DeviceClient, ModulationSource
-from nv200.utils import TimeSeries
+from nv200.utils import TimeSeries, wait_until
 
 
 class WaveformGenerator:
@@ -170,16 +170,16 @@ class WaveformGenerator:
         Raises:
             ValueError: If the waveform data is invalid.
         """
-        await self.set_waveform_buffer(waveform.y_values)
+        await self.set_waveform_buffer(waveform.values)
         self._waveform = waveform
-        await self.set_output_sampling_time(waveform.sample_time_us)
+        await self.set_output_sampling_time(waveform.sample_time_ms * 1000)
         if not adjust_loop:
             return
         # Adjust loop indices based on the waveform data
         await self.configure_waveform_loop(
             start_index=0,
             loop_start_index=0,
-            loop_end_index=len(waveform.y_values) - 1,
+            loop_end_index=len(waveform.values) - 1,
         )
 
     async def is_running(self) -> bool:
@@ -189,8 +189,24 @@ class WaveformGenerator:
         Returns:
             bool: True if the waveform generator is running, False otherwise.
         """
-        response = await self._dev.read_int_value('grun')
-        return response == "1"
+        return bool(await self._dev.read_int_value('grun'))
+    
+    async def wait_until_finished(self, timeout_s: float = 10.0):
+        """
+        Waits until the waveform generator is finished running.
+
+        Args:
+            timeout_s (float): The maximum time to wait in seconds. Defaults to 10 seconds.
+
+        Returns:
+            bool: True if the waveform generator finished running, False if timed out.
+        """
+        return await wait_until(
+            self.is_running,
+            check_func=lambda x: not x,
+            poll_interval_s=0.1,
+            timeout_s=timeout_s
+        )
 
 
     def generate_sine_wave(

@@ -2,7 +2,7 @@
 This module provides access to the NV200 data recorder functionality.
 """
 from nv200.device_interface import DeviceClient
-from nv200.utils import TimeSeries
+from nv200.utils import TimeSeries, wait_until
 import math
 from typing import List
 from enum import Enum
@@ -36,18 +36,12 @@ class DataRecorderSource(Enum):
     PIEZO_CURRENT_2 = 7
     "Piezo current 2 (A)"
 
-    def __init__(self, src: int):
-        self.src = src
-
     @classmethod
-    def get_source(cls, value: int) -> 'DataRecorderSource':
-        """
-        Given a source value, return the corresponding RecSrc enum.
-        """
-        for item in cls:
-            if item.value == value:
-                return item
-        raise ValueError(f"Invalid recsrc value: {value}")
+    def from_value(cls, value : int):
+        if value in cls._value2member_map_:
+            return cls(value)
+        else:
+            raise ValueError(f"Invalid recsrc value: {value}")
 
     def __repr__(self):
         """
@@ -64,15 +58,15 @@ class DataRecorderSource(Enum):
         """
         # Dictionary mapping enum names to human-readable strings
         human_readable = {
-            "PIEZO_POSITION": "Piezo Position (μm or mrad)",
-            "SETPOINT": "Setpoint (μm or mrad)",
-            "PIEZO_VOLTAGE": "Piezo Voltage (V)",
-            "POSITION_ERROR": "Position Error",
-            "ABS_POSITION_ERROR": "Absolute Position Error",
-            "PIEZO_CURRENT_1": "Piezo Current 1 (A)",
-            "PIEZO_CURRENT_2": "Piezo Current 2 (A)"
+            DataRecorderSource.PIEZO_POSITION: "Piezo Position (μm or mrad)",
+            DataRecorderSource.SETPOINT: "Setpoint (μm or mrad)",
+            DataRecorderSource.PIEZO_VOLTAGE: "Piezo Voltage (V)",
+            DataRecorderSource.POSITION_ERROR: "Position Error",
+            DataRecorderSource.ABS_POSITION_ERROR: "Absolute Position Error",
+            DataRecorderSource.PIEZO_CURRENT_1: "Piezo Current 1 (A)",
+            DataRecorderSource.PIEZO_CURRENT_2: "Piezo Current 2 (A)"
         }
-        return human_readable.get(self.name, self.name)  # Default to the enum name if not found
+        return human_readable.get(self, self.name)  # Fallback to enum name if not found
     
 
 class RecorderAutoStartMode(Enum):
@@ -249,7 +243,7 @@ class DataRecorder:
         Raises:
             Any exceptions raised by the underlying device communication methods.
         """
-        recsrc = DataRecorderSource(await self._dev.read_int_value(f"recsrc,{channel}"))
+        recsrc = DataRecorderSource.from_value(await self._dev.read_int_value(cmd = f"recsrc,{channel}", param_index = 1))
         number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
         if self._sample_rate is None:
             stride = await self._dev.read_int_value("recstr")
@@ -271,4 +265,30 @@ class DataRecorder:
         chan_data0 = await self.read_recorded_data_of_channel(0)
         chan_data1 = await self.read_recorded_data_of_channel(1)
         return [chan_data0, chan_data1]
+    
+    async def is_recording(self) -> bool:
+        """
+        Check if the recoder is currently recording.
+        """
+        return bool(await self._dev.read_int_value('recrun'))
+    
+    async def wait_until_finished(self, timeout_s: float = 10.0):
+        """
+        Waits asynchronously until the recording process has finished or the specified timeout is reached.
+
+        Args:
+            timeout_s (float): The maximum time to wait in seconds. Defaults to 10.0.
+
+        Returns:
+            bool: True if the recording process finished within the timeout, False otherwise.
+
+        Raises:
+            asyncio.TimeoutError: If the timeout is reached before the recording process finishes.
+        """
+        return await wait_until(
+            self.is_recording,
+            check_func=lambda recoding_active: not recoding_active,
+            poll_interval_s=0.1,
+            timeout_s=timeout_s
+        )
 

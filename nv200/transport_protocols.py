@@ -140,7 +140,9 @@ class TelnetProtocol(TransportProtocol):
         self.__writer.write(cmd)
         
     async def read_response(self) -> str:
-        return await self.__reader.readuntil(b'\n')
+        data = await self.__reader.readuntil(b'\x11')
+        return data.replace(b'\x11', b'').replace(b'\x13', b'') # strip XON and XOFF characters
+    
 
     async def close(self):
         if self.__writer:

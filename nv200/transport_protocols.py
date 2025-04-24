@@ -31,7 +31,7 @@ from abc import ABC, abstractmethod
 import telnetlib3
 import aioserial
 import serial.tools.list_ports
-import nv200.lantronix_device_discovery_async as ldd
+import nv200.lantronix_xport as ldd
 
 
 class TransportProtocol(ABC):
@@ -146,11 +146,11 @@ class TelnetProtocol(TransportProtocol):
             RuntimeError: If no devices are found during discovery.
         """
         if self.__host is None and self.__MAC is not None:
-            self.__host = await ldd.discover_lantronix_device(self.__MAC)
+            self.__host = await ldd.discover_lantronix_device_async(self.__MAC)
             if self.__host is None:
                 raise RuntimeError(f"Device with MAC address {self.__MAC} not found")
         elif self.__host is None and self.__MAC is None:
-            devices = await ldd.discover_lantronix_devices()
+            devices = await ldd.discover_lantronix_devices_async()
             if not devices:
                 raise RuntimeError("No devices found")
             self.__host = devices[0]['IP']
@@ -198,7 +198,7 @@ class TelnetProtocol(TransportProtocol):
         Returns:
             list: A list of dictionaries containing device information (IP and MAC addresses).
         """
-        return await ldd.discover_lantronix_devices()
+        return await ldd.discover_lantronix_devices_async()
 
 
 

@@ -1,6 +1,9 @@
 import asyncio
 import math
+import time
+import numpy as np
 import matplotlib.pyplot as plt
+import telnetlib3
 import aioserial
 import serial
 from matplotlib.ticker import AutoMinorLocator
@@ -231,6 +234,77 @@ async def test_serial_protocol():
     print(f"Received: {data}")
     dev.close()
 
+def test_numpy_waveform():
+    percent=30.0
+    TimePeriod=1.0
+    Cycles=10
+    dt=0.01 
+
+    t=np.arange(0, Cycles * TimePeriod , dt); 
+    pwm= t%TimePeriod<TimePeriod*percent/100 
+
+
+    # Plot the rectangular wave (square wave with controlled duty cycle)
+    plt.subplot(2, 1, 2)
+    plt.plot(t, pwm)
+
+    plt.tight_layout()
+    plt.show()
+
+
+CHANNEL1_PARAM_COUNT = 19
+PARAM_FLOW_CONTROL = 2
+XON_OFF_PASS_CHARS_TO_HOST = "05\r"
+XON_OFF = "01\r"
+
+async def configure_xport():
+    reader, writer = await asyncio.wait_for(
+        telnetlib3.open_connection("192.168.10.152", 9999),
+        timeout=5
+    )
+    mac = await reader.read(1024)
+    print(mac)
+    writer.write("\r")
+    await asyncio.sleep(0.1)
+    configuration = await reader.read(2048)
+    print(configuration)
+    
+
+    # if "Flow 05" in configuration:
+    #     reader.close()
+    #     writer.close()
+    #
+    # 
+    writer.write("1\r")
+
+
+    param_index = PARAM_FLOW_CONTROL
+    for i in range(0, CHANNEL1_PARAM_COUNT):
+        await asyncio.sleep(0.05)
+        param = await reader.read(2048)
+        print(f"Param {i}: {param}")
+        if i == param_index:
+            writer.write(XON_OFF)
+        else:
+            writer.write("\r")
+
+
+    await asyncio.sleep(0.05)
+    config_menu = await reader.read(2048)
+    print(config_menu)
+    writer.write("9\r")
+    store_msg = await reader.read(2048)
+    print(store_msg)
+    reader.close()
+    writer.close()
+
+    reader, writer = await asyncio.wait_for(
+        telnetlib3.open_connection("192.168.10.152", 9999),
+        timeout=5
+    )
+    mac = await reader.read(1024)
+    print(mac)
+
 
 
 
@@ -239,4 +313,6 @@ if __name__ == "__main__":
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
+    #test_numpy_waveform()
+    #asyncio.run(configure_xport())
 

@@ -40,3 +40,10 @@ waveform_generator
    :show-inheritance:
    :undoc-members:
 
+
+utils
+------------------
+.. automodule:: utils
+   :members:
+   :show-inheritance:
+   :undoc-members:

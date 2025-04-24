@@ -1,5 +1,6 @@
 import asyncio
 import socket
+import telnetlib3
 from typing import List, Tuple, Dict, Optional
 from nv200.eth_utils import get_active_ethernet_ips
 
@@ -242,6 +243,55 @@ def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[
 
 
 
+
+async def connect_telnet(host: str, port: int = 9999):
+    return await asyncio.wait_for(telnetlib3.open_connection(host, port), timeout=5)
+
+
+async def configure_flow_control(host: str) -> None:
+    """_
+    The function configures the serial flow control mode to XON_OFF_PASS_CHARS_TO_HOST to ensure
+    the XON and XOFF characters are passed to the host device because the TelnetTransport
+    relies on the recption of these characters to control the flow of data.
+    """
+    CHANNEL1_PARAM_COUNT = 19
+    PARAM_FLOW_CONTROL = 2
+    XON_OFF_PASS_CHARS_TO_HOST = "05\r"
+    STORE_CONFIG_MENU_OPTION = "9\r"
+
+    reader, writer = await connect_telnet(host)
+
+    try:
+        await reader.read(1024) # read the intial connection message - mac and software version
+        writer.write("\r")
+        await asyncio.sleep(0.1)
+        configuration = await reader.read(2048) # read the complete configuration setup that is sent by the device
+
+        if "Flow 05" in configuration:
+            return
+
+        writer.write("1\r")
+        for i in range(CHANNEL1_PARAM_COUNT):
+            await asyncio.sleep(0.05)
+            await reader.read(2048)
+            writer.write(XON_OFF_PASS_CHARS_TO_HOST if i == PARAM_FLOW_CONTROL else "\r")
+
+        await asyncio.sleep(0.05)
+        await reader.read(2048) # read the configuration menu response
+        writer.write(STORE_CONFIG_MENU_OPTION)
+        await reader.read(2048) # read the store configuration response
+
+    finally:
+        writer.close()
+        reader.close()
+
+    # Optional: reconnect for verification so we know the device is reachable again
+    reader, writer = await connect_telnet(host)
+    await reader.read(1024) # read the intial connection message - mac and software version
+    writer.close()
+
+
+
 # async Main execution
 async def main_async():
     TARGET_MAC: str = "00:80:A3:79:C6:18"
@@ -262,6 +312,7 @@ def main():
 
 # Running the async main function
 if __name__ == "__main__":
-    asyncio.run(main_async())
-    main()
+    #asyncio.run(main_async())
+    #main()
+    asyncio.run(configure_flow_control("192.168.10.152"))
 

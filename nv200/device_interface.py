@@ -1,3 +1,21 @@
+"""
+Provides classes and enumerations for communicating with and interpreting responses from NV200 devices.
+
+This module includes an asynchronous client for issuing commands and parsing responses
+from NV200 devices over supported transport protocols (e.g., serial, Telnet).
+It also defines enums for PID loop modes, error codes, status flags, and modulation sources,
+as well as utility classes for decoding device status and handling exceptions.
+
+Classes:
+    - :class:`.DeviceClient`: High-level async client for device communication.
+    - :class:`.StatusRegister`: Parses and interprets the device's 16-bit status register.
+    - :class:`.DeviceError`: Exception raised for device-reported error codes.
+    - :class:`.PidLoopMode`: PID loop control modes (open/closed).
+    - :class:`.ErrorCode`: Device error codes with human-readable descriptions.
+    - :class:`.StatusFlags`: Bitmask flags from the device's status register.
+    - :class:`.ModulationSource`: Supported sources for setpoint modulation.
+"""
+
 import asyncio
 from enum import Enum, IntFlag
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol

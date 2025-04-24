@@ -1,8 +1,16 @@
 """
-This module provides access to the NV200 arbitrary waveform generator
+WaveformGenerator module for controlling waveform generation on a connected NV200 device.
+
+This module defines the `WaveformGenerator` class, which provides methods to configure and control waveform generation,
+including the ability to generate sine waves, set cycles, adjust sampling times, and manage waveform buffers. It supports
+asynchronous interaction with the device for real-time control of waveform generation.
+
+Classes:
+    - :class:`.WaveformGenerator`: Manages waveform generation and configuration on the NV200 device.
+    - :class:`.WaveformData`: Represents waveform data with time, amplitude, and sample time.
 """
 import math
-from typing import List, Tuple, NamedTuple
+from typing import List
 
 from nv200.device_interface import DeviceClient, ModulationSource
 from nv200.utils import TimeSeries, wait_until

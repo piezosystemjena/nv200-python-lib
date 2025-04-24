@@ -93,27 +93,35 @@ async def data_recorder_tests(device: DeviceClient):
     """
     Asynchronous function to test the functionality of the DataRecorder with a given device.
     """
+
+    # Move the device to its initial position and wait for a short duration to stabilize
     await device.move_to_position(0)
     await asyncio.sleep(0.4)
 
+    # Create a DataRecorder instance and configure it
     recorder = DataRecorder(device)
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
     rec_param = await recorder.set_recording_duration_ms(100)
+    print("Recording parameters:")
+    print(f"  Used buffer entries: {rec_param.bufsize}")
+    print(f"  Stride: {rec_param.stride}")
+    print(f"  Sample frequency (Hz): {rec_param.sample_freq}")
 
+    # Start recording and move the device to a new position to record the parameters
     await recorder.start_recording()
     await device.move_to_position(80)
     await asyncio.sleep(0.4)
     print("Reading recorded data of both channels...")
+
+    # Read the recorded data from the DataRecorder
     rec_data = await recorder.read_recorded_data()
 
+    # Use matplotlib to plot the recorded data
     prepare_plot_style()
-    # Compute time axis
-    N = len(rec_data[0].data)
-    t = np.arange(N) / rec_param.sample_freq * 1000 # Time values in ms
-    plt.plot(t, rec_data[0].data, linestyle='-', color='orange', label=rec_data[0].source)
-    plt.plot(t, rec_data[1].data, linestyle='-', color='green', label=rec_data[1].source)    
+    plt.plot(rec_data[0].sample_times_ms, rec_data[0].values, linestyle='-', color='orange', label=rec_data[0].source)
+    plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source)   
     show_plot()
 
 
@@ -227,8 +235,8 @@ async def test_serial_protocol():
 
 
 if __name__ == "__main__":
-    #asyncio.run(client_telnet_test())
+    asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    asyncio.run(waveform_generator_test())
+    #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
 

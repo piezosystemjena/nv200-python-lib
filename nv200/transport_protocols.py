@@ -1,3 +1,30 @@
+"""
+This module defines the transport protocols for communicating with NV200 devices, including Telnet and Serial interfaces.
+
+Classes:
+    - :class:`.TransportProtocol`: Abstract base class for transport protocols.
+    - :class:`.TelnetProtocol`: Implements Telnet-based communication with NV200 devices.
+    - :class:`.SerialProtocol`: Implements serial communication with NV200 devices.
+
+Example:
+    .. code-block:: python
+
+        import asyncio
+        from nv200.device_interface import DeviceClient
+        from nv200.transport_protocols import SerialProtocol
+
+        async def serial_port_auto_detect():
+            transport = SerialProtocol()
+            client = DeviceClient(transport)
+            await client.connect()
+            print(f"Connected to device on serial port: {transport.port}")
+            await client.close()
+
+        if __name__ == "__main__":
+            asyncio.run(serial_port_auto_detect())
+
+"""
+
 import asyncio
 from typing import List, Dict
 from abc import ABC, abstractmethod

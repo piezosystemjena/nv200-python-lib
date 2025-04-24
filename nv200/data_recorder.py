@@ -229,6 +229,32 @@ class DataRecorder:
         """
         await self.start_recording(False)
 
+    async def is_recording(self) -> bool:
+        """
+        Check if the recoder is currently recording.
+        """
+        return bool(await self._dev.read_int_value('recrun'))
+    
+    async def wait_until_finished(self, timeout_s: float = 10.0):
+        """
+        Waits asynchronously until the recording process has finished or the specified timeout is reached.
+
+        Args:
+            timeout_s (float): The maximum time to wait in seconds. Defaults to 10.0.
+
+        Returns:
+            bool: True if the recording process finished within the timeout, False otherwise.
+
+        Raises:
+            asyncio.TimeoutError: If the timeout is reached before the recording process finishes.
+        """
+        return await wait_until(
+            self.is_recording,
+            check_func=lambda recoding_active: not recoding_active,
+            poll_interval_s=0.1,
+            timeout_s=timeout_s
+        )
+
     async def read_recorded_data_of_channel(self, channel : int) -> ChannelRecordingData:
         """
         Asynchronously reads recorded data from a specified channel.
@@ -266,29 +292,3 @@ class DataRecorder:
         chan_data1 = await self.read_recorded_data_of_channel(1)
         return [chan_data0, chan_data1]
     
-    async def is_recording(self) -> bool:
-        """
-        Check if the recoder is currently recording.
-        """
-        return bool(await self._dev.read_int_value('recrun'))
-    
-    async def wait_until_finished(self, timeout_s: float = 10.0):
-        """
-        Waits asynchronously until the recording process has finished or the specified timeout is reached.
-
-        Args:
-            timeout_s (float): The maximum time to wait in seconds. Defaults to 10.0.
-
-        Returns:
-            bool: True if the recording process finished within the timeout, False otherwise.
-
-        Raises:
-            asyncio.TimeoutError: If the timeout is reached before the recording process finishes.
-        """
-        return await wait_until(
-            self.is_recording,
-            check_func=lambda recoding_active: not recoding_active,
-            poll_interval_s=0.1,
-            timeout_s=timeout_s
-        )
-

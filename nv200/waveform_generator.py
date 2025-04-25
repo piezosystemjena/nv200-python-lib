@@ -27,12 +27,6 @@ class WaveformGenerator:
     class WaveformData(TimeSeries):
         """
         WaveformData is a NamedTuple that represents waveform data.
-
-        Attributes:
-            x_time (List[float]): A list of time values (in seconds) corresponding to the waveform.
-            y_values (List[float]): A list of amplitude values corresponding to the waveform.
-            sample_time_us (int): The sampling time in microseconds.
-            sample_factor (int): A factor used to calculate the sample time from the base sample time.
         """
 
         @property
@@ -81,14 +75,18 @@ class WaveformGenerator:
 
     async def set_loop_start_index(self, start_index: int):
         """
-        Sets the start index for arbitrary waveform generator output
+        Sets the start index for the waveform generator loop. 
+        If you use multiple cycles, the loop start index is the index defines the index
+        where the waveform generator starts in the next cycle.
         """
         await self._dev.write(f"gsarb,{start_index}")
 
 
     async def set_loop_end_index(self, end_index: int):
         """
-        Sets the end index for arbitrary waveform generator output
+        Sets the end index for arbitrary waveform generator output.
+        The loop end index is the index where the waveform generator jumps to the next
+        cycle or finishes if only one cycle is used.
         """
         await self._dev.write(f"gearb,{end_index}")
 
@@ -96,9 +94,9 @@ class WaveformGenerator:
         """
         Sets the offset index when arbitrary waveform generator 
         gets started. That means after the start() function is called, the arbitrary 
-        waveform generator starts at the index defined by set_start_offset() and runs 
-        until the index defined by set_end_index(). In all successive cycles, the arbitrary 
-        waveform generator starts at set_start_index(). This is repeated until the number 
+        waveform generator starts at the index defined by set_start_index() and runs 
+        until the index defined by set_loop_end_index(). In all successive cycles, the arbitrary 
+        waveform generator starts at set_loop_start_index(). This is repeated until the number 
         of cycles reaches the value given by set_cycles().
         """
         await self._dev.write(f"goarb,{index}")
@@ -107,7 +105,7 @@ class WaveformGenerator:
     async def set_cycles(self, cycles: int = 0):
         """
         Sets the number of cycles to run.
-        - 0 = infinitely
+        - WaveformGenerator.NV200_INFINITE_CYCLES - 0 = infinitely
         - 1…65535
         """
         await self._dev.write(f"gcarb,{cycles}")
@@ -116,6 +114,9 @@ class WaveformGenerator:
     async def configure_waveform_loop(self, start_index: int, loop_start_index: int, loop_end_index: int):
         """
         Sets the start and end indices for the waveform loop.
+        The start index is the index where the waveform generator starts when it is started.
+        The loop start index is the index where the waveform generator starts in the next cycle
+        and the loop end index is the index where the waveform generator jumps to the next cycle.
         """
         await self.set_start_index(start_index)
         await self.set_loop_start_index(loop_start_index)
@@ -131,6 +132,9 @@ class WaveformGenerator:
 
         Returns:
             int: The set sampling time in microseconds.
+
+        Note: Normally you do not need to set the sampling time manually because it is set automatically
+        calculated when the waveform is generated.
         """
         rounded_sampling_time = round(sampling_time / 50) * 50
         factor = rounded_sampling_time // 50
@@ -174,6 +178,11 @@ class WaveformGenerator:
             waveform (WaveformData): The waveform data to be set.
             adjust_loop (bool): If True, adjusts the loop indices based on the 
                                 waveform data, if false, the loop indices are not adjusted.
+                                If the loop indices are adjusted, then they will be set to
+                                the following value:
+                                - start_index = 0 (first waveform value)
+                                - loop_start_index = 0 (first waveform value)
+                                - loop_end_index = last waveform value
 
         Raises:
             ValueError: If the waveform data is invalid.
@@ -226,15 +235,18 @@ class WaveformGenerator:
     ) -> WaveformData:
         """
         Generates a sine wave based on the specified frequency and amplitude levels.
+
         Args:
-            frequency (float): The frequency of the sine wave in Hertz (Hz).
+            freq_hz (float): The frequency of the sine wave in Hertz (Hz).
             low_level (float): The minimum value (low level) of the sine wave.
             high_level (float): The maximum value (high level) of the sine wave.
+
         Returns:
             WaveformData: An object containing the generated sine wave data, including:
                 - x_time (List[float]): A list of time points in ms corresponding to the sine wave samples.
                 - y_values (List[float]): A list of amplitude values for the sine wave at each time point.
                 - sample_time_us (float): The time interval between samples in microseconds (µs).
+
         Notes:
             - The method calculates an optimal sample time based on the desired frequency and the
               hardware's base sample time.

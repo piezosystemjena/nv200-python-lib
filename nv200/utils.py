@@ -4,16 +4,7 @@ from typing import Generator, Callable, Awaitable, Optional
 class TimeSeries:
     """
     TimeSeries represents waveform data with amplitude values (values) and corresponding sample times (sample_times_ms).
-    It also includes a sample time in microseconds.
-
-    Attributes:
-        values (List[float]): A list of amplitude values corresponding to the waveform.
-        sample_time_us (int): The sampling time in microseconds (i.e., the interval between two time samples).
-
-    Methods:
-        values: Returns the amplitude values list.
-        generate_sample_times_ms: Returns time (sample_times_ms) values as a generator based on sample_time_us.
-        sample_times_ms: Returns time (sample_times_ms) values as a list based on sample_time_us.
+    It also includes a sample time in milliseconds.
     """
     
     def __init__(self, values: list, sample_time_ms: int):
@@ -22,7 +13,7 @@ class TimeSeries:
         
         Args:
             values (list): The amplitude values corresponding to the waveform.
-            sample_time_us (int): The sample time in microseconds (sampling interval).
+            sample_time_ms (int): The sample time in milliseconds (sampling interval).
         """
         self._values = values
         self._sample_time_ms = sample_time_ms

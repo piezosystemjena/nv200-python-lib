@@ -8,6 +8,7 @@ NV200 Python Library documentation
    intro.rst
    connecting.rst
    data_recorder.rst
+   waveform_generator.rst
    api.rst
 
 Indices and tables

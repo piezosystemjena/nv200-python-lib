@@ -1,4 +1,4 @@
-Using the Data Recorder
+Data Recorder
 ----------------------------
 
 If the device provides data recorder functionality, such as the NV200 amplifier
@@ -64,6 +64,9 @@ configuring data sources, and recording data.
 
 Step by step guide to using the Data Recorder
 =============================================
+
+This guide will walk you through the steps to set up and use the data recorder using the given
+example code.
     
 
 Step 1: Import Necessary Modules
@@ -82,7 +85,7 @@ and `DataRecorder`, `DataRecorderSource`, and `RecorderAutoStartMode` from `nv20
 Step 2: Setup the DeviceClient
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The DeviceClient instance is responsible for interacting with the hardware, allowing you 
+The `DeviceClient` instance is responsible for interacting with the hardware, allowing you 
 to control the movement of the device and manage the data recorder.
 
 .. code-block:: python
@@ -94,8 +97,8 @@ to control the movement of the device and manage the data recorder.
 Step 3: Create a DataRecorder Instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Once the device is ready, create an instance of the DataRecorder class, passing t
-he DeviceClient instance to it. This will allow the DataRecorder to manage data recording.
+Once the device is ready, create an instance of the `DataRecorder` class, passing t
+he `DeviceClient` instance to it. This will allow the DataRecorder to manage data recording.
 
 .. code-block:: python
     
@@ -125,7 +128,7 @@ Available options in `DataRecorderSource` include:
 Step 5: Set Auto-Start Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The set_autostart_mode function defines when the recording will start. 
+The `set_autostart_mode` function defines when the recording will start. 
 In this example, the recording starts when the set command is issued.
 
 .. code-block:: python
@@ -134,9 +137,9 @@ In this example, the recording starts when the set command is issued.
 
 You can choose different start modes:
 
-- `OFF`: No auto-start
-- `START_ON_SET_COMMAND`: Start when a set command is issued
-- `START_ON_GRUN_COMMAND`: Start on grun command
+- `OFF`: No auto-start - recording starts immediately when `start_recording` is called
+- `START_ON_SET_COMMAND`: Starts when a set command is issued after the `start_recording` call
+- `START_ON_WAVEFORM_GEN_RUN`: Starts recording when the waveform generator is started after the `start_recording` call
 
 
 Step 6: Configure Recording Duration
@@ -180,8 +183,8 @@ the device to start recording when the specified trigger condition is met
 Step 8: Execute Device Move and Record Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now you can start the recording by moving the device to a new position.
-The `move_to_position` method triggers the data recorder to start recording.
+Now you can trigger the actual recording start by moving the device to a new position.
+in this example, the `move_to_position` method triggers the data recorder to start recording.
 
 .. code-block:: python
 
@@ -208,7 +211,7 @@ stored as a `ChannelRecordingData` object, which includes:
 Step 9: Plot the Recorded Data (Optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After retrieving the recorded data, you can plot it using a library like matplotlib:
+After retrieving the recorded data, you can plot it using a library like `matplotlib <https://matplotlib.org/>`_:
 
 .. code-block:: python
 
@@ -234,3 +237,9 @@ The expected output is a plot showing the recorded data from both channels:
    - Auto-Start Behavior: 
          Depending on the chosen auto-start mode, recordings might begin automatically or require explicit start commands.
 
+API Reference
+==============
+.. automodule:: data_recorder
+   :members:
+   :show-inheritance:
+   :undoc-members:

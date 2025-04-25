@@ -202,7 +202,7 @@ async def waveform_generator_test():
     recorder = DataRecorder(client)
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
-    await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_GRUN_COMMAND)
+    await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN)
     await recorder.set_recording_duration_ms(sine.cycle_time_ms * 1.2)
     await recorder.start_recording()
 

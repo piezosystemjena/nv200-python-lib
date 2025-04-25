@@ -94,3 +94,7 @@ enable = true
 vcs = "git"
 fix-shallow-repository = true
 bump = true
+
+[tool.poetry.scripts]
+# Build the Sphinx documentation using the command "poetry run build-doc".
+build-doc = "sphinx-build -b html doc/ doc/_build/"

@@ -6,111 +6,111 @@ The NV200 Python library allow you to control the NV200 device from piezosystem 
 via Python. The library supports the ethernet interface as well as the
 USB interface of the device.
 
-## Installation
+## Getting Started
 
-This Python library requires specific dependencies to function correctly.
-To ensure that you are using the correct versions of these dependencies,
-we recommend setting up a virtual environment. Follow the steps below to 
-create a virtual environment and install the required packages using `requirements.txt`.
+### Installing poetry
 
-## Prerequisites
-
-Before starting, make sure you have the following installed:
-
-- Python 3.6 or higher
-- `pip` (Python's package installer)
-
-## Step 1: Clone the Repository
-
-Clone the repository to your local machine using the following command:
-
-```bash
-git clone http://localhost:10081/piezosystem/nv200_python_lib.git
-cd your-repository
-```
-
-## Step 2: Create a Virtual Environment
-
-To avoid conflicts with your system's Python packages, it's best to create a virtual 
-environment for this library.
-
-- **For Windows:**
-
-```bash
-python -m venv .venv
-```
-
-- **For macOS/Linux:**
-
-```bash
-python3 -m venv .venv
-```
-
-This will create a new directory called `.venv` that will contain a clean Python environment.
-
-## Step 3: Activate the Virtual Environment
-
-Once the virtual environment is created, activate it.
-
-- **For Windows:**
+If necessary, install [poetry] according to the official [installation instructions](https://python-poetry.org/docs/#installation) 
+(it's recommended to use [pipx](https://github.com/pypa/pipx) to install poetry in its own isolated environment but still have
+it available as a system wide command).
 
 ```shell
-.venv\Scripts\activate
+pip install pipx
+pipx ensurepath
+# reload your shell or start a new instance
+pipx install poetry
 ```
 
-- **For macOS/Linux:**
+### Setting up poetry to install dependencies in an in-project virtualenv (optional)
 
-```bash
-source venv/bin/activate
+By default, poetry will create virtualenv in the `{cache-dir}/virtualenvs` directory 
+(which for Windows is located in `%USERPROFILE%/AppData/Local/poetry/Cache`).
+But it might be nicer to have the virtualenv close to the project source code in a 
+`.venv` folder in the project root directory.
+
+This can be achieved by setting the `virtualenvs.in-project` config option of poetry to `true`:
+
+```shell
+poetry config virtualenvs.in-project true
 ```
 
-After activation, your terminal prompt should change to indicate that you are now 
-working within the virtual environment.
+Now, when we run `poetry install` in a project directory, it will create and install all dependencies 
+(and the project itself) into an in-project virtualenv located in `{project-root}/.venv`.
 
-## Step 4: Install the Dependencies
+> **Note:**  
+> If you already have an existing environment in the default location (i.e. out-of-project) and would like to convert to an in-project virtualenv, you have to first remove the existing virtualenv, ensure that the `virtualenvs.in-project` option is set to `true` and then create the new in-project virtualenv using `poetry install` (see [below](#installing-dependencies)) again.
+> 
+> To remove the existing virtualenv, first get its name and then remove it:
+> 
+> ```shell
+> poetry env list   # note the name of the environment
+> poetry env remove <name>
+> ```
+> 
+> If you're sure you only have one environment, you can also just use `poetry env remove --all`.
 
-With the virtual environment active, you can now install the required dependencies 
-from the `requirements.txt` file.
+### Installing dependencies
 
-Run the following command to install the dependencies:
+#### Required dependencies
 
-```bash
-pip install -r requirements.txt
+Run `poetry install` in this directory to install all dependencies necessary for running the 
+examples:
+
+```shell
+poetry install
 ```
 
-This will install all the necessary packages listed in the `requirements.txt` file.
+This will also install an editable version of the `nv200` library. If you don't want this, you can add the `--no-root` flag, which will then only install the dependencies, but not the `nv200` package itself:
 
-## Step 5: Verify Installation
-
-Code into the `src` folder and run the `lantronix_device_discovery.py` file to check,
-if the the installation is correct:
-
-```bash
-python lantronix_device_discovery.py
+```shell
+poetry install --no-root
 ```
 
-If no errors occur, the installation is successful!
 
-## Step 6: Deactivate the Virtual Environment (Optional)
+#### Optional dependencies
 
-When you are done using the library, you can deactivate the virtual environment with the following command:
+There are a couple of dependencies which are not strictly necessary to run the servers but may be nice to have.
 
-```bash
-deactivate
+You can install them all by running `poetry install` with the `--all-extras` flag or you can choose which extras to install by only specifying them using the `-E`/`--extras` flag
+
+```shell
+# installs all optional packages
+poetry install --all-extras
+
+# installs only selected optional packages
+poetry install --extras "optional-pkg-1 optional-pkg-2"
+poetry install -E optional-pkg-1 -E optional-pkg-2
 ```
 
-This will return you to your system's global Python environment.
+## Building the wheel
 
----
+To create an `pip` installable wheel for the `nv200` package simply run:
 
-## Troubleshooting
+```shell
+poetry build
+```
 
-- **Error: `pip` command not found:**  
-  Ensure that you have Python and `pip` correctly installed. You can check 
-  by running `python --version` and `pip --version` in your terminal.
+This will create a wheel file in the `dist` folder than you can distribute for installation.
 
-- **Error during installation:**  
-  If you run into any issues during the installation of dependencies, ensure that 
-  you are using the correct version of Python and that your virtual environment is activated.
+## Building the documentation
 
+The `nv200` package uses the Sphinx documentation tool for building its [HTML documentation](doc/_build/html/index.html). To build the documentation in the `doc` folder there are two ways:
 
+### Use poetry
+
+You can build the documentation with poetry using the following command:
+
+```shell
+poetry run sphinx-build -b html doc/ doc/_build/
+```
+
+### Use Sphinx make
+
+CD into the `doc` folder and execute `make html`.
+
+```shell
+cd doc
+make html
+```
+
+[poetry]: https://python-poetry.org/

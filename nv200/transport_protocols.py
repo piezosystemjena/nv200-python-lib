@@ -168,9 +168,9 @@ class TelnetProtocol(TransportProtocol):
         This asynchronous method attempts to connect to a Lantronix device using
         either the provided MAC address or by discovering devices on the network.
 
-        - If `self.host` is `None` and `self.MAC` is provided, it discovers the
+        - If self.host is None and self.MAC is provided, it discovers the
           device's IP address using the MAC address.
-        - If both `self.host` and `self.MAC` are `None`, it discovers all available
+        - If both self.host and self.MAC are None, it discovers all available
           Lantronix devices on the network and selects the first one.
 
         Once the device's IP address is determined, it establishes a Telnet

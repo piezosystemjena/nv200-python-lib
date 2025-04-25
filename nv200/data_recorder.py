@@ -79,8 +79,8 @@ class RecorderAutoStartMode(Enum):
     START_ON_SET_COMMAND = 1
     "Start on set-command"
     
-    START_ON_GRUN_COMMAND = 2
-    "Start on grun-command"
+    START_ON_WAVEFORM_GEN_RUN = 2
+    "Start on gwsaveform generator run"
 
     def __init__(self, mode: int):
         self.mode = mode
@@ -225,7 +225,7 @@ class DataRecorder:
 
     async def stop_recording(self):
         """
-        Stops the recording process by invoking the `start_recording` method with `False`.
+        Stops the recording process by invoking the `start_recording` method with False.
         """
         await self.start_recording(False)
 

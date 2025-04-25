@@ -31,7 +31,7 @@ from abc import ABC, abstractmethod
 import telnetlib3
 import aioserial
 import serial.tools.list_ports
-import nv200.lantronix_xport as ldd
+import nv200.lantronix_xport as xport
 
 
 class TransportProtocol(ABC):
@@ -127,6 +127,40 @@ class TelnetProtocol(TransportProtocol):
         self.__reader = None
         self.__writer = None
 
+
+    async def __connect_telnetlib(self):
+        """
+        Connect to telnetlib3 library
+        """
+        self.__reader, self.__writer = await asyncio.wait_for(
+            telnetlib3.open_connection(self.__host, self.__port),
+            timeout=5
+        )        
+
+
+    async def is_xon_xoff_forwared_to_host(self) -> bool:
+        """
+        Checks if XON/XOFF flow control is forwarded to the host.
+
+        This method sends a command to the device and checks the response to determine
+        if XON/XOFF flow control is enabled. The detection is based on whether the
+        response starts with the byte sequence "XON/XOFF".
+
+        Returns:
+            bool: True if XON/XOFF flow control is forwarded to the host, False otherwise.
+        """
+        await self.write('\r')
+        await asyncio.sleep(0.1)
+        response = await self.__reader.read(1024)
+        return response.startswith('\x13')
+    
+    @staticmethod
+    async def configure_flow_control_mode(host: str):
+        """
+        Configures the flow control mode for the device to pass XON/XOFF characters to host
+        """
+        return await xport.configure_flow_control(host)
+
     async def connect(self):
         """
         Establishes a connection to a Lantronix device.
@@ -146,20 +180,24 @@ class TelnetProtocol(TransportProtocol):
             RuntimeError: If no devices are found during discovery.
         """
         if self.__host is None and self.__MAC is not None:
-            self.__host = await ldd.discover_lantronix_device_async(self.__MAC)
+            self.__host = await xport.discover_lantronix_device_async(self.__MAC)
             if self.__host is None:
                 raise RuntimeError(f"Device with MAC address {self.__MAC} not found")
         elif self.__host is None and self.__MAC is None:
-            devices = await ldd.discover_lantronix_devices_async()
+            devices = await xport.discover_lantronix_devices_async()
             if not devices:
                 raise RuntimeError("No devices found")
             self.__host = devices[0]['IP']
             self.__MAC = devices[0]['MAC']
         try:
-            self.__reader, self.__writer = await asyncio.wait_for(
-                telnetlib3.open_connection(self.__host, self.__port),
-                timeout=5
-            )
+            config_changed : bool = False
+            await self.__connect_telnetlib()
+            # ensure that flow control XON and XOFF chars are forwarded to host
+            if not await self.is_xon_xoff_forwared_to_host():
+                config_changed = await TelnetProtocol.configure_flow_control_mode(self.__host)
+            # If flow control config changed, we need to reconnect
+            if config_changed:
+                await self.__connect_telnetlib()
         except asyncio.TimeoutError as exc:
             raise RuntimeError(f"Device with host address {self.__host} not found") from exc
     
@@ -174,7 +212,9 @@ class TelnetProtocol(TransportProtocol):
     async def close(self):
         if self.__writer:
             self.__writer.close()
+            self.__writer = None
             self.__reader.close()
+            self.__reader = None
 
     @property
     def host(self) -> str:
@@ -198,7 +238,7 @@ class TelnetProtocol(TransportProtocol):
         Returns:
             list: A list of dictionaries containing device information (IP and MAC addresses).
         """
-        return await ldd.discover_lantronix_devices_async()
+        return await xport.discover_lantronix_devices_async()
 
 
 
@@ -207,7 +247,7 @@ class SerialProtocol(TransportProtocol):
     A class to handle serial communication with an NV200 device using the AioSerial library.
     Attributes:
         port (str): The serial port to connect to. Defaults to None. If port is None, the class
-        will try to auto detect rthe port.
+        will try to auto detect the port.
         baudrate (int): The baud rate for the serial connection. Defaults to 115200.
         serial (AioSerial): The AioSerial instance for asynchronous serial communication.
     """
@@ -304,7 +344,7 @@ class SerialProtocol(TransportProtocol):
 
     async def read_response(self) -> str:
         data = await self.__serial.read_until_async(serial.XON)
-        return data.replace(b'\x11', b'').replace(b'\x13', b'') # strip XON and XOFF characters
+        return data.replace(serial.XON, b'').replace(serial.XOFF, b'') # strip XON and XOFF characters
 
     async def close(self):
         if self.__serial:

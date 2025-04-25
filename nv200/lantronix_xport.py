@@ -263,16 +263,20 @@ def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[
 
 
 
-async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlMode.XON_XOFF_PASS_TO_HOST) -> None:
+async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlMode.XON_XOFF_PASS_TO_HOST) -> bool:
     """_
     Configures the serial flow control mode to XON_OFF_PASS_CHARS_TO_HOST so
     that XON/XOFF characters are passed to the host device.
+
+    Returns:
+        bool: True if the configuration changed and false if configuration was already set to the desired mode.
     """
 
     CHANNEL1_PARAM_COUNT = 19
     PARAM_FLOW_CONTROL = 2
     STORE_CONFIG_MENU_OPTION = "9\r"
     port = 9999
+    debug : bool = False
 
 
     async def connect_telnet(host: str):
@@ -286,15 +290,17 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         Asnyc read data with debug output
         """
         data = await reader.read(size)
-        print(f"[DEBUG] Read ({context}): {data!r}")
+        if debug:
+            print(f"[DEBUG] Read ({context}): {data!r}")
         return data
 
     async def write_data(writer, data, context=""):
         """
         Write data with debug output
         """
-        print(f"[DEBUG] Write ({context}): {data!r}")
         writer.write(data)
+        if debug:
+            print(f"[DEBUG] Write ({context}): {data!r}")
 
     async def verify_rebooted(timeout : int):
         """
@@ -315,7 +321,7 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         configuration = await read_data(reader, 4096, "configuration setup")
 
         if f"Flow 0{mode.value}" in configuration:
-            return
+            return False
 
         await write_data(writer, "1\r", "enter channel 1 config")
         for i in range(CHANNEL1_PARAM_COUNT):
@@ -335,6 +341,7 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         reader.close()
 
     await verify_rebooted(25)
+    return True
 
 
 

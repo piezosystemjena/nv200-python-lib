@@ -1,6 +1,7 @@
 import asyncio
 import socket
 import telnetlib3
+from enum import Enum, IntFlag
 from typing import List, Tuple, Dict, Optional
 from nv200.eth_utils import get_active_ethernet_ips
 
@@ -9,6 +10,25 @@ BROADCAST_IP = '255.255.255.255'
 UDP_PORT = 30718  # Lantronix Discovery Protocol port
 TELNET_PORT = 23  # Telnet Port (default: 23)
 TIMEOUT = 0.4  # Timeout for UDP response
+
+
+class FlowControlMode(Enum):
+    """
+    Enumeration for different flow control options of XPORT device
+    """
+
+    NO_FLOW_CONTROL = 0x00
+    """No flow control is applied."""
+
+    XON_XOFF = 0x01
+    """Software-based flow control using XON/XOFF characters."""
+
+    RTS_CTS = 0x02
+    """Hardware flow control using RTS (Request to Send) and CTS (Clear to Send) lines."""
+
+    XON_XOFF_PASS_TO_HOST = 0x05
+    """Software-based flow control using XON/XOFF characters - pass XON/XOFF characters to the host."""
+
 
 
 async def send_udp_broadcast_async(local_ip : str) -> List[Tuple[bytes, Tuple[str, int]]]:
@@ -243,52 +263,79 @@ def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[
 
 
 
-
-async def connect_telnet(host: str, port: int = 9999):
-    return await asyncio.wait_for(telnetlib3.open_connection(host, port), timeout=5)
-
-
-async def configure_flow_control(host: str) -> None:
+async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlMode.XON_XOFF_PASS_TO_HOST) -> None:
     """_
-    The function configures the serial flow control mode to XON_OFF_PASS_CHARS_TO_HOST to ensure
-    the XON and XOFF characters are passed to the host device because the TelnetTransport
-    relies on the recption of these characters to control the flow of data.
+    Configures the serial flow control mode to XON_OFF_PASS_CHARS_TO_HOST so
+    that XON/XOFF characters are passed to the host device.
     """
+
     CHANNEL1_PARAM_COUNT = 19
     PARAM_FLOW_CONTROL = 2
-    XON_OFF_PASS_CHARS_TO_HOST = "05\r"
     STORE_CONFIG_MENU_OPTION = "9\r"
+    port = 9999
+
+
+    async def connect_telnet(host: str):
+        """
+        Connect to XPORT configuration port 9999
+        """
+        return await asyncio.wait_for(telnetlib3.open_connection(host, port), timeout=7)
+
+    async def read_data(reader, size=2048, context=""):
+        """
+        Asnyc read data with debug output
+        """
+        data = await reader.read(size)
+        print(f"[DEBUG] Read ({context}): {data!r}")
+        return data
+
+    async def write_data(writer, data, context=""):
+        """
+        Write data with debug output
+        """
+        print(f"[DEBUG] Write ({context}): {data!r}")
+        writer.write(data)
+
+    async def verify_rebooted(timeout : int):
+        """
+        Verify that the device has rebooted by checking if it is possible to connect to the telnet port 9999
+        """
+        try:
+            await asyncio.wait_for(asyncio.open_connection(host, port), timeout=timeout)
+        except asyncio.TimeoutError as e:
+            raise asyncio.TimeoutError(f"Timeout: Unable to connect to {host}:{port} within {timeout} seconds") from e
+
 
     reader, writer = await connect_telnet(host)
 
     try:
-        await reader.read(1024) # read the intial connection message - mac and software version
-        writer.write("\r")
+        await read_data(reader, 1024, "initial connection message")
+        await write_data(writer, "\r", "initial prompt")
         await asyncio.sleep(0.1)
-        configuration = await reader.read(2048) # read the complete configuration setup that is sent by the device
+        configuration = await read_data(reader, 4096, "configuration setup")
 
-        if "Flow 05" in configuration:
+        if f"Flow 0{mode.value}" in configuration:
             return
 
-        writer.write("1\r")
+        await write_data(writer, "1\r", "enter channel 1 config")
         for i in range(CHANNEL1_PARAM_COUNT):
             await asyncio.sleep(0.05)
-            await reader.read(2048)
-            writer.write(XON_OFF_PASS_CHARS_TO_HOST if i == PARAM_FLOW_CONTROL else "\r")
+            await read_data(reader, 2048, f"menu param {i}")
+            data_to_write = f"0{mode.value}\r" if i == PARAM_FLOW_CONTROL else "\r"
+            await write_data(writer, data_to_write, f"menu param {i} input")
 
         await asyncio.sleep(0.05)
-        await reader.read(2048) # read the configuration menu response
-        writer.write(STORE_CONFIG_MENU_OPTION)
-        await reader.read(2048) # read the store configuration response
+        await read_data(reader, 2048, "post param config")
+        await write_data(writer, STORE_CONFIG_MENU_OPTION, "store config")
+        await read_data(reader, 2048, "store config response")
+        await asyncio.sleep(5)
 
     finally:
         writer.close()
         reader.close()
 
-    # Optional: reconnect for verification so we know the device is reachable again
-    reader, writer = await connect_telnet(host)
-    await reader.read(1024) # read the intial connection message - mac and software version
-    writer.close()
+    await verify_rebooted(25)
+
 
 
 
@@ -314,5 +361,5 @@ def main():
 if __name__ == "__main__":
     #asyncio.run(main_async())
     #main()
-    asyncio.run(configure_flow_control("192.168.10.152"))
+    asyncio.run(configure_flow_control("192.168.10.177", FlowControlMode.XON_XOFF))
 

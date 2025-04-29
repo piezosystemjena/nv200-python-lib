@@ -1,0 +1,61 @@
+stages:
+  - build
+  - docs
+  - pages
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  POETRY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pypoetry"
+  POETRY_VIRTUALENVS_CREATE: "false"
+  POETRY_HOME: "$CI_PROJECT_DIR/.poetry"
+  DOC_BUILD_DIR: "doc/_build/html"
+
+cache:
+  paths:
+    - .cache/pip
+    - .cache/pypoetry
+
+before_script:
+  - python --version
+  - pip install pip --upgrade
+  - pip install poetry
+  - poetry install --no-root
+
+# ------------------
+# Build Python wheel
+# ------------------
+build_wheel:
+  stage: build
+  script:
+    - poetry build
+  artifacts:
+    paths:
+      - dist/*.whl
+      - dist/*.tar.gz
+    expire_in: 1 week
+
+# ------------------
+# Build Sphinx Docs
+# ------------------
+build_docs:
+  stage: docs
+  script:
+    - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
+  artifacts:
+    paths:
+      - $DOC_BUILD_DIR
+    expire_in: 1 week
+
+# ------------------
+# Deploy to GitLab Pages
+# ------------------
+pages:
+  stage: pages
+  script:
+    - mkdir -p public
+    - cp -r $DOC_BUILD_DIR/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main  # or your default branch

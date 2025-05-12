@@ -1,3 +1,5 @@
+image: python:3.12  # Use Python image globally for all jobs
+
 stages:
   - build
   - docs

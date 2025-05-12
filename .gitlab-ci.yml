@@ -21,6 +21,7 @@ before_script:
   - python --version
   - pip install pip --upgrade
   - pip install poetry
+  - poetry lock
   - poetry install --no-root
 
 # ------------------

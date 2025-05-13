@@ -2,7 +2,6 @@ image: python:3.12  # Use Python image globally for all jobs
 
 stages:
   - build
-  - docs
   - pages
 
 variables:
@@ -17,18 +16,20 @@ cache:
     - .cache/pip
     - .cache/pypoetry
 
-before_script:
-  - python --version
-  - pip install pip --upgrade
-  - pip install poetry
-  - poetry lock
-  - poetry install --no-root
+.default_setup: &default_setup
+  before_script:
+    - python --version
+    - pip install pip --upgrade
+    - pip install poetry
+    - poetry lock
+    - poetry install --no-root
 
 # ------------------
 # Build Python wheel
 # ------------------
 build_wheel:
   stage: build
+  <<: *default_setup
   script:
     - poetry build
   artifacts:
@@ -42,6 +43,7 @@ build_wheel:
 # -----------------------------
 pages:
   stage: pages
+  <<: *default_setup
   script:
     - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
     - mkdir -p public

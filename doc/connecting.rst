@@ -11,8 +11,8 @@ Serial Connection to NV200
 ----------------------------
 
 You can connect to a NV200 device using a serial connection (USB or RS232) by
-using :class:`SerialPort <nv200.transport_protocols.SerialProtocol>` class. 
-Just create the :class:`SerialPort <nv200.transport_protocols.SerialProtocol>` 
+using :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` class. 
+Just create the :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` 
 object and pass it to the :class:`DeviceClient <nv200.device_interface.DeviceClient>` 
 constructor.
 
@@ -44,7 +44,7 @@ Connect to a specific serial port
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to connect to a device on a specific serial port, you can do 
-so by specifying the port in the constructor of the :class:`SerialPort <nv200.transport_protocols.SerialProtocol>` class.
+so by specifying the port in the constructor of the :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` class.
 This is useful if you have multiple devices connected to your computer and 
 want to connect to a specific one.
 
@@ -153,5 +153,5 @@ the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
 
 
     if __name__ == "__main__":
-        asyncio.run(thernet_connect_to_ip())
+        asyncio.run(ethernet_connect_to_ip())
     

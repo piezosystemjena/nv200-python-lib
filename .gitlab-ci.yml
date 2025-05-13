@@ -37,28 +37,18 @@ build_wheel:
       - dist/*.tar.gz
     expire_in: 1 week
 
-# ------------------
-# Build Sphinx Docs
-# ------------------
-build_docs:
-  stage: docs
-  script:
-    - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
-  artifacts:
-    paths:
-      - $DOC_BUILD_DIR
-    expire_in: 1 week
-
-# ------------------
-# Deploy to GitLab Pages
-# ------------------
+# -----------------------------
+# Build and Deploy Sphinx Docs
+# -----------------------------
 pages:
   stage: pages
   script:
+    - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
     - mkdir -p public
     - cp -r $DOC_BUILD_DIR/* public/
   artifacts:
     paths:
       - public
+    expire_in: 1 week
   only:
     - main  # or your default branch

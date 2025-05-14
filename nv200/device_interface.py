@@ -26,8 +26,8 @@ from nv200.device_types import (
     ModulationSource,
     StatusRegister,
     DeviceError,
+    DetectedDevice
 )
-
 
 
 class DeviceClient:
@@ -273,3 +273,22 @@ class DeviceClient:
         """
         status_reg = await self.get_status_register()
         return status_reg.has_flag(flag)
+
+
+
+def create_device_client(detected_device: DetectedDevice) -> DeviceClient:
+    """
+    Factory function to create a DeviceClient with the right transport protocol 
+    from a DetectedDevice.
+    This function determines the appropriate transport protocol
+    based on the detected device type (e.g., serial or telnet).
+    """
+    if detected_device.transport == 'telnet':
+        transport = TelnetProtocol(host = detected_device.identifier)
+    elif detected_device.transport == 'serial':
+        transport = SerialProtocol(port = detected_device.identifier)
+    else:
+        raise ValueError(f"Unsupported dtransport type: {detected_device.transport}")
+    
+    # Return a DeviceClient initialized with the correct transport protocol
+    return DeviceClient(transport)

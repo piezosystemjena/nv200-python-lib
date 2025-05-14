@@ -29,13 +29,17 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.searchDevicesButton = QPushButton(self.centralwidget)
         self.searchDevicesButton.setObjectName(u"searchDevicesButton")
-        self.searchDevicesButton.setGeometry(QRect(160, 20, 141, 24))
-        self.comboBox = QComboBox(self.centralwidget)
-        self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setGeometry(QRect(20, 20, 131, 22))
+        self.searchDevicesButton.setGeometry(QRect(430, 20, 141, 24))
+        self.devicesComboBox = QComboBox(self.centralwidget)
+        self.devicesComboBox.setObjectName(u"devicesComboBox")
+        self.devicesComboBox.setGeometry(QRect(20, 20, 401, 22))
         self.mplCanvasWidget = MplCanvas(self.centralwidget)
         self.mplCanvasWidget.setObjectName(u"mplCanvasWidget")
         self.mplCanvasWidget.setGeometry(QRect(20, 60, 541, 291))
+        self.connectButton = QPushButton(self.centralwidget)
+        self.connectButton.setObjectName(u"connectButton")
+        self.connectButton.setEnabled(False)
+        self.connectButton.setGeometry(QRect(580, 20, 81, 24))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -53,5 +57,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.searchDevicesButton.setText(QCoreApplication.translate("MainWindow", u"Search Devices ...", None))
+        self.connectButton.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
     # retranslateUi
 

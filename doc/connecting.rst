@@ -7,6 +7,58 @@ The NV200 library provides an asynchronous API using :code:`async` and :code:`aw
 That means all functions are non blocking using coroutines.
 
 
+Discovering Devices
+----------------------------
+
+The `nv200.device_discovery` module provides a way to automatically discover all NV200 devices
+connected by USB or Ethernet. You just need to call the `discover_devices` function and it will return 
+a list of all detected devices.
+
+.. code-block:: python
+
+    from nv200.device_discovery import discover_devices
+
+    async def main_async():
+        print("Discovering devices...")
+        devices = await discover_devices()
+        
+        if not devices:
+            print("No devices found.")
+        else:
+            print(f"Found {len(devices)} device(s):")
+            for device in devices:
+                print(device)
+
+
+Connecting To a Device
+----------------------------
+
+The recommended way to connect to a NV200 device is to use the :func:`create_device_client <nv200.device_interface.create_device_client>`
+function from the :mod:`nv200.device_interface` module. So you just need to:
+
+#. Discover devices using the :func:`discover_devices <nv200.device_discovery.discover_devices>` function.
+#. Pass the :class:`DeviceProtocol <nv200.device_types.DetectedDevice>` object to the :func:`create_device_client <nv200.device_interface.create_device_client>` function.
+
+.. code-block:: python
+
+    from nv200.device_types import DetectedDevice
+    from nv200.device_discovery import discover_devices
+    from nv200.device_interface import DeviceClient, create_device_client
+
+    async def main_async():
+        print("Discovering devices...")
+        detected_devices = await discover_devices()
+        
+        if not detected_devices:
+            print("No devices found.")
+            return
+
+        # Create a device client for the first detected device
+        device = create_device_client(detected_devices[0])
+        await client.connect()
+
+
+
 Serial Connection to NV200
 ----------------------------
 

@@ -1,3 +1,11 @@
+"""
+This module provides asynchronous device discovery functionality for the NV200 library.
+It concurrently scans for devices available via Telnet and Serial protocols, returning
+a unified list of detected devices. Each detected device is represented by a :class:`.DetectedDevice`
+instance, annotated with its transport type (TELNET or SERIAL), identifier (such as IP address
+or serial port), and optionally a MAC address.
+"""
+
 import asyncio
 from typing import List
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol

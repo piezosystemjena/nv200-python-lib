@@ -1,3 +1,29 @@
+
+"""
+This module defines enumerations, classes, and data structures for representing device types,
+status flags, error codes, and related information for NV200 devices.
+
+Classes and Enums:
+------------------
+- :class:`.PidLoopMode` (Enum): Modes of operation for a PID control loop (open/closed loop).
+- :class:`.ErrorCode` (Enum): Error codes and descriptions for device errors.
+- :class:`.StatusFlags` (IntFlag): Bit flags representing the status register of a device.
+- :class:`.ModulationSource` (Enum): Sources for setpoint modulation.
+- :class:`.StatusRegister`: Class for parsing and representing a 16-bit status register.
+- :class:`.DeviceError` (Exception): Custom exception for device-related errors.
+- :class:`.TransportType` (Enum): Supported transport types (telnet, serial).
+- :class:`.DetectedDevice` (dataclass): Structure for detected device information.
+
+
+Functionality:
+--------------
+- Provides enums for device modes, errors, and status flags.
+- Offers utility methods for error code conversion and description lookup.
+- Parses and interprets status register values.
+- Defines a custom exception for device errors.
+- Structures device detection information for network or serial connections.
+"""    
+
 from enum import Enum, IntFlag
 from dataclasses import dataclass
 from typing import Optional

@@ -272,7 +272,7 @@ async def test_discover_devices():
 
 
 if __name__ == "__main__":
-    asyncio.run(test_discover_devices())
+    #asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())

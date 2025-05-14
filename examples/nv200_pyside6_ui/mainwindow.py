@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 import sys
-
+import asyncio
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt
@@ -10,6 +10,8 @@ from matplotlib.figure import Figure
 from nv200.device_types import DetectedDevice
 from nv200.device_discovery import discover_devices
 from nv200.device_interface import DeviceClient, create_device_client
+from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
+from qt_material import apply_stylesheet
 
 
 # Important:
@@ -23,6 +25,7 @@ from ui_mainwindow import Ui_MainWindow
 class MainWindow(QMainWindow):
 
     _device: DeviceClient = None
+    _recorder : DataRecorder = None
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -31,6 +34,9 @@ class MainWindow(QMainWindow):
         self.ui.searchDevicesButton.clicked.connect(qtinter.asyncslot(self.search_devices))
         self.ui.devicesComboBox.currentIndexChanged.connect(self.on_device_selected)
         self.ui.connectButton.clicked.connect(qtinter.asyncslot(self.connect_to_device))
+        self.ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
+        self.setWindowTitle("PySoWorks")
+
 
     async def search_devices(self):
         """
@@ -38,7 +44,12 @@ class MainWindow(QMainWindow):
         """
         self.ui.searchDevicesButton.setEnabled(False)
         self.ui.connectButton.setEnabled(False)
+        self.ui.easyModeGroupBox.setEnabled(False)
         self.ui.statusbar.showMessage("Searching for devices...", 2000)
+        if self._device is not None:
+            await self._device.close()
+            self._device = None
+        
         print("Searching...")
         try:
             print("Discovering devices...")
@@ -97,25 +108,71 @@ class MainWindow(QMainWindow):
         detected_device = self.selected_device()
         self.ui.statusbar.showMessage(f"Connecting to {detected_device.identifier}...", 2000)
         print(f"Connecting to {detected_device.identifier}...")
-        self._device = create_device_client(detected_device)
         try:
+            if self._device is not None:
+                await self._device.close()
+                self._device = None
+            self._device = create_device_client(detected_device)
             await self._device.connect()
+            self.ui.easyModeGroupBox.setEnabled(True)
+            self.ui.statusbar.showMessage(f"Connected to {detected_device.identifier}.", 2000)
+            print(f"Connected to {detected_device.identifier}.")
         except Exception as e:
             self.ui.statusbar.showMessage(f"Connection failed: {e}", 2000)
             print(f"Connection failed: {e}")
             return
 
-        # Implement the connection logic here
-        # For example, you might want to use the device's transport and identifier
-        # to establish a connection.
-        # await device.connect()
-        self.ui.statusbar.showMessage(f"Connected to {detected_device.identifier}.", 2000)
-        print(f"Connected to {detected_device.identifier}.")
+
+    def recorder(self) -> DataRecorder:
+        """
+        Returns the DataRecorder instance associated with the device.
+        """
+        if self._device is None:
+            return None
+
+        if self._recorder is None:
+            self._recorder = DataRecorder(self._device)
+        return self._recorder	
+
+
+    async def start_move(self):
+        """
+        Asynchronously starts the move operation.
+        """
+        if self._device is None:
+            print("No device connected.")
+            return
+        
+        self.ui.moveButton.setEnabled(False)
+        try:
+            recorder = self.recorder()
+            await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
+            await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
+            await recorder.set_recording_duration_ms(120)
+            await recorder.start_recording()
+
+            # Implement the move logic here
+            # For example, you might want to send a command to the device to start moving.
+            # await self._device.start_move()
+            print("Starting move operation...")
+            await self._device.move_to_position(self.ui.targetPosSpinBox.value())
+            self.ui.statusbar.showMessage("Move operation started.", 2000)
+            await recorder.wait_until_finished()
+            await asyncio.sleep(0.5)
+            rec_data = await recorder.read_recorded_data_of_channel(0)
+            self.ui.mplCanvasWidget.canvas.plot_data(rec_data)
+        except Exception as e:
+            self.ui.statusbar.showMessage(f"Error during move operation: {e}", 4000)
+            print(f"Error during move operation: {e}")
+            return
+        finally:
+            self.ui.moveButton.setEnabled(True)
             
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle('fusion')
+    app.setStyle('windowsvista')
+    apply_stylesheet(app, theme='dark_teal.xml')
     widget = MainWindow()
     widget.show()
     #sys.exit(app.exec())

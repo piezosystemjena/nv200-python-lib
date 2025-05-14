@@ -20,6 +20,7 @@ class MplCanvas(FigureCanvas):
         super().__init__(fig)
 
 
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -34,7 +35,7 @@ class MainWindow(QWidget):
 
         # Create the matplotlib FigureCanvas object,
         # which defines a single set of axes as self.axes.
-        self.sc = MplCanvas(self, width=5, height=4, dpi=100)
+        self.sc = MplCanvas(self)
         self.sc.axes.plot([0,1,2,3,4], [10,1,20,3,40])
 
         layout = QVBoxLayout()

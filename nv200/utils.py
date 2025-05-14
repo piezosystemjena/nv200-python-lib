@@ -47,6 +47,14 @@ class TimeSeries:
         Return all time (sample_times_ms) values as a list, calculated based on the sample time.
         """
         return list(self.generate_sample_times_ms())
+    
+    def __str__(self):
+        """
+        Return a string representation of the TimeSeries object, showing pairs of time and value.
+        Example: [(0, 1.2), (10, 2.5), (20, 3.7), ...]
+        """
+        time_value_pairs = list(zip(self.sample_times_ms, self.values))
+        return f"TimeSeries({time_value_pairs})"
 
 
 async def wait_until(

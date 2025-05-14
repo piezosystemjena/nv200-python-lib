@@ -274,7 +274,10 @@ class DataRecorder:
         if self._sample_rate is None:
             stride = await self._dev.read_int_value("recstr")
             self._sample_rate = self.NV200_RECORDER_SAMPLE_RATE_HZ / stride
-        return self.ChannelRecordingData([float(num) for num in number_strings], 1000 / self._sample_rate, recsrc)
+        numbers = []
+        for num in number_strings[1:]:  # starts from the second element
+            numbers.append(float(num))
+        return self.ChannelRecordingData(numbers, 1000 / self._sample_rate, recsrc)
     
     async def read_recorded_data(self) -> List[ChannelRecordingData]:
         """

@@ -155,7 +155,7 @@ class TelnetProtocol(TransportProtocol):
         return response.startswith('\x13')
     
     @staticmethod
-    async def configure_flow_control_mode(host: str):
+    async def configure_flow_control_mode(host: str) -> bool:
         """
         Configures the flow control mode for the device to pass XON/XOFF characters to host
         """

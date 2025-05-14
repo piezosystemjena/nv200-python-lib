@@ -13,6 +13,8 @@ from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
 from nv200.utils import wait_until
+from nv200.device_types import DetectedDevice
+from nv200.device_discovery import discover_devices
 
 
 
@@ -138,7 +140,7 @@ async def run_tests(client: DeviceClient):
     of the DeviceClient and ensure proper communication with the server.
     """
     await basic_tests(client)
-    await data_recorder_tests(client)
+    #await data_recorder_tests(client)
 
 
 
@@ -151,7 +153,8 @@ async def client_telnet_test():
     reads responses, and then closes the connection.
     """
     print(await TelnetProtocol.discover_devices())
-    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
+    #transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
+    transport = TelnetProtocol(host="192.168.10.103")  
     #transport = TelnetTransport()
     client = DeviceClient(transport)
     await client.connect()
@@ -252,9 +255,25 @@ def test_numpy_waveform():
     plt.show()
 
 
+async def test_discover_devices():
+    """
+    Asynchronously discovers available devices and prints their information.
+    """
+    print("Discovering devices...")
+    devices = await discover_devices()
+    
+    if not devices:
+        print("No devices found.")
+    else:
+        print(f"Found {len(devices)} device(s):")
+        for device in devices:
+            print(device)
+
+
 
 if __name__ == "__main__":
-    asyncio.run(client_telnet_test())
+    asyncio.run(test_discover_devices())
+    #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())

@@ -348,12 +348,16 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
 
 # async Main execution
 async def main_async():
-    TARGET_MAC: str = "00:80:A3:79:C6:18"
-    ip = await discover_lantronix_device_async(TARGET_MAC)
-    if ip:
-        print(f"Device with MAC {TARGET_MAC} found at IP: {ip}")
-    else:
-        print(f"Device with MAC {TARGET_MAC} not found.")
+    # TARGET_MAC: str = "00:80:A3:79:C6:18"
+    # ip = await discover_lantronix_device_async(TARGET_MAC)
+    # if ip:
+    #     print(f"Device with MAC {TARGET_MAC} found at IP: {ip}")
+    # else:
+    #     print(f"Device with MAC {TARGET_MAC} not found.")
+    devices = await discover_lantronix_devices_async()
+    print("Devices found:")
+    for device in devices:
+        print(f"MAC: {device['MAC']}, IP: {device['IP']}")
 
 def main():
     TARGET_MAC: str = "00:80:A3:79:C6:18"
@@ -366,7 +370,7 @@ def main():
 
 # Running the async main function
 if __name__ == "__main__":
-    #asyncio.run(main_async())
+    asyncio.run(main_async())
     #main()
-    asyncio.run(configure_flow_control("192.168.10.177", FlowControlMode.XON_XOFF))
+    #asyncio.run(configure_flow_control("192.168.10.177", FlowControlMode.XON_XOFF))
 

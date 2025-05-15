@@ -223,3 +223,6 @@ class DetectedDevice:
     transport: TransportType
     identifier: str  # e.g., IP or serial port
     mac: Optional[str] = None
+    actuator_name: Optional[str] = None
+    actuator_serial: Optional[str] = None
+    

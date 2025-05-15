@@ -149,7 +149,7 @@ class TelnetProtocol(TransportProtocol):
         Returns:
             bool: True if XON/XOFF flow control is forwarded to the host, False otherwise.
         """
-        await self.write('\r')
+        await self.write('\r\n')
         await asyncio.sleep(0.1)
         response = await self.__reader.read(1024)
         return response.startswith('\x13')
@@ -307,10 +307,14 @@ class SerialProtocol(TransportProtocol):
 
         async def detect_on_port(port_name: str) -> str | None:
             protocol = SerialProtocol(port_name)
-            await protocol.connect()
             try:
+                await protocol.connect()
                 detected = await protocol.detect_device()
                 return port_name if detected else None
+            except Exception as e:
+                # We do ignore the exception - if it is not possible to connect to the device, we just return None
+                print(f"Error on port {port_name}: {e}")
+                return None
             finally:
                 await protocol.close()
 

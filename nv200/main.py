@@ -260,7 +260,7 @@ async def test_discover_devices():
     Asynchronously discovers available devices and prints their information.
     """
     print("Discovering devices...")
-    devices = await discover_devices()
+    devices = await discover_devices(full_info=True)
     
     if not devices:
         print("No devices found.")
@@ -268,6 +268,32 @@ async def test_discover_devices():
         print(f"Found {len(devices)} device(s):")
         for device in devices:
             print(device)
+
+
+async def test_device_client_interface():
+    """
+    Asynchronously tests the DeviceClient interface by connecting to a device and performing basic operations.
+    """
+    transport = SerialProtocol(port="COM3")
+    client = DeviceClient(transport)
+    await client.connect()
+    print(f"Connected to device on serial port: {transport.port}")
+    print("Actor: ", await client.get_actuator_name())
+    print("Serial: ", await client.get_acctuator_serial_number())
+    print("Actuator type: ", await client.get_actuator_description())
+    await client.close()
+
+
+async def test_device_type():
+    transport = TelnetProtocol(host="192.168.10.180")
+    client = DeviceClient(transport)
+    await client.connect()
+    #print("Actor: ", await client.get_actuator_name())
+    #print("Serial: ", await client.get_acctuator_serial_number())
+    #print("Actuator type: ", await client.get_actuator_description())
+    print("Reading param...")
+    await client.read_string_value('uwe')
+    await client.close()
 
 
 
@@ -279,4 +305,6 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
+    asyncio.run(test_discover_devices())
+    #asyncio.run(test_device_type())
 

@@ -3,8 +3,8 @@ import sys
 import asyncio
 
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QDir, QCoreApplication
+from PySide6.QtGui import QColor, QIcon
 import qtinter
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.figure import Figure
@@ -13,6 +13,7 @@ from nv200.device_discovery import discover_devices
 from nv200.device_interface import DeviceClient, create_device_client
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
 from qt_material import apply_stylesheet
+from pathlib import Path
 
 
 # Important:
@@ -64,7 +65,7 @@ class MainWindow(QMainWindow):
         print("Searching...")
         try:
             print("Discovering devices...")
-            devices = await discover_devices()
+            devices = await discover_devices(full_info=True)    
             
             if not devices:
                 print("No devices found.")
@@ -235,6 +236,8 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle('windowsvista')
+    app_path = Path(__file__).resolve().parent
+    app.setWindowIcon(QIcon(str(app_path) + '/app_icon.ico'))
     apply_stylesheet(app, theme='dark_teal.xml')
     widget = MainWindow()
     widget.show()

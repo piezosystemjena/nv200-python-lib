@@ -194,6 +194,20 @@ class DeviceClient:
             float: The value as a floating-point number.
         """
         return int((await self.read_values(cmd))[param_index])
+    
+
+    async def read_string_value(self, cmd: str, param_index : int = 0) -> str:
+        """
+        Asynchronously reads a single string value from device
+
+        Args:
+            cmd (str): The command string to be sent.
+            param_index (int): Parameter index (default 0) to read from the response.
+
+        Returns:
+            str: The value as a string.
+        """
+        return (await self.read_values(cmd))[param_index]
 
 
     async def close(self):
@@ -272,7 +286,37 @@ class DeviceClient:
         """
         status_reg = await self.get_status_register()
         return status_reg.has_flag(flag)
-
+    
+    async def get_actuator_name(self) -> str:
+        """
+        Retrieves the name of the actuator that is connected to the NV200 device.
+        """
+        return await self.read_string_value('desc')
+    
+    async def get_actuator_serial_number(self) -> str:
+        """
+        Retrieves the serial number of the actuator that is connected to the NV200 device.
+        """
+        return await self.read_string_value('acserno')
+    
+    async def get_actuator_description(self) -> str:
+        """
+        Retrieves the description of the actuator that is connected to the NV200 device.
+        The description consists of the actuator type and the serial number.
+        For example: "TRITOR100SG, #85533"
+        """
+        name = await self.get_actuator_name()
+        serial_number = await self.get_actuator_serial_number()   
+        return f"{name} #{serial_number}"
+    
+    async def get_device_type(self) -> str:
+        """
+        Retrieves the type of the device.
+        The device type is the string that is returned if you just press enter after connecting to the device.
+        """
+        await self._transport.write("\r\n")
+        response = await self._read_response()
+        return self._parse_response(response)[0]
 
 
 def create_device_client(detected_device: DetectedDevice) -> DeviceClient:

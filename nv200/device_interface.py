@@ -239,6 +239,13 @@ class DeviceClient:
         await self.set_pid_mode(PidLoopMode.OPEN_LOOP)
         await self.set_setpoint(voltage)
 
+    async def move(self, target: float):
+        """
+        Moves the device to the specified target position or voltage.
+        The target is interpreted as a position in closed loop or a voltage in open loop.
+        """
+        await self.set_setpoint(target)
+
     async def get_current_position(self) -> float:
         """
         Retrieves the current position of the device.

@@ -4,10 +4,11 @@ import asyncio
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 import qtinter
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.figure import Figure
-from nv200.device_types import DetectedDevice
+from nv200.device_types import DetectedDevice, PidLoopMode
 from nv200.device_discovery import discover_devices
 from nv200.device_interface import DeviceClient, create_device_client
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
@@ -21,8 +22,13 @@ from qt_material import apply_stylesheet
 from ui_mainwindow import Ui_MainWindow
 
 
-
 class MainWindow(QMainWindow):
+    """
+    Main application window for the PySoWorks UI, providing asynchronous device discovery, connection, and control features.
+    Attributes:
+        _device (DeviceClient): The currently connected device client, or None if not connected.
+        _recorder (DataRecorder): The data recorder associated with the connected device, or None if not initialized
+    """
 
     _device: DeviceClient = None
     _recorder : DataRecorder = None
@@ -30,11 +36,16 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
-        self.ui.searchDevicesButton.clicked.connect(qtinter.asyncslot(self.search_devices))
-        self.ui.devicesComboBox.currentIndexChanged.connect(self.on_device_selected)
-        self.ui.connectButton.clicked.connect(qtinter.asyncslot(self.connect_to_device))
-        self.ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
+        ui = self.ui
+        ui.setupUi(self)
+        ui.searchDevicesButton.clicked.connect(qtinter.asyncslot(self.search_devices))
+        ui.devicesComboBox.currentIndexChanged.connect(self.on_device_selected)
+        ui.connectButton.clicked.connect(qtinter.asyncslot(self.connect_to_device))
+        ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
+        ui.openLoopButton.clicked.connect(qtinter.asyncslot(self.on_pid_mode_button_clicked))
+        ui.closedLoopButton.clicked.connect(qtinter.asyncslot(self.on_pid_mode_button_clicked))
+        ui.moveProgressBar.set_duration(5000)
+        ui.moveProgressBar.set_update_interval(20)
         self.setWindowTitle("PySoWorks")
 
 
@@ -91,6 +102,24 @@ class MainWindow(QMainWindow):
         self.ui.connectButton.setEnabled(True)
 
 
+    async def on_pid_mode_button_clicked(self):
+        """
+        Handles the event when the PID mode button is clicked.
+
+        Determines the desired PID loop mode (closed or open loop) based on the state of the UI button,
+        sends the mode to the device asynchronously, and updates the UI status bar with any errors encountered.
+        """
+        ui = self.ui
+        pid_mode = PidLoopMode.CLOSED_LOOP if ui.closedLoopButton.isChecked() else PidLoopMode.OPEN_LOOP
+        try:
+            await self._device.set_pid_mode(pid_mode)
+            print(f"PID mode set to {pid_mode}.")
+        except Exception as e:
+            print(f"Error setting PID mode: {e}")
+            self.ui.statusbar.showMessage(f"Error setting PID mode: {e}", 2000)
+            return
+
+
     def selected_device(self) -> DetectedDevice:
         """
         Returns the currently selected device from the devicesComboBox.
@@ -99,6 +128,34 @@ class MainWindow(QMainWindow):
         if index == -1:
             return None
         return self.ui.devicesComboBox.itemData(index, role=Qt.UserRole)
+    
+
+    async def initialize_easy_mode_ui(self):
+        """
+        Asynchronously initializes the UI elements for easy mode UI.
+        """
+        dev = self._device
+        ui = self.ui
+        ui.targetPosSpinBox.setValue(await dev.get_setpoint())
+        pid_mode = await dev.get_pid_mode()
+        if pid_mode == PidLoopMode.OPEN_LOOP:
+            ui.openLoopButton.setChecked(True)
+        else:
+            ui.closedLoopButton.setChecked(True)
+
+
+    async def disconnect_from_device(self):
+        """
+        Asynchronously disconnects from the currently connected device.
+        """
+        if self._device is None:
+            print("No device connected.")
+            return
+
+        await self._device.close()
+        self._device = None       
+        self._recorder = None
+            
 
 
     async def connect_to_device(self):
@@ -109,12 +166,11 @@ class MainWindow(QMainWindow):
         self.ui.statusbar.showMessage(f"Connecting to {detected_device.identifier}...", 2000)
         print(f"Connecting to {detected_device.identifier}...")
         try:
-            if self._device is not None:
-                await self._device.close()
-                self._device = None
+            await self.disconnect_from_device()
             self._device = create_device_client(detected_device)
             await self._device.connect()
             self.ui.easyModeGroupBox.setEnabled(True)
+            await self.initialize_easy_mode_ui()
             self.ui.statusbar.showMessage(f"Connected to {detected_device.identifier}.", 2000)
             print(f"Connected to {detected_device.identifier}.")
         except Exception as e:
@@ -144,9 +200,11 @@ class MainWindow(QMainWindow):
             return
         
         self.ui.moveButton.setEnabled(False)
+        self.ui.moveProgressBar.start()
         try:
             recorder = self.recorder()
             await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
+            await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
             await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
             await recorder.set_recording_duration_ms(120)
             await recorder.start_recording()
@@ -155,18 +213,23 @@ class MainWindow(QMainWindow):
             # For example, you might want to send a command to the device to start moving.
             # await self._device.start_move()
             print("Starting move operation...")
-            await self._device.move_to_position(self.ui.targetPosSpinBox.value())
+            await self._device.move(self.ui.targetPosSpinBox.value())
             self.ui.statusbar.showMessage("Move operation started.", 2000)
             await recorder.wait_until_finished()
             await asyncio.sleep(0.5)
             rec_data = await recorder.read_recorded_data_of_channel(0)
-            self.ui.mplCanvasWidget.canvas.plot_data(rec_data)
+            self.ui.mplCanvasWidget.canvas.plot_data(rec_data, QColor(0, 255, 0))
+            rec_data = await recorder.read_recorded_data_of_channel(1)
+            self.ui.mplCanvasWidget.canvas.add_line(rec_data,  QColor('orange'))
+            self.ui.moveProgressBar.stop(success=True)
         except Exception as e:
             self.ui.statusbar.showMessage(f"Error during move operation: {e}", 4000)
+            self.ui.moveProgressBar.reset()
             print(f"Error during move operation: {e}")
             return
         finally:
             self.ui.moveButton.setEnabled(True)
+
             
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QDoubleSpinBox, QGroupBo
     QStatusBar, QVBoxLayout, QWidget)
 
 from mplcanvas import MplWidget
+from timed_progress_bar import TimedProgressBar
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -65,7 +66,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout)
 
         self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(12)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, -1, 0, -1)
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.easyModeGroupBox = QGroupBox(self.centralwidget)
@@ -73,11 +76,11 @@ class Ui_MainWindow(object):
         self.easyModeGroupBox.setEnabled(False)
         self.verticalLayout = QVBoxLayout(self.easyModeGroupBox)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.openLoopButtton = QRadioButton(self.easyModeGroupBox)
-        self.openLoopButtton.setObjectName(u"openLoopButtton")
-        self.openLoopButtton.setChecked(True)
+        self.openLoopButton = QRadioButton(self.easyModeGroupBox)
+        self.openLoopButton.setObjectName(u"openLoopButton")
+        self.openLoopButton.setChecked(True)
 
-        self.verticalLayout.addWidget(self.openLoopButtton)
+        self.verticalLayout.addWidget(self.openLoopButton)
 
         self.closedLoopButton = QRadioButton(self.easyModeGroupBox)
         self.closedLoopButton.setObjectName(u"closedLoopButton")
@@ -111,6 +114,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)
 
+        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayout_4.setSpacing(0)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(-1, 0, -1, -1)
         self.mplCanvasWidget = MplWidget(self.centralwidget)
         self.mplCanvasWidget.setObjectName(u"mplCanvasWidget")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -119,7 +126,18 @@ class Ui_MainWindow(object):
         sizePolicy2.setHeightForWidth(self.mplCanvasWidget.sizePolicy().hasHeightForWidth())
         self.mplCanvasWidget.setSizePolicy(sizePolicy2)
 
-        self.horizontalLayout_2.addWidget(self.mplCanvasWidget)
+        self.verticalLayout_4.addWidget(self.mplCanvasWidget)
+
+        self.moveProgressBar = TimedProgressBar(self.centralwidget)
+        self.moveProgressBar.setObjectName(u"moveProgressBar")
+        self.moveProgressBar.setMaximumSize(QSize(16777215, 5))
+        self.moveProgressBar.setValue(0)
+        self.moveProgressBar.setTextVisible(False)
+
+        self.verticalLayout_4.addWidget(self.moveProgressBar)
+
+
+        self.horizontalLayout_2.addLayout(self.verticalLayout_4)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
@@ -143,7 +161,7 @@ class Ui_MainWindow(object):
         self.searchDevicesButton.setText(QCoreApplication.translate("MainWindow", u"Search Devices ...", None))
         self.connectButton.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
         self.easyModeGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"Easy Mode", None))
-        self.openLoopButtton.setText(QCoreApplication.translate("MainWindow", u"Open Loop", None))
+        self.openLoopButton.setText(QCoreApplication.translate("MainWindow", u"Open Loop", None))
         self.closedLoopButton.setText(QCoreApplication.translate("MainWindow", u"Closed Loop", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Target Position", None))
         self.moveButton.setText(QCoreApplication.translate("MainWindow", u"Start Move", None))

@@ -43,15 +43,21 @@ class MplCanvas(FigureCanvas):
         self.draw()
 
 
-    def plot_data(self, rec_data : DataRecorder.ChannelRecordingData):
+    def plot_data(self, rec_data : DataRecorder.ChannelRecordingData, color : QColor = QColor('orange')):
         """Plots the data and stores the line object for later removal."""
         self.remove_all_lines()  # Remove all previous lines before plotting new data
+        self.add_line(rec_data, color)  # Add the new line to the plot
 
+
+    def add_line(self, rec_data : DataRecorder.ChannelRecordingData, color : QColor = QColor('orange')):
+        """
+        Adds a new line plot to the canvas using the provided channel recording data.
+        """
         # Plot the data and add a label for the legend
         ax = self.axes
         ax.plot(
             rec_data.sample_times_ms, rec_data.values, 
-            linestyle='-', color='orange', label=rec_data.source
+            linestyle='-', color=color.name(), label=rec_data.source
         )
 
         # Autoscale the axes after plotting the data
@@ -90,4 +96,6 @@ class MplWidget(QWidget):
         self.canvas = MplCanvas()
         self.vbl = QVBoxLayout()
         self.vbl.addWidget(self.canvas)
+        self.vbl.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbl)
+        self.setContentsMargins(0, 0, 0, 0)

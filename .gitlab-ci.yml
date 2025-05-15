@@ -1,6 +1,7 @@
+image: python:3.12  # Use Python image globally for all jobs
+
 stages:
   - build
-  - docs
   - pages
 
 variables:
@@ -15,17 +16,20 @@ cache:
     - .cache/pip
     - .cache/pypoetry
 
-before_script:
-  - python --version
-  - pip install pip --upgrade
-  - pip install poetry
-  - poetry install --no-root
+.default_setup: &default_setup
+  before_script:
+    - python --version
+    - pip install pip --upgrade
+    - pip install poetry
+    - poetry lock
+    - poetry install --no-root
 
 # ------------------
 # Build Python wheel
 # ------------------
 build_wheel:
   stage: build
+  <<: *default_setup
   script:
     - poetry build
   artifacts:
@@ -34,28 +38,19 @@ build_wheel:
       - dist/*.tar.gz
     expire_in: 1 week
 
-# ------------------
-# Build Sphinx Docs
-# ------------------
-build_docs:
-  stage: docs
-  script:
-    - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
-  artifacts:
-    paths:
-      - $DOC_BUILD_DIR
-    expire_in: 1 week
-
-# ------------------
-# Deploy to GitLab Pages
-# ------------------
+# -----------------------------
+# Build and Deploy Sphinx Docs
+# -----------------------------
 pages:
   stage: pages
+  <<: *default_setup
   script:
+    - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
     - mkdir -p public
     - cp -r $DOC_BUILD_DIR/* public/
   artifacts:
     paths:
       - public
+    expire_in: 1 week
   only:
     - main  # or your default branch

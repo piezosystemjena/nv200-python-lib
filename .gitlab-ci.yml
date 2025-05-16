@@ -1,7 +1,6 @@
-image: python:3.12  # Use Python image globally for all jobs
+image: python:3.12
 
 stages:
-  #- build
   - pages
 
 variables:
@@ -9,7 +8,6 @@ variables:
   POETRY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pypoetry"
   POETRY_VIRTUALENVS_CREATE: "false"
   POETRY_HOME: "$CI_PROJECT_DIR/.poetry"
-  DOC_BUILD_DIR: "doc/_build/html"
 
 cache:
   paths:
@@ -19,40 +17,19 @@ cache:
 .default_setup: &default_setup
   before_script:
     - python --version
-    - pip install pip --upgrade
+    - pip install --upgrade pip
     - pip install poetry
-    - poetry lock
-    - poetry install
+    # Optional: poetry lock --no-update
+    - poetry install --no-root
 
-# ------------------
-# Build Python wheel
-# ------------------
-#build_wheel:
-#  stage: build
-#  <<: *default_setup
-#  script:
-#    - poetry build
-#  artifacts:
-#    paths:
-#      - dist/*.whl
-#      - dist/*.tar.gz
-#    expire_in: 1 week
-
-# -----------------------------
-# Build and Deploy Sphinx Docs
-# -----------------------------
 pages:
   stage: pages
   <<: *default_setup
   script:
-    - poetry run sphinx-apidoc -o doc/_api/ nv200
-    - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
-    - mkdir -p public
-    - cp -r $DOC_BUILD_DIR/* public/
+    - poetry run sphinx-build -b html doc/ public
   artifacts:
     paths:
       - public
     expire_in: 1 week
   only:
-    - main  # or your default branch
-    
+    - main

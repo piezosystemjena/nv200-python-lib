@@ -22,7 +22,7 @@ cache:
     - pip install pip --upgrade
     - pip install poetry
     - poetry lock
-    - poetry install --no-root
+    - poetry install
 
 # ------------------
 # Build Python wheel

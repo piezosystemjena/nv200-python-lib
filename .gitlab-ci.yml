@@ -49,8 +49,6 @@ pages:
   artifacts:
     paths:
       - public
-    reports:
-      pages: public
     expire_in: 1 week
   only:
     - main

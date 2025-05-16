@@ -1,6 +1,7 @@
 image: python:3.12
 
 stages:
+  - build
   - pages
 
 variables:
@@ -22,6 +23,24 @@ cache:
     # Optional: poetry lock --no-update
     - poetry install --no-root
 
+
+# ------------------
+# Build Python wheel
+# ------------------
+build_wheel:
+  stage: build
+  <<: *default_setup
+  script:
+    - poetry build
+  artifacts:
+    paths:
+      - dist/*.whl
+      - dist/*.tar.gz
+    expire_in: 1 week
+
+# -----------------------------
+# Build and Deploy Sphinx Docs
+# -----------------------------
 pages:
   stage: pages
   <<: *default_setup
@@ -30,6 +49,8 @@ pages:
   artifacts:
     paths:
       - public
+    reports:
+      pages: public
     expire_in: 1 week
   only:
     - main

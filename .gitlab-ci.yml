@@ -1,7 +1,7 @@
 image: python:3.12  # Use Python image globally for all jobs
 
 stages:
-  - build
+  #- build
   - pages
 
 variables:
@@ -22,7 +22,7 @@ cache:
     - pip install pip --upgrade
     - pip install poetry
     - poetry lock
-    - poetry install --no-root
+    - poetry install
 
 # ------------------
 # Build Python wheel

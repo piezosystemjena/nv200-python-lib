@@ -45,6 +45,7 @@ pages:
   stage: pages
   <<: *default_setup
   script:
+    - poetry run sphinx-apidoc -o doc/_api/ nv200
     - poetry run sphinx-build -b html doc/ $DOC_BUILD_DIR
     - mkdir -p public
     - cp -r $DOC_BUILD_DIR/* public/

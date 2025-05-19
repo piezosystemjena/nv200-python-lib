@@ -209,6 +209,12 @@ class TransportType(str, Enum):
     TELNET = "telnet"
     SERIAL = "serial"
 
+    def __str__(self):
+        """
+        Returns a string representation of the transport type, capitalized.
+        """
+        return self.name.capitalize()
+
 
 @dataclass
 class DetectedDevice:
@@ -226,3 +232,8 @@ class DetectedDevice:
     actuator_name: Optional[str] = None
     actuator_serial: Optional[str] = None
     
+    def __str__(self):
+        """
+        Returns a string representation of the transport type, capitalized.
+        """
+        return f"{self.transport} @ {self.identifier} - Actuator: {self.actuator_name} #{self.actuator_serial}"

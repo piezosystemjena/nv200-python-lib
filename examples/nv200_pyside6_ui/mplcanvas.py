@@ -1,7 +1,8 @@
 from matplotlib.backends.backend_qtagg import FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-from PySide6.QtGui import QPalette, QColor
+from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QApplication
 from nv200.data_recorder import DataRecorder
 
@@ -87,6 +88,32 @@ class MplCanvas(FigureCanvas):
         self.draw()
 
 
+
+class LightIconToolbar(NavigationToolbar2QT):
+    def __init__(self, canvas, parent):
+        super().__init__(canvas, parent)
+
+        # Define a mapping from action name to your custom icon file
+        icon_paths = {
+            'home': '/path/to/light-theme-icons/home.png',
+            'back': '/path/to/light-theme-icons/back.png',
+            'forward': '/path/to/light-theme-icons/forward.png',
+            'pan': '/path/to/light-theme-icons/pan.png',
+            'zoom': '/path/to/light-theme-icons/zoom.png',
+            'filesave': '/path/to/light-theme-icons/save.png',
+            'subplots': '/path/to/light-theme-icons/subplots.png',  # Optional if subplot config is shown
+        }
+
+        # Replace icons if paths are valid
+        for action_name, icon_path in icon_paths.items():
+            action = self._actions.get(action_name)
+            print(f"Action: {action_name}, Icon Path: {icon_path}")
+            if action:
+                action.setIcon(QIcon())
+
+
+
+
 class MplWidget(QWidget):
     '''
     Widget promoted and defined in Qt Designer
@@ -94,8 +121,14 @@ class MplWidget(QWidget):
     def __init__(self, parent = None):
         QWidget.__init__(self, parent)
         self.canvas = MplCanvas()
+        # Create the navigation toolbar linked to the canvas
+        self.toolbar = LightIconToolbar(self.canvas, self)
         self.vbl = QVBoxLayout()
+        self.vbl.addWidget(self.toolbar)
         self.vbl.addWidget(self.canvas)
         self.vbl.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbl)
         self.setContentsMargins(0, 0, 0, 0)
+
+
+    

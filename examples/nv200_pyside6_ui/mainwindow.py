@@ -82,7 +82,7 @@ class MainWindow(QMainWindow):
             self.ui.devicesComboBox.clear()
             if devices:
                 for device in devices:
-                    self.ui.devicesComboBox.addItem(f"{device.transport} @ {device.identifier}", device)
+                    self.ui.devicesComboBox.addItem(f"{device}", device)
             else:
                 self.ui.devicesComboBox.addItem("No devices found.")
             
@@ -200,8 +200,9 @@ class MainWindow(QMainWindow):
             print("No device connected.")
             return
         
-        self.ui.moveButton.setEnabled(False)
-        self.ui.moveProgressBar.start()
+        ui = self.ui
+        ui.moveButton.setEnabled(False)
+        ui.moveProgressBar.start()
         try:
             recorder = self.recorder()
             await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
@@ -214,28 +215,29 @@ class MainWindow(QMainWindow):
             # For example, you might want to send a command to the device to start moving.
             # await self._device.start_move()
             print("Starting move operation...")
-            await self._device.move(self.ui.targetPosSpinBox.value())
-            self.ui.statusbar.showMessage("Move operation started.", 2000)
+            await self._device.move(ui.targetPosSpinBox.value())
+            ui.statusbar.showMessage("Move operation started.")
             await recorder.wait_until_finished()
-            await asyncio.sleep(0.5)
+            ui.statusbar.showMessage("Reading recorded data from device...")
             rec_data = await recorder.read_recorded_data_of_channel(0)
-            self.ui.mplCanvasWidget.canvas.plot_data(rec_data, QColor(0, 255, 0))
+            ui.mplCanvasWidget.canvas.plot_data(rec_data, QColor(0, 255, 0))
             rec_data = await recorder.read_recorded_data_of_channel(1)
-            self.ui.mplCanvasWidget.canvas.add_line(rec_data,  QColor('orange'))
-            self.ui.moveProgressBar.stop(success=True)
+            ui.mplCanvasWidget.canvas.add_line(rec_data,  QColor('orange'))
+            ui.moveProgressBar.stop(success=True)
         except Exception as e:
-            self.ui.statusbar.showMessage(f"Error during move operation: {e}", 4000)
-            self.ui.moveProgressBar.reset()
+            ui.statusbar.showMessage(f"Error during move operation: {e}", 4000)
+            ui.moveProgressBar.reset()
             print(f"Error during move operation: {e}")
             return
         finally:
-            self.ui.moveButton.setEnabled(True)
+            ui.moveButton.setEnabled(True)
+            ui.statusbar.clearMessage()
 
             
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle('windowsvista')
+    app.setStyle('fusion')
     app_path = Path(__file__).resolve().parent
     app.setWindowIcon(QIcon(str(app_path) + '/app_icon.ico'))
     apply_stylesheet(app, theme='dark_teal.xml')

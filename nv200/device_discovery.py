@@ -37,6 +37,7 @@ async def enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevic
         return dev_info
     except Exception as e:
         print(f"Error enriching device info for {dev_info.identifier}: {e}")
+        await dev.close()
         return None
 
 

@@ -27,7 +27,7 @@ classifiers = [
 [tool.poetry.urls]
 Homepage = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib"
 Source = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib"
-Bug Tracker = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib/-/issues"
+"Bug Tracker" = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib/-/issues"
 Documentation = "https://nv200-python-lib-e9158a.gitlab.io/"
 
 

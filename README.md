@@ -2,11 +2,58 @@
 
 # NV200 Python Lib
 
-The NV200 Python library allow you to control the NV200 device from piezosystem Jena
-via Python. The library supports the ethernet interface as well as the
-USB interface of the device.
+The NV200 Python library allows you to control the [NV200/D piezo controller](https://www.piezosystem.com/product/nv-200-d-compact-amplifier/) from [piezosystem Jena](https://www.piezosystem.com) via Python.
+The library supports the ethernet interface as well as the USB interface of the device.
 
-## Getting Started
+## 🛠 Features
+
+- ✅ Asynchronous communication via `aioserial` and `telnetlib3`
+- ✅ Simple Pythonic interface for device control
+- ✅ Query & set device position
+- ✅ Supports NV200 data recorder functionality
+- ✅ Easy interface for NV200 waveform generator
+
+
+## ✅ For Users
+
+### 📚 Documentation 
+
+
+Full documentation, including API reference, installation options, and examples:  
+🔗 [https://nv200-python-lib-e9158a.gitlab.io/](https://nv200-python-lib-e9158a.gitlab.io/)
+
+### 📦 Quick Install
+
+If you only want to the use the Python interface, you can install nv200 through pip:
+
+```shell
+    pip3 install nv200
+```
+
+### 🧪 Quick Example
+
+```python
+from nv200.device_types import DetectedDevice
+from nv200.device_discovery import discover_devices
+from nv200.device_interface import DeviceClient, create_device_client
+
+async def main_async():
+    print("Discovering devices...")
+    detected_devices = await discover_devices()
+    
+    if not detected_devices:
+        print("No devices found.")
+        return
+
+    # Create a device client for the first detected device
+    device = create_device_client(detected_devices[0])
+    await client.connect()
+
+if __name__ == "__main__":
+        asyncio.run(main_async())
+```
+
+## 🔧 For Developers
 
 ### Installing poetry
 
@@ -49,7 +96,7 @@ Now, when we run `poetry install` in a project directory, it will create and ins
 > 
 > If you're sure you only have one environment, you can also just use `poetry env remove --all`.
 
-### Installing dependencies
+### 📦 Installing dependencies
 
 #### Required dependencies
 
@@ -66,7 +113,6 @@ This will also install an editable version of the `nv200` library. If you don't 
 poetry install --no-root
 ```
 
-
 #### Optional dependencies
 
 There are a couple of dependencies which are not strictly necessary to run the servers but may be nice to have.
@@ -82,7 +128,9 @@ poetry install --extras "optional-pkg-1 optional-pkg-2"
 poetry install -E optional-pkg-1 -E optional-pkg-2
 ```
 
-## Building the wheel
+## 📦 Building and Publishing
+
+### Building the wheel
 
 To create an `pip` installable wheel for the `nv200` package simply run:
 
@@ -92,9 +140,18 @@ poetry build
 
 This will create a wheel file in the `dist` folder than you can distribute for installation.
 
+### Publishing to TestPypI
+
+```shell
+poetry build
+poetry config repositories.test-pypi https://test.pypi.org/legacy/
+poetry config pypi-token.test-pypi your-token-here
+poetry publish -r test-pypi
+```
+
 ## Building the documentation
 
-The `nv200` package uses the Sphinx documentation tool for building its [HTML documentation](doc/_build/html/index.html). To build the documentation in the `doc` folder there are two ways:
+The `nv200` package uses the Sphinx documentation tool for building its [HTML documentation](https://nv200-python-lib-e9158a.gitlab.io/). To build the documentation in the `doc` folder there are two ways:
 
 ### Use poetry
 
@@ -104,7 +161,7 @@ You can build the documentation with poetry using the following command:
 poetry run sphinx-build -b html doc/ doc/_build/
 ```
 
-### Use Sphinx make
+### Use Make
 
 CD into the `doc` folder and execute `make html`.
 
@@ -114,13 +171,3 @@ make html
 ```
 
 [poetry]: https://python-poetry.org/
-
-
-## Publishing to TestPypI
-
-```shell
-poetry build
-poetry config repositories.test-pypi https://test.pypi.org/legacy/
-poetry config pypi-token.test-pypi your-token-here
-poetry publish -r test-pypi
-```

@@ -27,12 +27,24 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 ## 🚀 Quick Start
 
 ```python
-from nv200 import NV200Controller
+from nv200.device_types import DetectedDevice
+from nv200.device_discovery import discover_devices
+from nv200.device_interface import DeviceClient, create_device_client
 
-device = NV200Controller(port="/dev/ttyUSB0")
-device.move_absolute(position=50.0)
-position = device.query_position()
-print(f"Current position: {position} µm")
+async def main_async():
+    print("Discovering devices...")
+    detected_devices = await discover_devices()
+    
+    if not detected_devices:
+        print("No devices found.")
+        return
+
+    # Create a device client for the first detected device
+    device = create_device_client(detected_devices[0])
+    await client.connect()
+
+if __name__ == "__main__":
+        asyncio.run(main_async())
 ```
 
 > For more advanced usage and async control, see the full [API documentation](https://nv200-python-lib-e9158a.gitlab.io/).
@@ -55,10 +67,10 @@ It includes:
 ## 🛠 Features
 
 - ✅ Asynchronous communication via `aioserial` and `telnetlib3`
-- ✅ Simple Pythonic interface for serial device control
+- ✅ Simple Pythonic interface for device control
 - ✅ Query & set device position
-- ✅ Support for real NV200 serial protocol over USB
-- ✅ Designed for integration into scientific and automation environments
+- ✅ Supports NV200 data recorder functionality
+- ✅ Easy interface for NV200 waveform generator
 
 ---
 
@@ -73,6 +85,10 @@ See the `examples/` folder in the repository for:
 ---
 
 ## 🧪 Development & Testing
+
+### Git Repository
+
+The Git repository is available at: https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib
 
 ### Install dependencies
 

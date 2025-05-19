@@ -2,7 +2,7 @@
 
 **Python library for piezosystem NV200 device control**
 
-[![TestPyPI](https://img.shields.io/badge/publish-test--pypi-blue)](https://test.pypi.org/project/nv200/)
+[![PyPI version](https://img.shields.io/pypi/v/nv200)](https://pypi.org/project/nv200/)
 [![Python Version](https://img.shields.io/pypi/pyversions/nv200)](https://www.python.org/downloads/)
 [![Docs](https://img.shields.io/badge/docs-online-success)](https://nv200-python-lib-e9158a.gitlab.io/)
 
@@ -12,14 +12,8 @@
 
 Install from **TestPyPI**:
 
-```bash
-pip install --index-url https://test.pypi.org/simple/ nv200
-```
-
-If your project depends on packages from the main PyPI index as well, add:
-
-```bash
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple nv200
+```shell
+pip install nv200
 ```
 
 ---

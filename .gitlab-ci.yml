@@ -75,3 +75,18 @@ publish_testpypi:
   only:
     - main
 
+
+# -----------------------------------
+# Publish to PyPI on each new tag
+# -----------------------------------
+publish_pypi:
+  stage: publish
+  image: python:$PYTHON_VERSION
+  dependencies:
+    - build_wheel
+  script:
+    - poetry config repositories.pypi $PYPI_URL
+    - poetry config pypi-token.pypi $PYPI_TOKEN
+    - poetry publish -r pypi
+  only:
+    - tags

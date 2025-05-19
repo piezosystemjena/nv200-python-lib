@@ -89,5 +89,4 @@ publish_pypi:
     - poetry config pypi-token.pypi $PYPI_TOKEN
     - poetry publish -r pypi
   only:
-    - main
-
+    - tags

@@ -90,5 +90,3 @@ publish_pypi:
     - poetry publish -r pypi
   only:
     - tags
-
-  

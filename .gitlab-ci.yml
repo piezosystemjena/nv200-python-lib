@@ -62,6 +62,7 @@ pages:
 # -----------------------------------
 publish_testpypi:
   stage: publish
+  <<: *default_setup
   dependencies:
     - build_wheel
   script:

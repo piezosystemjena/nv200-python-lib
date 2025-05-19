@@ -57,7 +57,9 @@ class MainWindow(QMainWindow):
         self.ui.searchDevicesButton.setEnabled(False)
         self.ui.connectButton.setEnabled(False)
         self.ui.easyModeGroupBox.setEnabled(False)
-        self.ui.statusbar.showMessage("Searching for devices...", 2000)
+        self.ui.statusbar.showMessage("Searching for devices...")
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+
         if self._device is not None:
             await self._device.close()
             self._device = None
@@ -76,8 +78,9 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"Error: {e}")
         finally:
+            QApplication.restoreOverrideCursor()
             self.ui.searchDevicesButton.setEnabled(True)
-            self.ui.statusbar.showMessage("Search completed.", 2000)
+            self.ui.statusbar.clearMessage()
             print("Search completed.")
             self.ui.devicesComboBox.clear()
             if devices:

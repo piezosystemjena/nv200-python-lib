@@ -30,9 +30,15 @@ class Ui_MainWindow(object):
         MainWindow.resize(1072, 729)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout_3 = QVBoxLayout(self.centralwidget)
+        self.verticalLayout_5 = QVBoxLayout(self.centralwidget)
+        self.verticalLayout_5.setSpacing(0)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(9, 9, 9, 9)
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.devicesComboBox = QComboBox(self.centralwidget)
         self.devicesComboBox.setObjectName(u"devicesComboBox")
@@ -128,19 +134,22 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.mplCanvasWidget)
 
+
+        self.horizontalLayout_2.addLayout(self.verticalLayout_4)
+
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
+
+
+        self.verticalLayout_5.addLayout(self.verticalLayout_3)
+
         self.moveProgressBar = TimedProgressBar(self.centralwidget)
         self.moveProgressBar.setObjectName(u"moveProgressBar")
         self.moveProgressBar.setMaximumSize(QSize(16777215, 5))
         self.moveProgressBar.setValue(0)
         self.moveProgressBar.setTextVisible(False)
 
-        self.verticalLayout_4.addWidget(self.moveProgressBar)
-
-
-        self.horizontalLayout_2.addLayout(self.verticalLayout_4)
-
-
-        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_5.addWidget(self.moveProgressBar)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)

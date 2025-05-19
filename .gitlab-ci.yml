@@ -25,6 +25,9 @@ cache:
     - pip install poetry
     # Optional: poetry lock --no-update
     - poetry install --no-root
+    # Install dynamic versioning plugin
+    - pip install "poetry-dynamic-versioning[plugin]"
+    - poetry self add "poetry-dynamic-versioning[plugin]"
 
 
 # ------------------

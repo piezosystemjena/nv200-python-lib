@@ -10,11 +10,11 @@
 # - `include`: Specifies additional files or directories to include in the package distribution. In this case, all files in the "examples" directory and its subdirectories are included.
 [tool.poetry]
 name = "nv200"
-version = "0.1.0"
+version = "0.2.1.dev1"
 description = "Python library for piezosystem NV200 device"
 packages = [{include = "nv200"}]
 authors = ["piezosystemjena GmbH"]
-readme = "README.md"
+readme = "README_PYPI.md"
 include = ["examples/**/*"]
 classifiers = [
     "Programming Language :: Python :: 3.12",
@@ -101,6 +101,9 @@ enable = true
 vcs = "git"
 fix-shallow-repository = true
 bump = true
+#format = "{base}"  # <- This removes the `+local` part
+dirty = false
+metadata = false # <== disables the +commit-hash suffix to avoid warnings when uploading to PyPI
 
 [tool.poetry.scripts]
 # Build the Sphinx documentation using the command "poetry run build-doc".

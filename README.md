@@ -114,3 +114,13 @@ make html
 ```
 
 [poetry]: https://python-poetry.org/
+
+
+## Publishing to TestPypI
+
+```shell
+poetry build
+poetry config repositories.test-pypi https://test.pypi.org/legacy/
+poetry config pypi-token.test-pypi your-token-here
+poetry publish -r test-pypi
+```

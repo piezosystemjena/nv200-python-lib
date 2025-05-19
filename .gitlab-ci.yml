@@ -69,6 +69,7 @@ publish_testpypi:
   dependencies:
     - build_wheel
   script:
+    - echo "TEST_PYPI_TOKEN is: ${TEST_PYPI_TOKEN:0:4}**** (length: ${#TEST_PYPI_TOKEN})"
     - poetry config repositories.test-pypi $TEST_PYPI_URL
     - poetry config pypi-token.test-pypi $TEST_PYPI_TOKEN
     - poetry publish -r test-pypi
@@ -85,6 +86,7 @@ publish_pypi:
   dependencies:
     - build_wheel
   script:
+    - echo "PYPI_TOKEN is: ${PYPI_TOKEN:0:4}**** (length: ${#PYPI_TOKEN})"
     - poetry config repositories.pypi $PYPI_URL
     - poetry config pypi-token.pypi $PYPI_TOKEN
     - poetry publish -r pypi

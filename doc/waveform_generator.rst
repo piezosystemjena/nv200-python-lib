@@ -57,7 +57,7 @@ Step 1: Import Necessary Modules
 
 To get started, you'll need to import the relevant modules. 
 The `WaveformGenerator` class is imported from the `nv200.waveform_generator` module,
-along with other necessary components such as `DeviceClient and TelnetProtocol`.
+along with other necessary components such as `DeviceClient` and `TelnetProtocol`.
 
 .. code-block:: python
 
@@ -146,8 +146,8 @@ Step 7: Wait for the Waveform to Finish
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 After starting the waveform generator, you can wait for the waveform to finish its cycle.
-The `wait_until_finished` method can be used to wait until the waveform generator has 
-completed its operation. It waits until the `is_running``  function returns false.
+The `WaveformGenerator.wait_until_finished` method can be used to wait until the waveform generator has 
+completed its operation. It waits until the `is_running` function returns false.
 
 .. code-block:: python
 
@@ -168,7 +168,7 @@ to the device to free up resources.
 
 API Reference
 ==============
-.. automodule:: waveform_generator
+.. automodule:: nv200.waveform_generator
    :members:
    :show-inheritance:
    :undoc-members:

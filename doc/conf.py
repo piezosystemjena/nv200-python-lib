@@ -15,6 +15,7 @@ import sys
 from sphinx.roles import MenuSelection
 
 sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('../nv200'))
 
 
 # -- Project information -----------------------------------------------------

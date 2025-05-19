@@ -156,15 +156,16 @@ body > div.wy-grid-for-nav > nav > div > div.wy-menu.wy-menu-vertical code {
 
 
 .wy-nav-top {
-    background-color: #0000ff;
+    background-color: #04204c;
     /*border-bottom: 4px solid red;*/
   }
 
 
 .wy-nav-top a {
   /*color: #000;*/
+  font-family: "pathway_extreme_bold";
   font-weight: 200;
-  font-size: 24px;
+  font-size: 32px;
 }
 
 .wy-menu-vertical a {

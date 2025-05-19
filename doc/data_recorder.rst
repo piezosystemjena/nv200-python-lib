@@ -239,7 +239,7 @@ The expected output is a plot showing the recorded data from both channels:
 
 API Reference
 ==============
-.. automodule:: data_recorder
+.. automodule:: nv200.data_recorder
    :members:
    :show-inheritance:
    :undoc-members:

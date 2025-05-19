@@ -81,7 +81,7 @@ publish_testpypi:
 # -----------------------------------
 publish_pypi:
   stage: publish
-  image: python:$PYTHON_VERSION
+  <<: *default_setup
   dependencies:
     - build_wheel
   script:

@@ -13,7 +13,7 @@ name = "nv200"
 version = "0.0.1"
 description = "Python library for piezosystem NV200 device"
 packages = [{include = "nv200"}]
-authors = ["piezosystemjena GmbH"]
+authors = ["piezosystem jena GmbH"]
 readme = "README_PYPI.md"
 include = ["examples/**/*"]
 classifiers = [
@@ -22,6 +22,13 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers"
 ]
+
+
+[tool.poetry.urls]
+Homepage = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib"
+Source = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib"
+Bug Tracker = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib/-/issues"
+Documentation = "https://nv200-python-lib-e9158a.gitlab.io/"
 
 
 # This section defines the dependencies for the project using Poetry.

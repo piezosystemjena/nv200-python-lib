@@ -20,11 +20,12 @@ The library supports the ethernet interface as well as the USB interface of the 
 
 ### 📦 Quick Install
 
-To install the nv200 Python library, simply use pip:
+The NV200 library is available via [PyPI](https://pypi.org/project/nv200/) - the Python Package Index. To install the library, simply use pip:
 
 ```shell
     pip3 install nv200
 ```
+
 
 ### 📚 Documentation 
 
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 
 ## For Developers
 
-This project uses [Poetry](https://python-poetry.org/) for Python dependency management, packaging, and publishing. Poetry provides a modern, streamlined alternative to ``pip` and `virtualenv`, handling everything from installing dependencies to building and publishing the package.
+This project uses [Poetry](https://python-poetry.org/) for Python dependency management, packaging, and publishing. Poetry provides a modern, streamlined alternative to `pip` and `virtualenv`, handling everything from installing dependencies to building and publishing the package.
 
 If you're contributing to the project or running it locally for development, the steps below will help you set up your environment.
 

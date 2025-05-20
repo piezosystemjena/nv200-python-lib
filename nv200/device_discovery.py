@@ -23,7 +23,7 @@ async def enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevic
     try:
         print(f"Enriching device info for {dev_info.identifier}...")
         dev = create_device_client(dev_info)
-        await dev.connect()
+        await dev.connect(auto_adjust_comm_params=False)
         dev_type = await dev.get_device_type()
         print(f"Device type for {dev_info.identifier} is {dev_type}")
         if not dev_type.startswith("NV200/D_NET"):

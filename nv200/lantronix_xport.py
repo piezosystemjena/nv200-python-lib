@@ -321,6 +321,7 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         configuration = await read_data(reader, 4096, "configuration setup")
 
         if f"Flow 0{mode.value}" in configuration:
+            print(f"Flow control already set to {mode.name}")
             return False
 
         await write_data(writer, "1\r", "enter channel 1 config")

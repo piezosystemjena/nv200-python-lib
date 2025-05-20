@@ -95,7 +95,7 @@ class DeviceClient:
             return command, parameters
         
 
-    async def connect(self):
+    async def connect(self, auto_adjust_comm_params: bool = True):
         """
         Establishes a connection using the transport layer.
 
@@ -106,7 +106,7 @@ class DeviceClient:
             Exception: If the connection fails, an exception may be raised
                        depending on the implementation of the transport layer.
         """
-        await self._transport.connect()
+        await self._transport.connect(auto_adjust_comm_params)
 
     async def write(self, cmd: str):
         """
@@ -206,6 +206,10 @@ class DeviceClient:
 
         Returns:
             str: The value as a string.
+
+        Example:
+
+            >>> await self.read_string_value('desc')
         """
         return (await self.read_values(cmd))[param_index]
 

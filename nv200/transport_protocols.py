@@ -39,7 +39,7 @@ class TransportProtocol(ABC):
     Abstract base class representing a transport protocol interface for a device.
     """
     @abstractmethod
-    async def connect(self):
+    async def connect(self, auto_adjust_comm_params: bool = True):
         """
         Establishes an asynchronous connection to the NV200 device.
 
@@ -161,7 +161,7 @@ class TelnetProtocol(TransportProtocol):
         """
         return await xport.configure_flow_control(host)
 
-    async def connect(self):
+    async def connect(self, auto_adjust_comm_params: bool = True):
         """
         Establishes a connection to a Lantronix device.
 
@@ -193,11 +193,11 @@ class TelnetProtocol(TransportProtocol):
             config_changed : bool = False
             await self.__connect_telnetlib()
             # ensure that flow control XON and XOFF chars are forwarded to host
-            if not await self.is_xon_xoff_forwared_to_host():
+            if auto_adjust_comm_params:
                 config_changed = await TelnetProtocol.configure_flow_control_mode(self.__host)
-            # If flow control config changed, we need to reconnect
-            if config_changed:
-                await self.__connect_telnetlib()
+                # If flow control config changed, we need to reconnect
+                if config_changed:
+                    await self.__connect_telnetlib()
         except asyncio.TimeoutError as exc:
             raise RuntimeError(f"Device with host address {self.__host} not found") from exc
     
@@ -325,7 +325,7 @@ class SerialProtocol(TransportProtocol):
         # Filter out Nones
         return [port for port in results if port]
 
-    async def connect(self):
+    async def connect(self, auto_adjust_comm_params: bool = True):
         """
         Establishes an asynchronous connection to the NV200 device using the specified serial port settings.
 

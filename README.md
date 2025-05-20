@@ -1,6 +1,12 @@
 ![logo](doc/_static/piezosystem_logo.svg)
 
+
 # NV200 Python Lib
+
+[![PyPI version](https://img.shields.io/pypi/v/nv200)](https://pypi.org/project/nv200/)
+[![Python Version](https://img.shields.io/pypi/pyversions/nv200)](https://www.python.org/downloads/)
+[![Docs](https://img.shields.io/badge/docs-online-success)](https://nv200-python-lib-e9158a.gitlab.io/)
+
 
 The NV200 Python library allows you to control the [NV200/D piezo controller](https://www.piezosystem.com/product/nv-200-d-compact-amplifier/) from [piezosystem Jena](https://www.piezosystem.com) via Python.
 The library supports the ethernet interface as well as the USB interface of the device.

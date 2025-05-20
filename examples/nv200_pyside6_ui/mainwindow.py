@@ -47,10 +47,10 @@ class MainWindow(QMainWindow):
         ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
         ui.openLoopButton.clicked.connect(qtinter.asyncslot(self.on_pid_mode_button_clicked))
         ui.closedLoopButton.clicked.connect(qtinter.asyncslot(self.on_pid_mode_button_clicked))
+        ui.slewRateSpinBox.editingFinished.connect(qtinter.asyncslot(self.on_slow_rate_editing_finished))
         ui.moveProgressBar.set_duration(5000)
         ui.moveProgressBar.set_update_interval(20)
         self.setWindowTitle("PySoWorks")
-
 
     async def search_devices(self):
         """
@@ -129,6 +129,21 @@ class MainWindow(QMainWindow):
             print(f"Error setting PID mode: {e}")
             self.ui.statusbar.showMessage(f"Error setting PID mode: {e}", 2000)
             return
+        
+    async def on_slow_rate_editing_finished(self):
+        """
+        Handles the event when the slew rate editing is finished.
+
+        Sends the new slew rate to the device asynchronously and updates the UI status bar with any errors encountered.
+        """
+        ui = self.ui
+        try:
+            await self._device.set_slew_rate(ui.slewRateSpinBox.value())
+            print(f"Slew rate set to {ui.slewRateSpinBox.value()}.")
+        except Exception as e:
+            print(f"Error setting slew rate: {e}")
+            self.ui.statusbar.showMessage(f"Error setting slew rate: {e}", 2000)
+            return
 
 
     def selected_device(self) -> DetectedDevice:
@@ -153,6 +168,9 @@ class MainWindow(QMainWindow):
             ui.openLoopButton.setChecked(True)
         else:
             ui.closedLoopButton.setChecked(True)
+        ui.slewRateSpinBox.setValue(await dev.get_slew_rate())
+        ui.setpointFilterCheckBox.setChecked(await dev.is_setpoint_lowpass_filter_enabled())
+        ui.setpointFilterCutoffSpinBox.setValue(await dev.get_setpoint_lowpass_filter_cutoff_freq())
 
 
     async def disconnect_from_device(self):

@@ -32,6 +32,9 @@
     </property>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>12</number>
+      </property>
       <property name="leftMargin">
        <number>9</number>
       </property>
@@ -147,6 +150,58 @@
               <widget class="QPushButton" name="moveButton">
                <property name="text">
                 <string>Start Move</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="setpointParamGroupBox">
+            <property name="title">
+             <string>Setpoint Param.</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QLabel" name="slewRateLabel">
+               <property name="text">
+                <string>Slew Rate</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="slewRateSpinBox">
+               <property name="decimals">
+                <number>7</number>
+               </property>
+               <property name="minimum">
+                <double>0.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>2000.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="setpointFilterCheckBox">
+               <property name="text">
+                <string>LP Filter Cutoff</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="setpointFilterCutoffSpinBox">
+               <property name="suffix">
+                <string> Hz</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>10000</number>
                </property>
               </widget>
              </item>

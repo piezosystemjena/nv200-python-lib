@@ -321,6 +321,44 @@ class DeviceClient:
         await self._transport.write("\r\n")
         response = await self._read_response()
         return self._parse_response(response)[0]
+    
+    async def get_slew_rate(self) -> float:
+        """
+        Retrieves the slew rate of the device.
+        The slew rate is the maximum speed at which the device can move.
+        """
+        return await self.read_float_value('sr')
+    
+    async def set_slew_rate(self, slew_rate: float):
+        """
+        Sets the slew rate of the device.
+        0.0000008 ... 2000.0 %ms⁄ (2000 = disabled)
+        """
+        await self.write(f"sr,{slew_rate}")
+
+    async def enable_setpoint_lowpass_filter(self, enable: bool):
+        """
+        Enables the low-pass filter for the setpoint.
+        """
+        await self.write(f"setlpon,{int(enable)}")
+
+    async def is_setpoint_lowpass_filter_enabled(self) -> bool:
+        """
+        Checks if the low-pass filter for the setpoint is enabled.
+        """
+        return await self.read_int_value('setlpon') == 1
+    
+    async def set_setpoint_lowpass_filter_cutoff_freq(self, frequency: int):
+        """
+        Sets the cutoff frequency of the low-pass filter for the setpoint from 1..10000 Hz.
+        """
+        await self.write(f"setlpf,{frequency}")
+
+    async def get_setpoint_lowpass_filter_cutoff_freq(self) -> int:
+        """
+        Retrieves the cutoff frequency of the low-pass filter for the setpoint.
+        """
+        return await self.read_int_value('setlpf')
 
 
 def create_device_client(detected_device: DetectedDevice) -> DeviceClient:

@@ -15,10 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDoubleSpinBox, QGroupBox,
-    QHBoxLayout, QLabel, QMainWindow, QMenuBar,
-    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox,
+    QGroupBox, QHBoxLayout, QLabel, QMainWindow,
+    QMenuBar, QPushButton, QRadioButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QStatusBar, QVBoxLayout,
+    QWidget)
 
 from mplcanvas import MplWidget
 from timed_progress_bar import TimedProgressBar
@@ -35,6 +36,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setSpacing(12)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(9, 9, 9, 9)
         self.horizontalLayout = QHBoxLayout()
@@ -113,6 +115,39 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.easyModeGroupBox)
 
+        self.setpointParamGroupBox = QGroupBox(self.centralwidget)
+        self.setpointParamGroupBox.setObjectName(u"setpointParamGroupBox")
+        self.verticalLayout_6 = QVBoxLayout(self.setpointParamGroupBox)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.slewRateLabel = QLabel(self.setpointParamGroupBox)
+        self.slewRateLabel.setObjectName(u"slewRateLabel")
+
+        self.verticalLayout_6.addWidget(self.slewRateLabel)
+
+        self.slewRateSpinBox = QDoubleSpinBox(self.setpointParamGroupBox)
+        self.slewRateSpinBox.setObjectName(u"slewRateSpinBox")
+        self.slewRateSpinBox.setDecimals(7)
+        self.slewRateSpinBox.setMinimum(0.000000000000000)
+        self.slewRateSpinBox.setMaximum(2000.000000000000000)
+        self.slewRateSpinBox.setValue(0.000000000000000)
+
+        self.verticalLayout_6.addWidget(self.slewRateSpinBox)
+
+        self.setpointFilterCheckBox = QCheckBox(self.setpointParamGroupBox)
+        self.setpointFilterCheckBox.setObjectName(u"setpointFilterCheckBox")
+
+        self.verticalLayout_6.addWidget(self.setpointFilterCheckBox)
+
+        self.setpointFilterCutoffSpinBox = QSpinBox(self.setpointParamGroupBox)
+        self.setpointFilterCutoffSpinBox.setObjectName(u"setpointFilterCutoffSpinBox")
+        self.setpointFilterCutoffSpinBox.setMinimum(1)
+        self.setpointFilterCutoffSpinBox.setMaximum(10000)
+
+        self.verticalLayout_6.addWidget(self.setpointFilterCutoffSpinBox)
+
+
+        self.verticalLayout_2.addWidget(self.setpointParamGroupBox)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
@@ -174,5 +209,9 @@ class Ui_MainWindow(object):
         self.closedLoopButton.setText(QCoreApplication.translate("MainWindow", u"Closed Loop", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Target Position", None))
         self.moveButton.setText(QCoreApplication.translate("MainWindow", u"Start Move", None))
+        self.setpointParamGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"Setpoint Param.", None))
+        self.slewRateLabel.setText(QCoreApplication.translate("MainWindow", u"Slew Rate", None))
+        self.setpointFilterCheckBox.setText(QCoreApplication.translate("MainWindow", u"LP Filter Cutoff", None))
+        self.setpointFilterCutoffSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" Hz", None))
     # retranslateUi
 

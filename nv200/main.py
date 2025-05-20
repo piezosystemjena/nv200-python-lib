@@ -15,6 +15,7 @@ from nv200.waveform_generator import WaveformGenerator
 from nv200.utils import wait_until
 from nv200.device_types import DetectedDevice
 from nv200.device_discovery import discover_devices
+import logging
 
 
 
@@ -296,8 +297,16 @@ async def test_device_type():
     await client.close()
 
 
+def setup_logging():
+    logging.basicConfig(
+        level=logging.WARN,
+        format='%(asctime)s.%(msecs)03d | %(levelname)-6s | %(name)-25s | %(message)s',
+        datefmt='%H:%M:%S'
+    )
+
 
 if __name__ == "__main__":
+    setup_logging()
     #asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
@@ -305,6 +314,9 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
+    print("Starting device discovery...")
+    logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
+    logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)
     asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
 

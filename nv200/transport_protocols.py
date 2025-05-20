@@ -26,12 +26,17 @@ Example:
 """
 
 import asyncio
+import logging
 from typing import List, Dict
 from abc import ABC, abstractmethod
 import telnetlib3
 import aioserial
 import serial.tools.list_ports
 import nv200.lantronix_xport as xport
+
+
+# Global module locker
+logger = logging.getLogger(__name__)
 
 
 class TransportProtocol(ABC):
@@ -189,9 +194,12 @@ class TelnetProtocol(TransportProtocol):
                 raise RuntimeError("No devices found")
             self.__host = devices[0]['IP']
             self.__MAC = devices[0]['MAC']
+
         try:
+            logger.debug("Connecting to device %s", self.__host)
             config_changed : bool = False
             await self.__connect_telnetlib()
+            logger.debug("Connected to device %s", self.__host)
             # ensure that flow control XON and XOFF chars are forwarded to host
             if auto_adjust_comm_params:
                 config_changed = await TelnetProtocol.configure_flow_control_mode(self.__host)

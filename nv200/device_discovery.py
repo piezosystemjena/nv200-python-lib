@@ -7,10 +7,15 @@ or serial port), and optionally a MAC address.
 """
 
 import asyncio
+import logging
 from typing import List, Optional
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol
 from nv200.device_types import DetectedDevice, TransportType
 from nv200.device_interface import create_device_client
+
+
+# Global module locker
+logger = logging.getLogger(__name__)
 
 
 async def enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevice]:
@@ -21,22 +26,22 @@ async def enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevic
         DetectedDevice: The enriched device information object with actuator name and serial number populated.
     """
     try:
-        print(f"Enriching device info for {dev_info.identifier}...")
+        logger.debug("Enriching device info for %s...", dev_info.identifier)
         dev = create_device_client(dev_info)
         await dev.connect(auto_adjust_comm_params=False)
         dev_type = await dev.get_device_type()
-        print(f"Device type for {dev_info.identifier} is {dev_type}")
+        logger.debug("Device type for %s is %s", dev_info.identifier, dev_type)
         if not dev_type.startswith("NV200/D_NET"):
-            print(f"Device type {dev_type} is not supported.")
+            logger.debug("Device type %s is not supported.", dev_type)
             await dev.close()
             return None
         dev_info.actuator_name = await dev.get_actuator_name()
         dev_info.actuator_serial = await dev.get_actuator_serial_number()
         await dev.close()
-        print(f"Enriching device info for {dev_info.identifier} finished")
+        logger.debug("Enriching device info for %s finished", dev_info.identifier)
         return dev_info
     except Exception as e:
-        print(f"Error enriching device info for {dev_info.identifier}: {e}")
+        logger.debug("Error enriching device info for %s: %s", dev_info.identifier, e)
         await dev.close()
         return None
 
@@ -77,7 +82,7 @@ async def discover_devices(full_info: bool = False) -> List[DetectedDevice]:
 
     if full_info:
         # Enrich each device with detailed info
-        print(f"Enriching {len(devices)} devices with detailed info...")
+        logger.debug("Enriching %d devices with detailed info...", len(devices))
         raw_results = await asyncio.gather(*(enrich_device_info(d) for d in devices))
         devices = [d for d in raw_results if d is not None]
 

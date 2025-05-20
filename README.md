@@ -23,12 +23,11 @@ The library supports the ethernet interface as well as the USB interface of the 
 The NV200 library is available via [PyPI](https://pypi.org/project/nv200/) - the Python Package Index. To install the library, simply use pip:
 
 ```shell
-    pip3 install nv200
+pip install nv200
 ```
 
 
 ### 📚 Documentation 
-
 
 Comprehensive documentation—including API reference, installation options, and usage examples—is available here:
 

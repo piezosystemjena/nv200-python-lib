@@ -5,6 +5,7 @@ from matplotlib.figure import Figure
 from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QApplication
 from nv200.data_recorder import DataRecorder
+from qt_material_icons import MaterialIcon
 
 
 class MplCanvas(FigureCanvas):
@@ -90,26 +91,39 @@ class MplCanvas(FigureCanvas):
 
 
 class LightIconToolbar(NavigationToolbar2QT):
+    _icons_initialized : bool = False
+
     def __init__(self, canvas, parent):
         super().__init__(canvas, parent)
 
-        # Define a mapping from action name to your custom icon file
+    def showEvent(self, event):
+        super().showEvent(event)
+        if not self._icons_initialized:
+            self._initialize_icons()
+            self._icons_initialized = True
+
+    def _initialize_icons(self):
         icon_paths = {
-            'home': '/path/to/light-theme-icons/home.png',
-            'back': '/path/to/light-theme-icons/back.png',
-            'forward': '/path/to/light-theme-icons/forward.png',
-            'pan': '/path/to/light-theme-icons/pan.png',
-            'zoom': '/path/to/light-theme-icons/zoom.png',
-            'filesave': '/path/to/light-theme-icons/save.png',
-            'subplots': '/path/to/light-theme-icons/subplots.png',  # Optional if subplot config is shown
+            'home': 'home',
+            'back': 'arrow_back',
+            'forward': 'arrow_forward',
+            'pan': 'pan_tool',
+            'zoom': 'zoom_in',
+            'save_figure': 'file_save',
+            'configure_subplots': 'line_axis',
+            'edit_parameters': 'tune',
         }
 
-        # Replace icons if paths are valid
+        print(self._actions)
+   
+
         for action_name, icon_path in icon_paths.items():
             action = self._actions.get(action_name)
-            print(f"Action: {action_name}, Icon Path: {icon_path}")
             if action:
-                action.setIcon(QIcon())
+                print(f"Setting icon for action: {action_name}")
+                icon = MaterialIcon(icon_path, size=24)
+                icon.set_color(self.palette().color(QPalette.ColorRole.WindowText))
+                action.setIcon(icon)
 
 
 

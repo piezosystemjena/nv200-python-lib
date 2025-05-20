@@ -786,6 +786,21 @@ typing = ["typing-extensions ; python_version < \"3.10\""]
 xmp = ["defusedxml"]
 
 [[package]]
+name = "pockets"
+version = "0.9.1"
+description = "A collection of helpful Python tools!"
+optional = false
+python-versions = "*"
+groups = ["dev"]
+files = [
+    {file = "pockets-0.9.1-py2.py3-none-any.whl", hash = "sha256:68597934193c08a08eb2bf6a1d85593f627c22f9b065cc727a4f03f669d96d86"},
+    {file = "pockets-0.9.1.tar.gz", hash = "sha256:9320f1a3c6f7a9133fe3b571f283bcf3353cd70249025ae8d618e40e9f7e92b3"},
+]
+
+[package.dependencies]
+six = ">=1.5.2"
+
+[[package]]
 name = "psutil"
 version = "7.0.0"
 description = "Cross-platform lib for process and system monitoring in Python.  NOTE: the syntax of this script MUST be kept compatible with Python 2.7."
@@ -925,6 +940,21 @@ files = [
 
 [package.dependencies]
 six = ">=1.5"
+
+[[package]]
+name = "qt-material-icons"
+version = "0.2.0"
+description = "Material Symbols by Google for Qt using PySide"
+optional = false
+python-versions = ">=3.6"
+groups = ["dev"]
+files = [
+    {file = "qt_material_icons-0.2.0-py3-none-any.whl", hash = "sha256:bdc14af68e7576b1b0847eb37b53fd68962cab9e2469c8a22a06a860b8deb604"},
+    {file = "qt_material_icons-0.2.0.tar.gz", hash = "sha256:4711082ceb3a91743df00a0f366df3c94adbd149bdfa73973e6a8dd0ac5c8603"},
+]
+
+[package.extras]
+dev = ["PySide6", "black", "python-semantic-release"]
 
 [[package]]
 name = "qtinter"
@@ -1230,6 +1260,22 @@ files = [
 test = ["flake8", "mypy", "pytest"]
 
 [[package]]
+name = "sphinxcontrib-napoleon"
+version = "0.7"
+description = "Sphinx \"napoleon\" extension."
+optional = false
+python-versions = "*"
+groups = ["dev"]
+files = [
+    {file = "sphinxcontrib-napoleon-0.7.tar.gz", hash = "sha256:407382beed396e9f2d7f3043fad6afda95719204a1e1a231ac865f40abcbfcf8"},
+    {file = "sphinxcontrib_napoleon-0.7-py2.py3-none-any.whl", hash = "sha256:711e41a3974bdf110a484aec4c1a556799eb0b3f3b897521a018ad7e2db13fef"},
+]
+
+[package.dependencies]
+pockets = ">=0.3"
+six = ">=1.5.2"
+
+[[package]]
 name = "sphinxcontrib-qthelp"
 version = "2.0.0"
 description = "sphinxcontrib-qthelp is a sphinx extension which outputs QtHelp documents"
@@ -1323,4 +1369,4 @@ test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12,<3.14"
-content-hash = "539d44195381c0637438bd3d58aec8c1e10ce8402b24123dbc50860831bd3146"
+content-hash = "70136ed28421ba07b2a6bda06fd801c704cb977a0e165bad5804a63f8238a5b9"

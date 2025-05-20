@@ -133,7 +133,7 @@ html:not([data-theme='dark']) .rst-content h6 {
   color: #04204c;
 }
 
-/* Use "Brand light blue" for ToC heading */
+/* Use "Brand light green" for ToC heading */
 body > div.wy-grid-for-nav > nav > div > div.wy-menu.wy-menu-vertical > p > span {
     color: #68B27e !important;
 }
@@ -143,7 +143,7 @@ body > div.wy-grid-for-nav > nav > div > div.wy-menu.wy-menu-vertical code {
   font-size: 11.5px;
 }
 
-/* Use "Brand dark blue" for top of sidebar */
+/* Use "Brand dark green" for top of sidebar */
 .wy-side-nav-search {
     background-color: #298043 !important;
 }
@@ -156,7 +156,7 @@ body > div.wy-grid-for-nav > nav > div > div.wy-menu.wy-menu-vertical code {
 
 
 .wy-nav-top {
-    background-color: #04204c;
+    background-color: #298043;
     /*border-bottom: 4px solid red;*/
   }
 

@@ -39,7 +39,8 @@ extensions = [
    'sphinx_rtd_dark_mode',
    'sphinx_fontawesome',
    'sphinx_togglebutton',
-   'sphinx.ext.autosectionlabel' 
+   'sphinx.ext.autosectionlabel', 
+   'sphinx.ext.napoleon'
 ]
 
 # user starts in, light mode
@@ -51,6 +52,13 @@ toc_object_entries_show_parents = "hide"
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
+
+
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = True
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 
 # Set a bullet character for :menuselection: role

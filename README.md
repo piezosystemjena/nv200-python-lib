@@ -5,30 +5,34 @@
 The NV200 Python library allows you to control the [NV200/D piezo controller](https://www.piezosystem.com/product/nv-200-d-compact-amplifier/) from [piezosystem Jena](https://www.piezosystem.com) via Python.
 The library supports the ethernet interface as well as the USB interface of the device.
 
-## 🛠 Features
+![NV200](doc/images/nv200.jpg)
 
-- ✅ Asynchronous communication via `aioserial` and `telnetlib3`
-- ✅ Simple Pythonic interface for device control
-- ✅ Query & set device position
-- ✅ Supports NV200 data recorder functionality
-- ✅ Easy interface for NV200 waveform generator
+## Features
 
-
-## ✅ For Users
-
-### 📚 Documentation 
+- Asynchronous communication via `aioserial` and `telnetlib3`
+- Simple Pythonic interface for device control
+- Query & set device position
+- Supports NV200 data recorder functionality
+- Easy interface for NV200 waveform generator
 
 
-Full documentation, including API reference, installation options, and examples:  
-🔗 [https://nv200-python-lib-e9158a.gitlab.io/](https://nv200-python-lib-e9158a.gitlab.io/)
+## For Users
 
 ### 📦 Quick Install
 
-If you only want to the use the Python interface, you can install nv200 through pip:
+To install the nv200 Python library, simply use pip:
 
 ```shell
     pip3 install nv200
 ```
+
+### 📚 Documentation 
+
+
+Comprehensive documentation—including API reference, installation options, and usage examples—is available here:
+
+[https://nv200-python-lib-e9158a.gitlab.io/](https://nv200-python-lib-e9158a.gitlab.io/)
+
 
 ### 🧪 Quick Example
 
@@ -53,13 +57,16 @@ if __name__ == "__main__":
         asyncio.run(main_async())
 ```
 
-## 🔧 For Developers
+## For Developers
 
-### Installing poetry
+This project uses [Poetry](https://python-poetry.org/) for Python dependency management, packaging, and publishing. Poetry provides a modern, streamlined alternative to ``pip` and `virtualenv`, handling everything from installing dependencies to building and publishing the package.
+
+If you're contributing to the project or running it locally for development, the steps below will help you set up your environment.
+
+### 📥 Installing poetry
 
 If necessary, install [poetry] according to the official [installation instructions](https://python-poetry.org/docs/#installation) 
-(it's recommended to use [pipx](https://github.com/pypa/pipx) to install poetry in its own isolated environment but still have
-it available as a system wide command).
+(it's recommended to use [pipx](https://github.com/pypa/pipx) to install poetry in its own isolated environment but still have it available as a system wide command).
 
 ```shell
 pip install pipx
@@ -68,18 +75,18 @@ pipx ensurepath
 pipx install poetry
 ```
 
-### Setting up poetry to install dependencies in an in-project virtualenv (optional)
+### ⚙️ Configuring Poetry to Use an In-Project Virtual Environment (Optional)
 
-By default, poetry will create virtualenv in the `{cache-dir}/virtualenvs` directory 
-(which for Windows is located in `%USERPROFILE%/AppData/Local/poetry/Cache`).
-But it might be nicer to have the virtualenv close to the project source code in a 
-`.venv` folder in the project root directory.
+By default, Poetry creates virtual environments in `{cache-dir}/virtualenvs`
+(Windows: `%USERPROFILE%/AppData/Local/pypoetry/Cache/virtualenvs`).
 
-This can be achieved by setting the `virtualenvs.in-project` config option of poetry to `true`:
+You can instead configure Poetry to create the virtual environment inside the project directory by setting:
 
 ```shell
 poetry config virtualenvs.in-project true
 ```
+
+This will place the virtualenv in a `.venv` folder at the project root the next time you run `poetry install`.
 
 Now, when we run `poetry install` in a project directory, it will create and install all dependencies 
 (and the project itself) into an in-project virtualenv located in `{project-root}/.venv`.
@@ -100,14 +107,13 @@ Now, when we run `poetry install` in a project directory, it will create and ins
 
 #### Required dependencies
 
-Run `poetry install` in this directory to install all dependencies necessary for running the 
-examples:
+To install all required dependencies and set up the project in editable mode:
 
 ```shell
 poetry install
 ```
 
-This will also install an editable version of the `nv200` library. If you don't want this, you can add the `--no-root` flag, which will then only install the dependencies, but not the `nv200` package itself:
+To skip installing the project itself (i.e. install only dependencies):
 
 ```shell
 poetry install --no-root
@@ -115,32 +121,37 @@ poetry install --no-root
 
 #### Optional dependencies
 
-There are a couple of dependencies which are not strictly necessary to run the servers but may be nice to have.
+Some extra features are provided via optional dependencies.
 
-You can install them all by running `poetry install` with the `--all-extras` flag or you can choose which extras to install by only specifying them using the `-E`/`--extras` flag
+- Install all **optional packages**:
 
 ```shell
-# installs all optional packages
 poetry install --all-extras
-
-# installs only selected optional packages
-poetry install --extras "optional-pkg-1 optional-pkg-2"
-poetry install -E optional-pkg-1 -E optional-pkg-2
 ```
 
-## 📦 Building and Publishing
+- Install **specific extras**:
 
-### Building the wheel
+```shell
+poetry install --extras "extra1 extra2"
+# or
+poetry install -E extra1 -E extra2
+```
 
-To create an `pip` installable wheel for the `nv200` package simply run:
+## Building and Publishing
+
+### Build the Wheel
+
+To build a distributable `.whl` package:
 
 ```shell
 poetry build
 ```
 
-This will create a wheel file in the `dist` folder than you can distribute for installation.
+This creates a `.whl` and `.tar.gz` file in the `dist/` directory.
 
-### Publishing to TestPypI
+### Publishing 
+
+#### To TestPyPI
 
 ```shell
 poetry build
@@ -149,25 +160,28 @@ poetry config pypi-token.test-pypi your-token-here
 poetry publish -r test-pypi
 ```
 
+#### To PyPI
+
+```shell
+poetry build
+poetry config repositories.pypi https://upload.pypi.org/legacy/
+poetry config pypi-token.pypi your-token-here
+poetry publish -r test-pypi
+```
+
 ## Building the documentation
 
-The `nv200` package uses the Sphinx documentation tool for building its [HTML documentation](https://nv200-python-lib-e9158a.gitlab.io/). To build the documentation in the `doc` folder there are two ways:
+Documentation is generated using [Sphinx](https://www.sphinx-doc.org/), located in the `doc/` folder.
 
-### Use poetry
-
-You can build the documentation with poetry using the following command:
+### With Poetry
 
 ```shell
 poetry run sphinx-build -b html doc/ doc/_build/
 ```
 
-### Use Make
-
-CD into the `doc` folder and execute `make html`.
+### With Make
 
 ```shell
 cd doc
 make html
 ```
-
-[poetry]: https://python-poetry.org/

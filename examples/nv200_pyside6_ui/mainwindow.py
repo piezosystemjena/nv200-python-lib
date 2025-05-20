@@ -1,6 +1,7 @@
 # This Python file uses the following encoding: utf-8
 import sys
 import asyncio
+import logging
 
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt, QDir, QCoreApplication
@@ -21,6 +22,7 @@ from pathlib import Path
 #     pyside6-uic form.ui -o ui_form.py, or
 #     pyside2-uic form.ui -o ui_form.py
 from ui_mainwindow import Ui_MainWindow
+
 
 
 class MainWindow(QMainWindow):
@@ -54,10 +56,11 @@ class MainWindow(QMainWindow):
         """
         Asynchronously searches for available devices and updates the UI accordingly.
         """
-        self.ui.searchDevicesButton.setEnabled(False)
-        self.ui.connectButton.setEnabled(False)
-        self.ui.easyModeGroupBox.setEnabled(False)
-        self.ui.statusbar.showMessage("Searching for devices...")
+        ui = self.ui
+        ui.searchDevicesButton.setEnabled(False)
+        ui.connectButton.setEnabled(False)
+        ui.easyModeGroupBox.setEnabled(False)
+        ui.statusbar.showMessage("Searching for devices...")
         QApplication.setOverrideCursor(Qt.WaitCursor)
 
         if self._device is not None:
@@ -65,6 +68,7 @@ class MainWindow(QMainWindow):
             self._device = None
         
         print("Searching...")
+        ui.moveProgressBar.start(5000, "search_devices")
         try:
             print("Discovering devices...")
             devices = await discover_devices(full_info=True)    
@@ -75,7 +79,9 @@ class MainWindow(QMainWindow):
                 print(f"Found {len(devices)} device(s):")
                 for device in devices:
                     print(device)
+            ui.moveProgressBar.stop(success=True, context="search_devices")
         except Exception as e:
+            ui.moveProgressBar.reset()
             print(f"Error: {e}")
         finally:
             QApplication.restoreOverrideCursor()
@@ -88,6 +94,7 @@ class MainWindow(QMainWindow):
                     self.ui.devicesComboBox.addItem(f"{device}", device)
             else:
                 self.ui.devicesComboBox.addItem("No devices found.")
+            
             
     def on_device_selected(self, index):
         """
@@ -205,7 +212,7 @@ class MainWindow(QMainWindow):
         
         ui = self.ui
         ui.moveButton.setEnabled(False)
-        ui.moveProgressBar.start()
+        ui.moveProgressBar.start(5000, "start_move")
         try:
             recorder = self.recorder()
             await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
@@ -226,7 +233,7 @@ class MainWindow(QMainWindow):
             ui.mplCanvasWidget.canvas.plot_data(rec_data, QColor(0, 255, 0))
             rec_data = await recorder.read_recorded_data_of_channel(1)
             ui.mplCanvasWidget.canvas.add_line(rec_data,  QColor('orange'))
-            ui.moveProgressBar.stop(success=True)
+            ui.moveProgressBar.stop(success=True, context="start_move")
         except Exception as e:
             ui.statusbar.showMessage(f"Error during move operation: {e}", 4000)
             ui.moveProgressBar.reset()
@@ -236,9 +243,23 @@ class MainWindow(QMainWindow):
             ui.moveButton.setEnabled(True)
             ui.statusbar.clearMessage()
 
-            
+ 
+def setup_logging():
+    """
+    Configures the logging settings for the application.
+    """
+    logging.basicConfig(
+        level=logging.WARN,
+        format='%(asctime)s.%(msecs)03d | %(levelname)-6s | %(name)-25s | %(message)s',
+        datefmt='%H:%M:%S'
+    )     
+
+    logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
+    logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)         
+
 
 if __name__ == "__main__":
+    setup_logging()
     app = QApplication(sys.argv)
     app.setStyle('fusion')
     app_path = Path(__file__).resolve().parent

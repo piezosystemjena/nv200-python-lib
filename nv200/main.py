@@ -16,8 +16,11 @@ from nv200.utils import wait_until
 from nv200.device_types import DetectedDevice
 from nv200.device_discovery import discover_devices
 import logging
+from functools import wraps
 
 
+# Global module locker
+logger = logging.getLogger(__name__)
 
 
 async def basic_tests(client: DeviceClient):
@@ -260,6 +263,9 @@ async def test_discover_devices():
     """
     Asynchronously discovers available devices and prints their information.
     """
+    logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
+    logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
+    
     print("Discovering devices...")
     devices = await discover_devices(full_info=True)
     
@@ -286,18 +292,23 @@ async def test_device_client_interface():
 
 
 async def test_device_type():
-    transport = TelnetProtocol(host="192.168.10.180")
+    logger.setLevel(logging.DEBUG)
+
+    transport = TelnetProtocol(host="192.168.10.152")
     client = DeviceClient(transport)
     await client.connect()
     #print("Actor: ", await client.get_actuator_name())
     #print("Serial: ", await client.get_acctuator_serial_number())
     #print("Actuator type: ", await client.get_actuator_description())
-    print("Reading param...")
-    await client.read_string_value('uwe')
+    logger.debug("Reading param...")
+    logger.debug(await client.get_device_type())
     await client.close()
 
 
 def setup_logging():
+    """
+    Configures the logging settings for the application.
+    """
     logging.basicConfig(
         level=logging.WARN,
         format='%(asctime)s.%(msecs)03d | %(levelname)-6s | %(name)-25s | %(message)s',
@@ -314,9 +325,6 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    print("Starting device discovery...")
-    logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
-    logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)
-    asyncio.run(test_discover_devices())
-    #asyncio.run(test_device_type())
+    #asyncio.run(test_discover_devices())
+    asyncio.run(test_device_type())
 

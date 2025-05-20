@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QProgressBar
 from PySide6.QtCore import QTimer, QElapsedTimer
+from typing import Dict
 
 
 class TimedProgressBar(QProgressBar):
@@ -12,6 +13,7 @@ class TimedProgressBar(QProgressBar):
     - Visibility toggling while retaining layout space.
     - Ability to measure actual elapsed time and update duration accordingly (if desired).
     """
+    _elapsed_times: Dict[str, int] = {}
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -29,7 +31,7 @@ class TimedProgressBar(QProgressBar):
         self._step_value = 100 / self._steps
         self._current_value = 0
 
-    def start(self):
+    def start(self, default_duration: int = 5000, context: str = ""):
         """
         Start the progress bar from 0. Resets any existing state.
         Starts the internal timer and begins tracking elapsed time.
@@ -38,6 +40,12 @@ class TimedProgressBar(QProgressBar):
         self._current_value = 0
         self.setValue(0)
         #self.setVisible(True)  # Initially hidden
+        self.duration = self._elapsed_times.get(context, default_duration)
+
+        # Recalculate steps and increment
+        self._steps = self.duration / self.update_interval
+        self._step_value = 100 / self._steps
+
         self._timer.start(self.update_interval)
         self._elapsed_timer.start()
 
@@ -50,7 +58,7 @@ class TimedProgressBar(QProgressBar):
         self._current_value = 0
         super().reset()
 
-    def stop(self, success: bool):
+    def stop(self, success: bool, context: str = ""):
         """
         Stop the progress bar and optionally update duration if operation was successful.
 
@@ -62,7 +70,7 @@ class TimedProgressBar(QProgressBar):
         if success and self._elapsed_timer.isValid():
             elapsed = self._elapsed_timer.elapsed()
             if elapsed > 0:
-                self.set_duration(elapsed)
+                self._elapsed_times[context] = elapsed
 
         self._timer.stop()
         self._current_value = 0

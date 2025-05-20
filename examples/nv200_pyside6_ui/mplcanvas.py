@@ -120,7 +120,6 @@ class LightIconToolbar(NavigationToolbar2QT):
         for action_name, icon_path in icon_paths.items():
             action = self._actions.get(action_name)
             if action:
-                print(f"Setting icon for action: {action_name}")
                 icon = MaterialIcon(icon_path, size=24)
                 icon.set_color(self.palette().color(QPalette.ColorRole.WindowText))
                 action.setIcon(icon)

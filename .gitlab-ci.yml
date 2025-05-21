@@ -30,19 +30,19 @@ cache:
     - poetry self add "poetry-dynamic-versioning[plugin]"
 
 
-# ------------------
-# Build Python wheel
-# ------------------
-build_wheel:
-  stage: build
-  <<: *default_setup
-  script:
-    - poetry build
-  artifacts:
-    paths:
-      - dist/*.whl
-      - dist/*.tar.gz
-    expire_in: 1 week
+# # ------------------
+# # Build Python wheel
+# # ------------------
+# build_wheel:
+#   stage: build
+#   <<: *default_setup
+#   script:
+#     - poetry build
+#   artifacts:
+#     paths:
+#       - dist/*.whl
+#       - dist/*.tar.gz
+#     expire_in: 1 week
 
 # -----------------------------
 # Build and Deploy Sphinx Docs
@@ -66,12 +66,12 @@ pages:
 publish_testpypi:
   stage: publish
   <<: *default_setup
-  dependencies:
-    - build_wheel
+  # dependencies:
+  #   - build_wheel
   script:
     - poetry config repositories.test-pypi $TEST_PYPI_URL
     - poetry config pypi-token.test-pypi $TEST_PYPI_TOKEN
-    - poetry publish -r test-pypi
+    - poetry publish -r test-pypi --build
   only:
     - main
 
@@ -82,11 +82,11 @@ publish_testpypi:
 publish_pypi:
   stage: publish
   <<: *default_setup
-  dependencies:
-    - build_wheel
+  # dependencies:
+  #   - build_wheel
   script:
     - poetry config repositories.pypi $PYPI_URL
     - poetry config pypi-token.pypi $PYPI_TOKEN
-    - poetry publish -r pypi
+    - poetry publish -r pypi --build
   only:
     - tags

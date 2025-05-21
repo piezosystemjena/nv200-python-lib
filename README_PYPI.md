@@ -10,7 +10,7 @@
 
 ## 📦 Installation
 
-Install from **TestPyPI**:
+Install from **PyPI**:
 
 ```shell
 pip install nv200
@@ -88,12 +88,6 @@ The Git repository is available at: https://gitlab.com/gitlabuser0xFFFF/nv200_py
 
 ```bash
 poetry install
-```
-
-### Run tests
-
-```bash
-poetry run pytest
 ```
 
 ### Build documentation locally

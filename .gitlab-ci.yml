@@ -30,20 +30,6 @@ cache:
     - poetry self add "poetry-dynamic-versioning[plugin]"
 
 
-# # ------------------
-# # Build Python wheel
-# # ------------------
-# build_wheel:
-#   stage: build
-#   <<: *default_setup
-#   script:
-#     - poetry build
-#   artifacts:
-#     paths:
-#       - dist/*.whl
-#       - dist/*.tar.gz
-#     expire_in: 1 week
-
 # -----------------------------
 # Build and Deploy Sphinx Docs
 # -----------------------------

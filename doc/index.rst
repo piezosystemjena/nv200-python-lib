@@ -6,6 +6,7 @@ NV200 Python Library documentation
    :caption: Contents:
 
    intro.rst
+   installation.rst
    connecting.rst
    data_recorder.rst
    waveform_generator.rst

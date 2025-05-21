@@ -1,10 +1,47 @@
 Connecting to device
 ==================================
 
-This section contains guides for how to use the NV200 library.
+Quick Start
+----------------------------
 
-The NV200 library provides an asynchronous API using :code:`async` and :code:`await`.
-That means all functions are non blocking using coroutines.
+
+This example demonstrates how to discover NV200 devices connected via USB or Ethernet
+and connect to the first detected device using the asynchronous API.
+
+.. code-block:: python
+
+    import asyncio
+    from nv200.device_discovery import discover_devices
+    from nv200.device_interface import create_device_client
+
+    async def main():
+        print("Discovering devices...")
+        devices = await discover_devices()
+
+        if not devices:
+            print("No devices found.")
+            return
+
+        print(f"Found {len(devices)} device(s). Connecting to the first device...")
+        client = create_device_client(devices[0])
+        await client.connect()
+        print("Connected to device.")
+
+        # Perform your device operations here
+
+        await client.close()
+        print("Connection closed.")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+
+.. admonition:: Important
+   :class: note
+
+    All device interactions are asynchronous. Make sure to use the `await` keyword
+    when calling any asynchronous function, such as `discover_devices()` or
+    `client.connect()`. These functions do not block the main thread and allow for
+    concurrent operations within an asynchronous application.
 
 
 Discovering Devices
@@ -37,7 +74,7 @@ The recommended way to connect to a NV200 device is to use the :func:`create_dev
 function from the :mod:`nv200.device_interface` module. So you just need to:
 
 #. Discover devices using the :func:`discover_devices <nv200.device_discovery.discover_devices>` function.
-#. Pass the :class:`DeviceProtocol <nv200.device_types.DetectedDevice>` object to the :func:`create_device_client <nv200.device_interface.create_device_client>` function.
+#. Pass the :class:`DetectedDevice <nv200.device_types.DetectedDevice>` object to the :func:`create_device_client <nv200.device_interface.create_device_client>` function.
 
 .. code-block:: python
 

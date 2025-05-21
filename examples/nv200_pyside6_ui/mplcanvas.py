@@ -114,9 +114,6 @@ class LightIconToolbar(NavigationToolbar2QT):
             'edit_parameters': 'tune',
         }
 
-        print(self._actions)
-   
-
         for action_name, icon_path in icon_paths.items():
             action = self._actions.get(action_name)
             if action:

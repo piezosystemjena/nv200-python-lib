@@ -100,17 +100,54 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.label)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(6)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, -1, -1)
         self.targetPosSpinBox = QDoubleSpinBox(self.easyModeGroupBox)
         self.targetPosSpinBox.setObjectName(u"targetPosSpinBox")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.targetPosSpinBox.sizePolicy().hasHeightForWidth())
+        self.targetPosSpinBox.setSizePolicy(sizePolicy2)
         self.targetPosSpinBox.setDecimals(3)
         self.targetPosSpinBox.setMaximum(1000.000000000000000)
 
-        self.verticalLayout.addWidget(self.targetPosSpinBox)
+        self.horizontalLayout_3.addWidget(self.targetPosSpinBox)
 
         self.moveButton = QPushButton(self.easyModeGroupBox)
         self.moveButton.setObjectName(u"moveButton")
+        sizePolicy1.setHeightForWidth(self.moveButton.sizePolicy().hasHeightForWidth())
+        self.moveButton.setSizePolicy(sizePolicy1)
 
-        self.verticalLayout.addWidget(self.moveButton)
+        self.horizontalLayout_3.addWidget(self.moveButton)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(6)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalLayout_4.setContentsMargins(0, 0, -1, -1)
+        self.targetPosSpinBox_2 = QDoubleSpinBox(self.easyModeGroupBox)
+        self.targetPosSpinBox_2.setObjectName(u"targetPosSpinBox_2")
+        sizePolicy2.setHeightForWidth(self.targetPosSpinBox_2.sizePolicy().hasHeightForWidth())
+        self.targetPosSpinBox_2.setSizePolicy(sizePolicy2)
+        self.targetPosSpinBox_2.setDecimals(3)
+        self.targetPosSpinBox_2.setMaximum(1000.000000000000000)
+
+        self.horizontalLayout_4.addWidget(self.targetPosSpinBox_2)
+
+        self.moveButton_2 = QPushButton(self.easyModeGroupBox)
+        self.moveButton_2.setObjectName(u"moveButton_2")
+        sizePolicy1.setHeightForWidth(self.moveButton_2.sizePolicy().hasHeightForWidth())
+        self.moveButton_2.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_4.addWidget(self.moveButton_2)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
 
 
         self.verticalLayout_2.addWidget(self.easyModeGroupBox)
@@ -161,11 +198,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setContentsMargins(-1, 0, -1, -1)
         self.mplCanvasWidget = MplWidget(self.centralwidget)
         self.mplCanvasWidget.setObjectName(u"mplCanvasWidget")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.mplCanvasWidget.sizePolicy().hasHeightForWidth())
-        self.mplCanvasWidget.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.mplCanvasWidget.sizePolicy().hasHeightForWidth())
+        self.mplCanvasWidget.setSizePolicy(sizePolicy3)
 
         self.verticalLayout_4.addWidget(self.mplCanvasWidget)
 
@@ -207,8 +244,9 @@ class Ui_MainWindow(object):
         self.easyModeGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"Easy Mode", None))
         self.openLoopButton.setText(QCoreApplication.translate("MainWindow", u"Open Loop", None))
         self.closedLoopButton.setText(QCoreApplication.translate("MainWindow", u"Closed Loop", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Target Position", None))
-        self.moveButton.setText(QCoreApplication.translate("MainWindow", u"Start Move", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Target Positions", None))
+        self.moveButton.setText("")
+        self.moveButton_2.setText("")
         self.setpointParamGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"Setpoint Param.", None))
         self.slewRateLabel.setText(QCoreApplication.translate("MainWindow", u"Slew Rate", None))
         self.setpointFilterCheckBox.setText(QCoreApplication.translate("MainWindow", u"LP Filter Cutoff", None))

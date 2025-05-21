@@ -2,9 +2,10 @@
 import sys
 import asyncio
 import logging
+import os
 
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import Qt, QDir, QCoreApplication
+from PySide6.QtCore import Qt, QDir, QCoreApplication, QSize
 from PySide6.QtGui import QColor, QIcon
 import qtinter
 from matplotlib.backends.backend_qtagg import FigureCanvas
@@ -15,6 +16,7 @@ from nv200.device_interface import DeviceClient, create_device_client
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
 from qt_material import apply_stylesheet
 from pathlib import Path
+from qt_material_icons import MaterialIcon
 
 
 # Important:
@@ -22,6 +24,12 @@ from pathlib import Path
 #     pyside6-uic form.ui -o ui_form.py, or
 #     pyside2-uic form.ui -o ui_form.py
 from ui_mainwindow import Ui_MainWindow
+
+
+def get_icon(icon_name: str, size: int = 24, fill: bool = True) -> MaterialIcon:
+    icon = MaterialIcon(icon_name, size=size, fill=fill)
+    icon.set_color(QColor.fromString(os.environ.get("QTMATERIAL_PRIMARYCOLOR", "")))
+    return icon
 
 
 
@@ -44,12 +52,23 @@ class MainWindow(QMainWindow):
         ui.searchDevicesButton.clicked.connect(qtinter.asyncslot(self.search_devices))
         ui.devicesComboBox.currentIndexChanged.connect(self.on_device_selected)
         ui.connectButton.clicked.connect(qtinter.asyncslot(self.connect_to_device))
-        ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
         ui.openLoopButton.clicked.connect(qtinter.asyncslot(self.on_pid_mode_button_clicked))
         ui.closedLoopButton.clicked.connect(qtinter.asyncslot(self.on_pid_mode_button_clicked))
         ui.slewRateSpinBox.editingFinished.connect(qtinter.asyncslot(self.on_slow_rate_editing_finished))
         ui.moveProgressBar.set_duration(5000)
         ui.moveProgressBar.set_update_interval(20)
+
+        ui.moveButton.setIcon(get_icon("play_arrow", size=24, fill=True))
+        ui.moveButton.setStyleSheet("QPushButton { padding: 0px }")
+        ui.moveButton.setIconSize(QSize(24, 24))
+        ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
+        ui.moveButton.setProperty("target_edit", ui.targetPosSpinBox)
+
+        ui.moveButton_2.setIcon(ui.moveButton.icon())
+        ui.moveButton_2.setStyleSheet("QPushButton { padding: 0px }")
+        ui.moveButton_2.setIconSize(ui.moveButton.iconSize())
+        ui.moveButton_2.clicked.connect(qtinter.asyncslot(self.start_move))
+        ui.moveButton_2.setProperty("target_edit", ui.targetPosSpinBox_2)
         self.setWindowTitle("PySoWorks")
 
     async def search_devices(self):
@@ -229,7 +248,7 @@ class MainWindow(QMainWindow):
             return
         
         ui = self.ui
-        ui.moveButton.setEnabled(False)
+        ui.easyModeGroupBox.setEnabled(False)
         ui.moveProgressBar.start(5000, "start_move")
         try:
             recorder = self.recorder()
@@ -258,7 +277,7 @@ class MainWindow(QMainWindow):
             print(f"Error during move operation: {e}")
             return
         finally:
-            ui.moveButton.setEnabled(True)
+            ui.easyModeGroupBox.setEnabled(True)
             ui.statusbar.clearMessage()
 
  

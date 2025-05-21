@@ -116,7 +116,10 @@ class DeviceClient:
         to the transport layer.
 
         Args:
-            cmd (str): The command string to be sent. No carriage return is needed.  
+            cmd (str): The command string to be sent. No carriage return is needed. 
+
+        Example:
+            >>> await device_client.write('set,80') 
         """
         print(f"Writing command: {cmd}")
         await self._transport.write(cmd + "\r")
@@ -129,6 +132,9 @@ class DeviceClient:
     async def read(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
         Sends a command to the transport layer and reads the response asynchronously.
+        For example, if you write `cl` to the device, it will return `cl,0` or `cl,1`
+        depending on the current PID mode. That means, this function returns the
+        complete string ``cl,0\\r\\n`` or ``cl,1\\r\\n`` including the carriage return and line feed.
 
         Args:
             cmd (str): The command string to be sent.
@@ -136,6 +142,11 @@ class DeviceClient:
 
         Returns:
             str: The response received from the transport layer.
+
+        Example: 
+            >>> response = await device_client.read('cl')
+            >>> print(response)
+            b'cl,1\\r\\n'
         """
         await self._transport.write(cmd + "\r")
         return await self._read_response(timeout)
@@ -144,12 +155,20 @@ class DeviceClient:
     async def read_response(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> tuple:
         """
         Asynchronously sends a command to read values and parses the response.
+        For example, if you write the command `set`, it will return `set,80.000` if
+        the setpoint is 80.000. The response is parsed into a tuple containing the command `set`
+        and a list of parameter strings, in this case `[80.000]`.
 
         Args:
             cmd (str): The command string to be sent.
 
         Returns:
-            tuple: A tuple containing the command (str) and a list of parameters (list of str)..
+            tuple: A tuple containing the command (str) and a list of parameters (list of str).
+        
+        Example:
+            >>> response = await device_client.read_response('set')
+            >>> print(response)
+            ('set', ['80.000'])
         """
         response = await self.read(cmd, timeout)
         return self._parse_response(response)
@@ -157,20 +176,31 @@ class DeviceClient:
 
     async def read_values(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> list[str]:
         """
-        Asynchronously sends a command and returns the values as a list of strings
+        Asynchronously sends a command and returns the values as a list of strings.
+        For example, if you write the command `'recout,0,0,1`, to read the first data recorder
+        value, it will return `['0', '0', '0.029']` if the first data recorder value is `0.029`.
+        So it returns a list of 3 strings.
 
         Args:
             cmd (str): The command string to be sent.
 
         Returns:
             A list of values (list of str)..
+
+        Example:
+            >>> values = await device_client.read_values('recout,0,0,1')
+            >>> print(values)
+            ['0', '0', '0.029']
         """
         return (await self.read_response(cmd, timeout))[1]
 
 
     async def read_float_value(self, cmd: str, param_index : int = 0) -> float:
         """
-        Asynchronously reads a single float value from device
+        Asynchronously reads a single float value from device.
+        For example, if you write the command `set`, to read the current setpoint,
+        it will return `80.000` if the setpoint is 80.000. The response is parsed into a
+        float value. Use this function for command that returns a single floating point value.
 
         Args:
             cmd (str): The command string to be sent.
@@ -178,13 +208,20 @@ class DeviceClient:
 
         Returns:
             float: The value as a floating-point number.
+
+        Example:
+            >>> value = await device_client.read_float_value('set')
+            >>> print(value)
+            80.000
         """
         return float((await self.read_values(cmd))[param_index])
 
 
     async def read_int_value(self, cmd: str, param_index : int = 0) -> int:
         """
-        Asynchronously reads a single float value from device
+        Asynchronously reads a single float value from device.
+        For example, if you write `cl` to the device, the response will be `0` or `1`
+        depending on the current PID mode. The response is parsed into an integer value.
 
         Args:
             cmd (str): The command string to be sent.
@@ -192,13 +229,21 @@ class DeviceClient:
 
         Returns:
             float: The value as a floating-point number.
+
+        Example:
+            >>> value = await device_client.read_int_value('cl')
+            >>> print(value)
+            1
         """
         return int((await self.read_values(cmd))[param_index])
     
 
     async def read_string_value(self, cmd: str, param_index : int = 0) -> str:
         """
-        Asynchronously reads a single string value from device
+        Asynchronously reads a single string value from device.
+        For example, if you write the command `desc`, the device will return
+        the name of the actuator i.e. `TRITOR100SG` . The response is parsed 
+        into a string value.
 
         Args:
             cmd (str): The command string to be sent.
@@ -208,8 +253,9 @@ class DeviceClient:
             str: The value as a string.
 
         Example:
-
             >>> await self.read_string_value('desc')
+            >>> print(value)
+            TRITOR100SG
         """
         return (await self.read_values(cmd))[param_index]
 

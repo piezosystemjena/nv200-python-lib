@@ -315,6 +315,30 @@ def setup_logging():
         datefmt='%H:%M:%S'
     )
 
+async def read_write_tests():
+    """
+    Test some generic low-level read/write methods
+    """
+    transport = SerialProtocol(port="COM3")
+    device_client = DeviceClient(transport)
+    await device_client.connect()
+    print(f"Connected to device on serial port: {transport.port}")
+    await device_client.write('cl,0')
+    response = await device_client.read('cl')
+    print(response)
+    response = await device_client.read_response('set')
+    print(response)
+    response = await device_client.read_values('recout,0,0,1')
+    print(response)
+    response = await device_client.read_float_value('set')
+    print(response)
+    response = await device_client.read_int_value('cl')
+    print(response)
+    response = await device_client.read_string_value('desc')
+    print(response)
+    await device_client.close()
+
+
 
 if __name__ == "__main__":
     setup_logging()
@@ -326,5 +350,6 @@ if __name__ == "__main__":
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
     #asyncio.run(test_discover_devices())
-    asyncio.run(test_device_type())
+    #asyncio.run(test_device_type())
+    asyncio.run(read_write_tests())
 

@@ -11,6 +11,7 @@ Classes:
 import asyncio
 from enum import Enum, IntFlag
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
+from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 from nv200.device_types import (
     PidLoopMode,
     ErrorCode,
@@ -33,6 +34,16 @@ class DeviceClient:
     
     def __init__(self, transport: TransportProtocol):
         self._transport = transport
+        self._lock = _ReentrantAsyncLock()
+
+    @property
+    def lock(self) -> _ReentrantAsyncLock:
+        """
+        Lock that can be used by external code to synchronize access to the device.
+
+        Use with `async with client.lock:` to group operations atomically.
+        """
+        return self._lock
 
     @property
     def serial_protocol(self) -> SerialProtocol:
@@ -380,7 +391,8 @@ class DeviceClient:
         Sets the slew rate of the device.
         0.0000008 ... 2000.0 %ms⁄ (2000 = disabled)
         """
-        await self.write(f"sr,{slew_rate}")
+        async with self.lock:
+            await self.write(f"sr,{slew_rate}")
 
     async def enable_setpoint_lowpass_filter(self, enable: bool):
         """

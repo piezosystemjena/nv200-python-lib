@@ -10,7 +10,7 @@ import asyncio
 import logging
 from typing import List, Optional
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol
-from nv200.device_types import DetectedDevice, TransportType
+from nv200.device_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_interface import create_device_client
 
 
@@ -46,41 +46,55 @@ async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevi
         return None
 
 
-async def discover_devices(full_info: bool = False) -> List[DetectedDevice]:
+async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) -> List[DetectedDevice]:
     """
-    Asynchronously discovers available devices over Telnet and Serial protocols.
-    This function concurrently scans for devices using both Telnet and Serial discovery methods.
-    It returns a list of DetectedDevice objects, each representing a found device. If `full_info`
-    is set to True, the function will further enrich each detected device with additional
-    detailed information and will discard any devices that are not of type NV200/D_NET.
+    Asynchronously discovers available devices over Telnet and Serial protocols, with optional enrichment.
+
+    The discovery process can be customized using flags to enable or disable:
+      - Telnet discovery - DiscoverFlags.DETECT_ETHERNET
+      - Serial discovery - DiscoverFlags.DETECT_SERIAL
+      - Device info enrichment - DiscoverFlags.ENRICH
+
     Args:
-        full_info (bool, optional): If True, enriches each detected device with detailed info.
-            Defaults to False.
+        flags (DiscoverFlags): Bitwise combination of discovery options. Defaults to ALL_INTERFACES.
+
     Returns:
-        List[DetectedDevice]: A list of detected and optionally enriched device objects.
+        List[DetectedDevice]: A list of detected and optionally enriched devices.
+
+    Note:
+        Enrichment may involve additional communication with each device and take more time.
     """
-    # Run both discovery coroutines concurrently
-    telnet_task = TelnetProtocol.discover_devices()
-    serial_task = SerialProtocol.discover_devices()
-    
-    telnet_devices, serial_ports = await asyncio.gather(telnet_task, serial_task)
-
     devices: List[DetectedDevice] = []
+    tasks = []
 
-    for dev in telnet_devices:
-        devices.append(DetectedDevice(
-            transport=TransportType.TELNET,
-            identifier=dev["IP"],
-            mac=dev.get("MAC")
-        ))
+    if flags & DiscoverFlags.DETECT_ETHERNET:
+        tasks.append(TelnetProtocol.discover_devices())
+    else:
+        tasks.append(asyncio.sleep(0, result=[]))  # Placeholder for parallel await
 
-    for port in serial_ports:
-        devices.append(DetectedDevice(
-            transport=TransportType.SERIAL,
-            identifier=port
-        ))
+    if flags & DiscoverFlags.DETECT_SERIAL:
+        tasks.append(SerialProtocol.discover_devices())
+    else:
+        tasks.append(asyncio.sleep(0, result=[]))  # Placeholder for parallel await
 
-    if full_info:
+    telnet_devices, serial_ports = await asyncio.gather(*tasks)
+
+    if flags & DiscoverFlags.DETECT_ETHERNET:
+        for dev in telnet_devices:
+            devices.append(DetectedDevice(
+                transport=TransportType.TELNET,
+                identifier=dev["IP"],
+                mac=dev.get("MAC")
+            ))
+
+    if flags & DiscoverFlags.DETECT_SERIAL:
+        for port in serial_ports:
+            devices.append(DetectedDevice(
+                transport=TransportType.SERIAL,
+                identifier=port
+            ))
+
+    if flags & DiscoverFlags.ENRICH:
         # Enrich each device with detailed info
         logger.debug("Enriching %d devices with detailed info...", len(devices))
         raw_results = await asyncio.gather(*(_enrich_device_info(d) for d in devices))

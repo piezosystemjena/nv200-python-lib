@@ -24,7 +24,7 @@ Functionality:
 - Structures device detection information for network or serial connections.
 """    
 
-from enum import Enum, IntFlag
+from enum import Enum, IntFlag, Flag, auto
 from dataclasses import dataclass
 from typing import Optional
 
@@ -237,3 +237,22 @@ class DetectedDevice:
         Returns a string representation of the transport type, capitalized.
         """
         return f"{self.transport} @ {self.identifier} - Actuator: {self.actuator_name} #{self.actuator_serial}"
+    
+
+class DiscoverFlags(Flag):
+    """
+    Flags to configure the behavior of the device discovery process.
+
+    These flags can be combined using the bitwise OR (`|`) operator.
+
+    Attributes:
+        DETECT_SERIAL: Enables detection of serial devices.
+        DETECT_ETHERNET: Enables detection of ethernet devices.
+        ENRICH: Enriches discovered devices with additional information.
+        ALL: Enables all discovery actions (serial, ethernet, and enrichment).
+    """
+    DETECT_SERIAL: "DiscoverFlags" = auto()
+    DETECT_ETHERNET: "DiscoverFlags" = auto()
+    ENRICH: "DiscoverFlags" = auto()
+    ALL_INTERFACES: "DiscoverFlags" = DETECT_SERIAL | DETECT_ETHERNET
+    ALL: "DiscoverFlags" = ALL_INTERFACES | ENRICH

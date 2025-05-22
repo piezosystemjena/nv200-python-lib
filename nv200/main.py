@@ -13,7 +13,7 @@ from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
 from nv200.utils import wait_until
-from nv200.device_types import DetectedDevice
+from nv200.device_types import DetectedDevice, DiscoverFlags
 from nv200.device_discovery import discover_devices
 import logging
 from functools import wraps
@@ -268,7 +268,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(full_info=True)
+    devices = await discover_devices(DiscoverFlags.ALL)
     
     if not devices:
         print("No devices found.")

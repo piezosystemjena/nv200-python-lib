@@ -9,7 +9,7 @@ from syncwrap import run as _run
 
 device_discovery = device_discovery
 
-def discover_devices(full_info):
+def discover_devices(flags):
     """
     Discovers available devices over Telnet and Serial protocols.
     This function concurrently scans for devices using both Telnet and Serial discovery methods.
@@ -24,4 +24,4 @@ def discover_devices(full_info):
     Returns:
         List[DetectedDevice]: A list of detected and optionally enriched device objects.
     """
-    return _run(device_discovery.discover_devices(full_info))
+    return _run(device_discovery.discover_devices(flags))

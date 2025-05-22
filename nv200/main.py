@@ -17,7 +17,6 @@ from nv200.device_types import DetectedDevice, DiscoverFlags
 from nv200.device_discovery import discover_devices
 import logging
 from functools import wraps
-import syncwrap
 
 
 # Global module locker
@@ -268,7 +267,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.ALL)
+    devices = await discover_devices(DiscoverFlags.DETECT_SERIAL | DiscoverFlags.EXTENDED_INFO)
     
     if not devices:
         print("No devices found.")
@@ -343,7 +342,7 @@ async def read_write_tests():
 
 if __name__ == "__main__":
     setup_logging()
-    #asyncio.run(test_discover_devices())
+    asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())

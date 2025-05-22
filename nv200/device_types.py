@@ -248,11 +248,11 @@ class DiscoverFlags(Flag):
     Attributes:
         DETECT_SERIAL: Enables detection of serial devices.
         DETECT_ETHERNET: Enables detection of ethernet devices.
-        ENRICH: Enriches discovered devices with additional information.
+        EXTENDED_INFO: Enriches discovered devices with additional information such as actuator name and actuator serial number.
         ALL: Enables all discovery actions (serial, ethernet, and enrichment).
     """
     DETECT_SERIAL: "DiscoverFlags" = auto()
     DETECT_ETHERNET: "DiscoverFlags" = auto()
-    ENRICH: "DiscoverFlags" = auto()
+    EXTENDED_INFO: "DiscoverFlags" = auto()
     ALL_INTERFACES: "DiscoverFlags" = DETECT_SERIAL | DETECT_ETHERNET
-    ALL: "DiscoverFlags" = ALL_INTERFACES | ENRICH
+    ALL: "DiscoverFlags" = ALL_INTERFACES | EXTENDED_INFO

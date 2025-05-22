@@ -49,11 +49,11 @@ async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevi
 async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) -> List[DetectedDevice]:
     """
     Asynchronously discovers available devices over Telnet and Serial protocols, with optional enrichment.
-
     The discovery process can be customized using flags to enable or disable:
-      - Telnet discovery - DiscoverFlags.DETECT_ETHERNET
-      - Serial discovery - DiscoverFlags.DETECT_SERIAL
-      - Device info enrichment - DiscoverFlags.ENRICH
+
+      - `DiscoverFlags.DETECT_ETHERNET` - detect devices connected via Ethernet
+      - `DiscoverFlags.DETECT_SERIAL` - detect devices connected via Serial
+      - `DiscoverFlags.EXTENDED_INFO` - enrich device information with additional details such as actuator name and actuator serial number
 
     Args:
         flags (DiscoverFlags): Bitwise combination of discovery options. Defaults to ALL_INTERFACES.
@@ -94,7 +94,7 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
                 identifier=port
             ))
 
-    if flags & DiscoverFlags.ENRICH:
+    if flags & DiscoverFlags.EXTENDED_INFO:
         # Enrich each device with detailed info
         logger.debug("Enriching %d devices with detailed info...", len(devices))
         raw_results = await asyncio.gather(*(_enrich_device_info(d) for d in devices))

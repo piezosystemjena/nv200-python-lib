@@ -13,10 +13,11 @@ and connect to the first detected device using the asynchronous API.
     import asyncio
     from nv200.device_discovery import discover_devices
     from nv200.device_interface import create_device_client
+    from nv200.device_types import DetectedDevice, DiscoverFlags
 
     async def main():
         print("Discovering devices...")
-        devices = await discover_devices()
+        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES)
 
         if not devices:
             print("No devices found.")
@@ -51,13 +52,23 @@ The `nv200.device_discovery` module provides a way to automatically discover all
 connected by USB or Ethernet. You just need to call the `discover_devices` function and it will return 
 a list of all detected devices.
 
+The `discover_devices` function accepts a `DiscoverFlags` parameter to specify the type of devices to discover.
+
+- Telnet discovery - `DiscoverFlags.DETECT_ETHERNET`
+- Serial discovery - `DiscoverFlags.DETECT_SERIAL`
+- Device info enrichment - `DiscoverFlags.ENRICH`
+
+The `DiscoverFlags.ENRICH` flag is used to enrich the device information with additional details such as the
+name and serial number of the actuator connected to the amplifier. This is useful for identifying the device
+and its capabilities.
+
 .. code-block:: python
 
     from nv200.device_discovery import discover_devices
 
     async def main_async():
         print("Discovering devices...")
-        devices = await discover_devices()
+        devices = await discover_devices(DiscoverFlags.DETECT_SERIAL)
         
         if not devices:
             print("No devices found.")
@@ -65,6 +76,14 @@ a list of all detected devices.
             print(f"Found {len(devices)} device(s):")
             for device in devices:
                 print(device)
+
+In this example, the output could look like this:
+
+.. code-block:: text
+
+    Discovering devices...
+    Found 1 device(s):
+    Serial @ COM3 - Actuator: TRITOR100SG  #85533
 
 
 Connecting To a Device

@@ -17,6 +17,7 @@ from nv200.device_types import DetectedDevice
 from nv200.device_discovery import discover_devices
 import logging
 from functools import wraps
+import syncwrap
 
 
 # Global module locker
@@ -351,5 +352,5 @@ if __name__ == "__main__":
     #asyncio.run(configure_xport())
     #asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
-    asyncio.run(read_write_tests())
+    #asyncio.run(read_write_tests())
 

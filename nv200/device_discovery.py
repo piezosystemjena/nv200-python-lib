@@ -18,7 +18,7 @@ from nv200.device_interface import create_device_client
 logger = logging.getLogger(__name__)
 
 
-async def enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevice]:
+async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevice]:
     """
     Asynchronously enriches a DetectedDevice object with additional actuator information.
 
@@ -83,7 +83,7 @@ async def discover_devices(full_info: bool = False) -> List[DetectedDevice]:
     if full_info:
         # Enrich each device with detailed info
         logger.debug("Enriching %d devices with detailed info...", len(devices))
-        raw_results = await asyncio.gather(*(enrich_device_info(d) for d in devices))
+        raw_results = await asyncio.gather(*(_enrich_device_info(d) for d in devices))
         devices = [d for d in raw_results if d is not None]
 
     return devices

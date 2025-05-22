@@ -7,6 +7,7 @@ import math
 from typing import List
 from enum import Enum
 from collections import namedtuple
+from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 
 
 class DataRecorderSource(Enum):
@@ -269,11 +270,13 @@ class DataRecorder:
         Raises:
             Any exceptions raised by the underlying device communication methods.
         """
-        recsrc = DataRecorderSource.from_value(await self._dev.read_int_value(cmd = f"recsrc,{channel}", param_index = 1))
-        number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
-        if self._sample_rate is None:
-            stride = await self._dev.read_int_value("recstr")
-            self._sample_rate = self.NV200_RECORDER_SAMPLE_RATE_HZ / stride
+        async with self._dev.lock:
+            recsrc = DataRecorderSource.from_value(await self._dev.read_int_value(cmd = f"recsrc,{channel}", param_index = 1))
+            number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
+            if self._sample_rate is None:
+                stride = await self._dev.read_int_value("recstr")
+                self._sample_rate = self.NV200_RECORDER_SAMPLE_RATE_HZ / stride
+
         numbers = []
         for num in number_strings[1:]:  # starts from the second element
             numbers.append(float(num))

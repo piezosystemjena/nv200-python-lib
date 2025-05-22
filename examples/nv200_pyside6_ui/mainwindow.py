@@ -5,8 +5,9 @@ import logging
 import os
 
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import Qt, QDir, QCoreApplication, QSize
+from PySide6.QtCore import Qt, QDir, QCoreApplication, QSize, QObject
 from PySide6.QtGui import QColor, QIcon
+from PySide6.QtWidgets import QDoubleSpinBox
 import qtinter
 from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.figure import Figure
@@ -61,14 +62,14 @@ class MainWindow(QMainWindow):
         ui.moveButton.setIcon(get_icon("play_arrow", size=24, fill=True))
         ui.moveButton.setStyleSheet("QPushButton { padding: 0px }")
         ui.moveButton.setIconSize(QSize(24, 24))
-        ui.moveButton.clicked.connect(qtinter.asyncslot(self.start_move))
-        ui.moveButton.setProperty("target_edit", ui.targetPosSpinBox)
+        ui.moveButton.clicked.connect(self.start_move)
+        ui.moveButton.setProperty("value_edit", ui.targetPosSpinBox)
 
         ui.moveButton_2.setIcon(ui.moveButton.icon())
         ui.moveButton_2.setStyleSheet("QPushButton { padding: 0px }")
         ui.moveButton_2.setIconSize(ui.moveButton.iconSize())
-        ui.moveButton_2.clicked.connect(qtinter.asyncslot(self.start_move))
-        ui.moveButton_2.setProperty("target_edit", ui.targetPosSpinBox_2)
+        ui.moveButton_2.clicked.connect(self.start_move)
+        ui.moveButton_2.setProperty("value_edit", ui.targetPosSpinBox_2)
         self.setWindowTitle("PySoWorks")
 
     async def search_devices(self):
@@ -237,9 +238,16 @@ class MainWindow(QMainWindow):
         if self._recorder is None:
             self._recorder = DataRecorder(self._device)
         return self._recorder	
+    
+
+    def start_move(self):
+        """
+        Initiates an asynchronous move operation by creating a new asyncio task.
+        """
+        asyncio.create_task(self.start_move_async(self.sender()))
 
 
-    async def start_move(self):
+    async def start_move_async(self, sender: QObject):
         """
         Asynchronously starts the move operation.
         """
@@ -247,6 +255,7 @@ class MainWindow(QMainWindow):
             print("No device connected.")
             return
         
+        spinbox : QDoubleSpinBox = sender.property("value_edit")
         ui = self.ui
         ui.easyModeGroupBox.setEnabled(False)
         ui.moveProgressBar.start(5000, "start_move")
@@ -262,7 +271,7 @@ class MainWindow(QMainWindow):
             # For example, you might want to send a command to the device to start moving.
             # await self._device.start_move()
             print("Starting move operation...")
-            await self._device.move(ui.targetPosSpinBox.value())
+            await self._device.move(spinbox.value())
             ui.statusbar.showMessage("Move operation started.")
             await recorder.wait_until_finished()
             ui.statusbar.showMessage("Reading recorded data from device...")

@@ -3,7 +3,17 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/). 
 
-## [1.0.0] - 2025-05-22
+## [1.0.2] - 2025-05-23
+
+### Added
+
+- **data_recorder_example.py** Shows how to use the `data_recorder` module
+
+### Fixed
+
+- renamed `device_types.py` to `shared_types.py` to make the name more clear
+
+## [1.0.1] - 2025-05-22
 
 - First stable version with core functionality.
 

@@ -13,7 +13,7 @@ from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
 from nv200.utils import wait_until
-from nv200.device_types import DetectedDevice, DiscoverFlags
+from nv200.shared_types import DetectedDevice, DiscoverFlags
 from nv200.device_discovery import discover_devices
 import logging
 from functools import wraps

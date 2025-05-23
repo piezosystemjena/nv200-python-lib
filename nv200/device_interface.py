@@ -12,7 +12,7 @@ import asyncio
 from enum import Enum, IntFlag
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
-from nv200.device_types import (
+from nv200.shared_types import (
     PidLoopMode,
     ErrorCode,
     StatusFlags,

@@ -43,7 +43,7 @@ Comprehensive documentation—including API reference, installation options, and
 ### 🧪 Quick Example
 
 ```python
-from nv200.device_types import DetectedDevice
+from nv200.shared_types import DetectedDevice
 from nv200.device_discovery import discover_devices
 from nv200.device_interface import DeviceClient, create_device_client
 

@@ -21,7 +21,7 @@ pip install nv200
 ## 🚀 Quick Start
 
 ```python
-from nv200.device_types import DetectedDevice
+from nv200.shared_types import DetectedDevice
 from nv200.device_discovery import discover_devices
 from nv200.device_interface import DeviceClient, create_device_client
 

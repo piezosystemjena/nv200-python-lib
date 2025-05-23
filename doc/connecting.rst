@@ -13,7 +13,7 @@ and connect to the first detected device using the asynchronous API.
     import asyncio
     from nv200.device_discovery import discover_devices
     from nv200.device_interface import create_device_client
-    from nv200.device_types import DetectedDevice, DiscoverFlags
+    from nv200.shared_types import DetectedDevice, DiscoverFlags
 
     async def main():
         print("Discovering devices...")
@@ -93,11 +93,11 @@ The recommended way to connect to a NV200 device is to use the :func:`create_dev
 function from the :mod:`nv200.device_interface` module. So you just need to:
 
 #. Discover devices using the :func:`discover_devices <nv200.device_discovery.discover_devices>` function.
-#. Pass the :class:`DetectedDevice <nv200.device_types.DetectedDevice>` object to the :func:`create_device_client <nv200.device_interface.create_device_client>` function.
+#. Pass the :class:`DetectedDevice <nv200.shared_types.DetectedDevice>` object to the :func:`create_device_client <nv200.device_interface.create_device_client>` function.
 
 .. code-block:: python
 
-    from nv200.device_types import DetectedDevice
+    from nv200.shared_types import DetectedDevice
     from nv200.device_discovery import discover_devices
     from nv200.device_interface import DeviceClient, create_device_client
 

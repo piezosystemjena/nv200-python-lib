@@ -10,7 +10,7 @@ import asyncio
 import logging
 from typing import List, Optional
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol
-from nv200.device_types import DetectedDevice, TransportType, DiscoverFlags
+from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_interface import create_device_client
 
 

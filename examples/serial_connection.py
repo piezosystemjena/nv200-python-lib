@@ -4,6 +4,13 @@ from nv200.transport_protocols import SerialProtocol
 
 
 async def serial_port_auto_detect():
+    """
+    Automatically detects and connects to a device over a serial port.
+
+    This asynchronous function initializes a serial transport protocol, creates a device client,
+    and attempts to connect to the device. Upon successful connection, it prints the serial port
+    used for the connection and then closes the client.
+    """
     transport = SerialProtocol()
     client = DeviceClient(transport)
     await client.connect()

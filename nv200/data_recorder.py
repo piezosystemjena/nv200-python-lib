@@ -75,30 +75,28 @@ class RecorderAutoStartMode(Enum):
     Enum representing the autostart mode of the data recorder.
     """
     OFF = 0
-    "Autostart off"
+    "Autostart off - start recording manually with recorder start command"
 
     START_ON_SET_COMMAND = 1
     "Start on set-command"
     
     START_ON_WAVEFORM_GEN_RUN = 2
-    "Start on gwsaveform generator run"
-
-    def __init__(self, mode: int):
-        self.mode = mode
+    "Start on waveform generator run"
 
     @classmethod
-    def get_mode(cls, value: int) -> 'Recast':
+    def get_mode(cls, value: int) -> 'RecorderAutoStartMode':
         """
-        Given a mode value, return the corresponding Recast enum.
+        Given a mode value, return the corresponding RecorderAutoStartMode enum.
         """
         for item in cls:
             if item.value == value:
                 return item
-        raise ValueError(f"Invalid recast value: {value}")
+        raise ValueError(f"Invalid RecorderAutoStartMode value: {value}")
 
     def __repr__(self):
-        return f"Recast(MODE{self.mode})"
+        return f"{self.__class__.__name__}.{self.name}"
     
+
 
 class DataRecorder:
     """

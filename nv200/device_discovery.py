@@ -8,14 +8,15 @@ or serial port), and optionally a MAC address.
 
 import asyncio
 import logging
-from typing import List, Optional
-from nv200.transport_protocols import TelnetProtocol, SerialProtocol
-from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
+from typing import List, Optional, Callable, Awaitable
+from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
+from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags, NetworkEndpoint
 from nv200.device_interface import create_device_client
 
 
 # Global module locker
 logger = logging.getLogger(__name__)
+
 
 
 async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevice]:
@@ -44,6 +45,10 @@ async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevi
         logger.debug("Error enriching device info for %s: %s", dev_info.identifier, e)
         await dev.close()
         return None
+    
+
+async def example_callback(proto: TransportProtocol, device: DetectedDevice) -> None:
+    print("Example callback called")
 
 
 async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) -> List[DetectedDevice]:
@@ -77,15 +82,10 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
     else:
         tasks.append(asyncio.sleep(0, result=[]))  # Placeholder for parallel await
 
-    telnet_devices, serial_ports = await asyncio.gather(*tasks)
+    eth_devs, serial_ports = await asyncio.gather(*tasks)
 
     if flags & DiscoverFlags.DETECT_ETHERNET:
-        for dev in telnet_devices:
-            devices.append(DetectedDevice(
-                transport=TransportType.TELNET,
-                identifier=dev["IP"],
-                mac=dev.get("MAC")
-            ))
+        devices.append(eth_devs)
 
     if flags & DiscoverFlags.DETECT_SERIAL:
         for port in serial_ports:

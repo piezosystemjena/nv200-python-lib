@@ -14,7 +14,7 @@ from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataR
 from nv200.waveform_generator import WaveformGenerator
 from nv200.utils import wait_until
 from nv200.shared_types import DetectedDevice, DiscoverFlags
-from nv200.device_discovery import discover_devices
+from nv200.device_discovery import discover_devices, create_device_client
 import logging
 from functools import wraps
 
@@ -267,7 +267,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.DETECT_SERIAL | DiscoverFlags.EXTENDED_INFO)
+    devices = await discover_devices(DiscoverFlags.DETECT_ETHERNET)
     
     if not devices:
         print("No devices found.")
@@ -286,7 +286,7 @@ async def test_device_client_interface():
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
     print("Actor: ", await client.get_actuator_name())
-    print("Serial: ", await client.get_acctuator_serial_number())
+    print("Serial: ", await client.get_actuator_serial_number())
     print("Actuator type: ", await client.get_actuator_description())
     await client.close()
 
@@ -294,13 +294,16 @@ async def test_device_client_interface():
 async def test_device_type():
     logger.setLevel(logging.DEBUG)
 
-    transport = TelnetProtocol(host="192.168.10.152")
-    client = DeviceClient(transport)
+    print("Discovering devices...")
+    detected_devices = await discover_devices(DiscoverFlags.DETECT_SERIAL)
+    if not detected_devices:
+        print("No devices found.")
+        return
+
+    client = create_device_client(detected_devices[0])
+    print("Connecting...")
     await client.connect()
-    #print("Actor: ", await client.get_actuator_name())
-    #print("Serial: ", await client.get_acctuator_serial_number())
-    #print("Actuator type: ", await client.get_actuator_description())
-    logger.debug("Reading param...")
+    print("Reading device type...")
     logger.debug(await client.get_device_type())
     await client.close()
 
@@ -342,14 +345,15 @@ async def read_write_tests():
 
 if __name__ == "__main__":
     setup_logging()
-    asyncio.run(test_discover_devices())
+
+    #asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    #asyncio.run(test_discover_devices())
+    asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
 

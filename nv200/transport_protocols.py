@@ -31,18 +31,30 @@ from typing import List, Dict
 from abc import ABC, abstractmethod
 import telnetlib3
 import aioserial
+from typing import Callable, Awaitable, Optional
 import serial.tools.list_ports
 import nv200.lantronix_xport as xport
+from nv200.shared_types import NetworkEndpoint, DetectedDevice, TransportType
 
 
 # Global module locker
 logger = logging.getLogger(__name__)
+
+# An async function taking a TransportProtocol and returning nothing
+DiscoveryCallback = Callable[["TransportProtocol", "DetectedDevice"], Awaitable[None]]
 
 
 class TransportProtocol(ABC):
     """
     Abstract base class representing a transport protocol interface for a device.
     """
+    XON = b'\x11'
+    XOFF = b'\x13'
+    LF = b'\x0A'
+    CR = b'\x0D'
+    CRLF = b'\x0D\x0A'
+    DEFAULT_TIMEOUT_SECS = 0.4
+
     @abstractmethod
     async def connect(self, auto_adjust_comm_params: bool = True):
         """
@@ -57,12 +69,34 @@ class TransportProtocol(ABC):
         """
 
     @abstractmethod
-    async def read_response(self) -> str:
+    async def read_response(self, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
         Asynchronously reads and returns a response as a string.
 
         Returns:
             str: The response read from the source.
+        """
+
+    @abstractmethod
+    async def read_until(self, expected: bytes = XON, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
+        """
+        Asynchronously reads data from the connection until the specified expected byte sequence is encountered.
+
+        Args:
+            expected (bytes, optional): The byte sequence to read until. Defaults to serial.XON.
+
+        Returns:
+            str: The data read from the serial connection, decoded as a string, .
+        """
+
+    @abstractmethod
+    async def flush_input(self):
+        """
+        Asynchronously flushes or clears the input buffer of the transport protocol.
+
+        This method is intended to remove any pending or unread data from the input stream,
+        ensuring that subsequent read operations start with a clean buffer. It is typically
+        used to prevent processing of stale or unwanted data.
         """
 
     @abstractmethod
@@ -101,9 +135,9 @@ class TransportProtocol(ABC):
         Returns:
             bool: True if the device is detected as an NV200, False otherwise.
         """
-        await self.write('\r')
-        response = await self.read_response()
-        return response.startswith(b"NV200")
+        await self.write('\r\n')
+        response = await self.read_until(TransportProtocol.LF)
+        return response.startswith("NV200")
 
 
 
@@ -208,13 +242,32 @@ class TelnetProtocol(TransportProtocol):
                     await self.__connect_telnetlib()
         except asyncio.TimeoutError as exc:
             raise RuntimeError(f"Device with host address {self.__host} not found") from exc
-    
+
+
+    async def flush_input(self):
+        """
+        Discard all available input within a short timeout window.
+        """
+        try:
+            while True:
+                data = await asyncio.wait_for(self.__reader.read(1024), 0.01)
+                if not data:
+                    break
+        except asyncio.TimeoutError:
+            pass  # expected when no more data arrives within timeout       
+
+
     async def write(self, cmd: str):
+        await self.flush_input()
         self.__writer.write(cmd)
+
+
+    async def read_until(self, expected: bytes = TransportProtocol.XON, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
+        data = await asyncio.wait_for(self.__reader.readuntil(expected), timeout)
+        return data.decode('utf-8').strip("\x11\x13") # strip XON and XOFF characters
         
-    async def read_response(self) -> str:
-        data = await self.__reader.readuntil(b'\x11')
-        return data.replace(b'\x11', b'').replace(b'\x13', b'') # strip XON and XOFF characters
+    async def read_response(self, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
+        return await self.read_until(TransportProtocol.XON, timeout)
     
 
     async def close(self):
@@ -238,15 +291,48 @@ class TelnetProtocol(TransportProtocol):
         """
         return self.__MAC
     
-    @staticmethod
-    async def discover_devices()  -> List[Dict[str, str]]:
+    @classmethod
+    async def discover_devices(cls, on_connect: Optional[DiscoveryCallback] = None)  -> List[DetectedDevice]:
         """
         Asynchronously discovers all devices connected via ethernet interface
 
         Returns:
             list: A list of dictionaries containing device information (IP and MAC addresses).
         """
-        return await xport.discover_lantronix_devices_async()
+        network_endpoints = await xport.discover_lantronix_devices_async()
+    
+        async def detect_on_endpoint(network_endpoint: NetworkEndpoint) -> DetectedDevice | None:
+            protocol = TelnetProtocol(host=network_endpoint.ip)
+            try:
+                await protocol.connect()
+                detected = await protocol.detect_device()
+                if not detected:
+                    return None
+                
+                dev = DetectedDevice(
+                    transport=TransportType.TELNET,
+                    identifier=network_endpoint.ip,
+                    mac=network_endpoint.mac
+                )
+                if on_connect:
+                    await on_connect(protocol, dev)
+
+                return dev
+            except Exception as e:
+                # We do ignore the exception - if it is not possible to connect to the device, we just return None
+                print(f"Error for network endpoint {network_endpoint}: {e.__class__.__name__} {e}")
+                return None
+            finally:
+                await protocol.close()
+
+        # Run all detections concurrently
+        tasks = [detect_on_endpoint(endpoint) for endpoint in network_endpoints]
+        results = await asyncio.gather(*tasks)
+
+        # Filter out Nones
+        return [dev for dev in results if dev]
+
+
 
 
 
@@ -321,7 +407,7 @@ class SerialProtocol(TransportProtocol):
                 return port_name if detected else None
             except Exception as e:
                 # We do ignore the exception - if it is not possible to connect to the device, we just return None
-                print(f"Error on port {port_name}: {e}")
+                print(f"Error on port {port_name}: {e.__class__.__name__} {e}")
                 return None
             finally:
                 await protocol.close()
@@ -350,13 +436,23 @@ class SerialProtocol(TransportProtocol):
         if self.__port is None:
             raise RuntimeError("NV200 device not found")
 
+    async def flush_input(self):
+        """
+        Discard all available input within a short timeout window.
+        """
+        self.__serial.reset_input_buffer()
 
     async def write(self, cmd: str):
+        await self.flush_input()
         await self.__serial.write_async(cmd.encode('utf-8'))
 
-    async def read_response(self) -> str:
-        data = await self.__serial.read_until_async(serial.XON)
-        return data.replace(serial.XON, b'').replace(serial.XOFF, b'') # strip XON and XOFF characters
+    async def read_until(self, expected: bytes = TransportProtocol.XON, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
+        data = await asyncio.wait_for(self.__serial.read_until_async(expected), timeout)
+        #return data.replace(TransportProtocol.XON, b'').replace(TransportProtocol.XOFF, b'') # strip XON and XOFF characters
+        return data.decode('utf-8').strip("\x11\x13") # strip XON and XOFF characters
+
+    async def read_response(self, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
+        return await self.read_until(TransportProtocol.XON, timeout)
 
     async def close(self):
         if self.__serial:
@@ -368,3 +464,5 @@ class SerialProtocol(TransportProtocol):
         Returns the serial port the device is connected to
         """
         return self.__port
+    
+ 

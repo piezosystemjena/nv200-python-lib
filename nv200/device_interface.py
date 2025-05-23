@@ -68,10 +68,10 @@ class DeviceClient:
         """
         Asynchronously reads a response from the transport layer with a specified timeout.
         """
-        return await asyncio.wait_for(self._transport.read_response(), timeout=timeout_param)
+        return await self._transport.read_response(timeout_param)
         
 
-    def _parse_response(self, response_param: bytes) -> tuple:
+    def _parse_response(self, response: str) -> tuple:
         """
         Parses the response from the device and extracts the command and parameters.
         If the response indicates an error (starts with "error"), it raises a DeviceError
@@ -85,7 +85,6 @@ class DeviceClient:
             DeviceError: If the response indicates an error.
         """
         # Check if the response indicates an error
-        response = response_param.decode('utf-8')
         if response.startswith("error"):
             parts = response.split(',', 1)
             if len(parts) > 1:
@@ -117,7 +116,8 @@ class DeviceClient:
             auto_adjust_comm_params (bool): If True, the Telnet transport will
                 automatically adjust the internal communication parameters of
                 the XPORT ethernet module. It will set the flow control mode to#
-                `XON_XOFF_PASS_TO_HOST`.
+                `XON_XOFF_PASS_TO_HOST`. This is required for the library to work+
+                properly.
 
         Raises:
             Exception: If the connection fails, an exception may be raised
@@ -141,7 +141,7 @@ class DeviceClient:
         print(f"Writing command: {cmd}")
         await self._transport.write(cmd + "\r")
         try:
-            response = await asyncio.wait_for(self._transport.read_response(), timeout=0.4)
+            response = await self._transport.read_response(timeout=0.4)
             return self._parse_response(response)
         except asyncio.TimeoutError:
             return None  # Or handle it differently
@@ -382,8 +382,8 @@ class DeviceClient:
         The device type is the string that is returned if you just press enter after connecting to the device.
         """
         await self._transport.write("\r\n")
-        response = await self._read_response()
-        return self._parse_response(response)[0]
+        response = await self._transport.read_until(b"\n")
+        return response.strip("\x01\n\r\x00")
     
     async def get_slew_rate(self) -> float:
         """

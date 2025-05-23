@@ -4,6 +4,7 @@ import telnetlib3
 from enum import Enum, IntFlag
 from typing import List, Tuple, Dict, Optional
 from nv200.eth_utils import get_active_ethernet_ips
+from nv200.shared_types import NetworkEndpoint
 
 # Define constants
 BROADCAST_IP = '255.255.255.255'
@@ -97,16 +98,16 @@ def find_device_by_mac(device_list: List[Dict[str, str]], target_mac: str) -> Op
     return None
 
 
-async def discover_lantronix_devices_async() -> List[Dict[str, str]]:
+async def discover_lantronix_devices_async() -> List[NetworkEndpoint]:
     """
     Discovers Lantronix devices on the network by sending UDP broadcast messages
     from all active Ethernet interfaces and parsing their responses.
 
     Returns:
-        List[Dict[str, str]]:
-            A list of dictionaries where each dictionary contains:
-            - 'MAC' (str): The MAC address of the responding device.
-            - 'IP' (str): The IP address of the responding device.
+        List[NetworkEndpoint]:
+            A list of NetworkEndpoint instances, each containing:
+            - mac (str): The MAC address of the responding device.
+            - ip (str): The IP address of the responding device.
     """
     device_list: List[Dict[str, str]] = []
     ips = [ip for _, ip in get_active_ethernet_ips()]
@@ -185,16 +186,16 @@ def send_udp_broadcast(local_ip : str) -> List[Tuple[bytes, Tuple[str, int]]]:
     return broadcast_responses
 
 
-def discover_lantronix_devices() -> List[Dict[str, str]]:
+def discover_lantronix_devices() -> List[NetworkEndpoint]:
     """
     Discovers Lantronix devices on the network by sending UDP broadcast messages
     from all active Ethernet interfaces and parsing their responses.
 
     Returns:
-        List[Dict[str, str]]:
-            A list of dictionaries where each dictionary contains:
-            - 'MAC' (str): The MAC address of the responding device.
-            - 'IP' (str): The IP address of the responding device.
+        List[NetworkEndpoint]:
+            A list of NetworkEndpoint instances, each containing:
+            - mac (str): The MAC address of the responding device.
+            - ip (str): The IP address of the responding device.
     """
     for _, ip in get_active_ethernet_ips():
         device_responses = send_udp_broadcast(ip)
@@ -230,7 +231,7 @@ def discover_lantronix_device(target_mac: str) -> Optional[str]:
 LANTRONIX_RESPONSE_SIZE = 30  # Expected size of Lantronix response
 LAMNTONIX_MAC_PREFIX = "00:80:A3"  # Lantronix MAC address prefix
 
-def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[Dict[str, str]]:
+def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[NetworkEndpoint]:
     """
     Parses the received responses from the devices to extract their MAC and IP addresses.
 
@@ -241,10 +242,10 @@ def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[
             - The sender's address, which is a tuple containing IP (str) and port (int).
 
     Returns:
-        List[Dict[str, str]]:
-            A list of dictionaries where each dictionary contains:
-            - 'MAC' (str): The MAC address of the responding device.
-            - 'IP' (str): The IP address of the responding device.
+        List[NetworkEndpoint]:
+            A list of NetworkEndpoint instances, each containing:
+            - mac (str): The MAC address of the responding device.
+            - ip (str): The IP address of the responding device.
     """
     parsed_devices = []
     for data, address in response_list:
@@ -255,7 +256,7 @@ def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[
             mac_address = ':'.join(mac_hex[48:60][i:i + 2] for i in range(0, 12, 2)).upper()
             if not mac_address.startswith(LAMNTONIX_MAC_PREFIX):
                 continue
-            parsed_devices.append({'MAC': mac_address, 'IP': address[0]})
+            parsed_devices.append(NetworkEndpoint(mac=mac_address, ip=address[0]))
         except Exception as e:
             print(f"Error parsing response: {e}")
 
@@ -355,10 +356,10 @@ async def main_async():
     #     print(f"Device with MAC {TARGET_MAC} found at IP: {ip}")
     # else:
     #     print(f"Device with MAC {TARGET_MAC} not found.")
-    devices = await discover_lantronix_devices_async()
+    network_endpoints = await discover_lantronix_devices_async()
     print("Devices found:")
-    for device in devices:
-        print(f"MAC: {device['MAC']}, IP: {device['IP']}")
+    for network_endpoint in network_endpoints:
+        print(network_endpoint)
 
 def main():
     TARGET_MAC: str = "00:80:A3:79:C6:18"

@@ -256,3 +256,22 @@ class DiscoverFlags(Flag):
     EXTENDED_INFO: "DiscoverFlags" = auto()
     ALL_INTERFACES: "DiscoverFlags" = DETECT_SERIAL | DETECT_ETHERNET
     ALL: "DiscoverFlags" = ALL_INTERFACES | EXTENDED_INFO
+
+
+@dataclass
+class NetworkEndpoint:
+    """
+    Represents a network endpoint identified by a MAC and IP address.
+
+    Attributes:
+        mac (str): The MAC (Media Access Control) address of the endpoint,
+                   typically in the format '00:1A:2B:3C:4D:5E'.
+        ip (str): The IPv4 or IPv6 address of the endpoint,
+                  e.g., '192.168.1.100'
+    """
+    mac: str
+    ip: str
+
+    def __str__(self) -> str:
+        """Returns a user-friendly string representation of the endpoint."""
+        return f"MAC={self.mac}, IP={self.ip}"

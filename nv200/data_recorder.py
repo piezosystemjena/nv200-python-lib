@@ -1,6 +1,7 @@
 """
 This module provides access to the NV200 data recorder functionality.
 """
+import logging
 from nv200.device_interface import DeviceClient
 from nv200.utils import TimeSeries, wait_until
 import math
@@ -8,6 +9,10 @@ from typing import List
 from enum import Enum
 from collections import namedtuple
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
+
+
+# Global module locker
+logger = logging.getLogger(__name__)
 
 
 class DataRecorderSource(Enum):

@@ -113,6 +113,12 @@ class DeviceClient:
         This asynchronous method initiates the connection process by calling
         the `connect` method of the transport instance.
 
+        Args:
+            auto_adjust_comm_params (bool): If True, the Telnet transport will
+                automatically adjust the internal communication parameters of
+                the XPORT ethernet module. It will set the flow control mode to#
+                `XON_XOFF_PASS_TO_HOST`.
+
         Raises:
             Exception: If the connection fails, an exception may be raised
                        depending on the implementation of the transport layer.

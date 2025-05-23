@@ -64,11 +64,15 @@ and its capabilities.
 
 .. code-block:: python
 
-    from nv200.device_discovery import discover_devices
+    import asyncio
+    from nv200.device_discovery import discover_devices, DiscoverFlags
 
     async def main_async():
-        print("Discovering devices...")
-        devices = await discover_devices(DiscoverFlags.DETECT_SERIAL)
+        """
+        Asynchronously discovers available devices and prints their information.
+        """
+        print("\nDiscovering devices...")
+        devices = await discover_devices()
         
         if not devices:
             print("No devices found.")
@@ -77,12 +81,34 @@ and its capabilities.
             for device in devices:
                 print(device)
 
-In this example, the output could look like this:
+        print("\nDiscovering devices with extended information...")
+        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.EXTENDED_INFO)	
+        
+        if not devices:
+            print("No devices found.")
+        else:
+            print(f"Found {len(devices)} device(s):")
+            for device in devices:
+                print(device)
+
+    # Running the async main function
+    if __name__ == "__main__":
+        asyncio.run(main_async())
+
+In this example, there are two discovery calls. The first one discovers all devices but does not 
+query the actuator information. The second one discovers all devices and queries the actuator 
+information. The output of the example may look like this:
 
 .. code-block:: text
 
     Discovering devices...
-    Found 1 device(s):
+    Found 2 device(s):
+    Telnet @ 192.168.10.178 - Actuator: None #None
+    Serial @ COM3 - Actuator: None #None
+
+    Discovering devices with extended information...
+    Found 2 device(s):
+    Telnet @ 192.168.10.178 - Actuator: TRITOR100SG  #85533
     Serial @ COM3 - Actuator: TRITOR100SG  #85533
 
 
@@ -113,6 +139,20 @@ function from the :mod:`nv200.device_interface` module. So you just need to:
         device = create_device_client(detected_devices[0])
         await client.connect()
 
+
+.. admonition:: Important
+   :class: note
+
+    To ensure error-free Ethernet communication with the device, the communication parameters of 
+    the XPORT Ethernet interface must be correctly configured, i.e., the flow control mode must 
+    be set to `XON_XOFF_PASS_TO_HOST`. This setting is automatically configured when 
+    `DeviceClient.connect()` is called.
+
+    To disable the automatic configuration, just call the connect function as follows:
+
+    .. code-block:: python
+
+        await client.connect(auto_adjust_comm_params=False)
 
 
 Serial Connection to NV200

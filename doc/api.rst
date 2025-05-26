@@ -4,6 +4,7 @@ API Reference
 The NV200 library API consists of the following modules:
 
 * :ref:`device_discovery`: The NV200 device discovery module.
+* :ref:`connection_utils`: Helper functions for device connection.
 * :ref:`device_interface`: The NV200 device interface module.
 * :ref:`shared_types`: Various device types used by various modules.
 * :ref:`transport_protocols`: The transport_protocols module.
@@ -15,6 +16,14 @@ device_discovery
 ------------------------
 
 .. automodule:: nv200.device_discovery
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+connection_utils
+------------------------
+
+.. automodule:: nv200.connection_utils
    :members:
    :show-inheritance:
    :undoc-members:

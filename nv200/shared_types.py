@@ -256,6 +256,27 @@ class DiscoverFlags(Flag):
     EXTENDED_INFO: "DiscoverFlags" = auto()
     ALL_INTERFACES: "DiscoverFlags" = DETECT_SERIAL | DETECT_ETHERNET
     ALL: "DiscoverFlags" = ALL_INTERFACES | EXTENDED_INFO
+    
+
+    @staticmethod
+    def flags_for_transport(transport: Optional[TransportType] = None) -> 'DiscoverFlags':
+        """
+        Maps a TransportType to the appropriate DiscoverFlags.
+
+        Args:
+            transport: The transport type (e.g., SERIAL or TELNET)
+
+        Returns:
+            DiscoverFlags corresponding to the selected transport type.
+        """
+        if transport is None:
+            return DiscoverFlags.ALL_INTERFACES
+        elif transport == TransportType.SERIAL:
+            return DiscoverFlags.DETECT_SERIAL
+        elif transport == TransportType.TELNET:
+            return DiscoverFlags.DETECT_ETHERNET
+        else:
+            raise ValueError(f"Unsupported transport type: {transport}")
 
 
 @dataclass

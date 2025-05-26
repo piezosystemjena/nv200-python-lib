@@ -1,5 +1,32 @@
 import socket
 import psutil
+import ipaddress
+import re
+
+
+def is_valid_ip(address: str) -> bool:
+    """
+    Returns True if the string is a valid IPv4 or IPv6 address, False otherwise.
+    """
+    try:
+        ipaddress.ip_address(address)
+        return True
+    except ValueError:
+        return False
+
+
+_MAC_REGEX = re.compile(
+    r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$|'          # e.g. 01:23:45:67:89:ab or 01-23-45-67-89-ab
+    r'^([0-9A-Fa-f]{12})$'                                  # e.g. 0123456789ab (no separators)
+)
+
+
+def is_valid_mac(address: str) -> bool:
+    """
+    Returns True if the string is a valid MAC address (common formats), False otherwise.
+    """
+    return bool(_MAC_REGEX.match(address))
+
 
 def get_active_ethernet_ips():
     """

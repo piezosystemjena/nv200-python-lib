@@ -9,8 +9,8 @@ Classes:
 """
 
 import asyncio
-from enum import Enum, IntFlag
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
+from nv200.shared_types import TransportType
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 from nv200.shared_types import (
     PidLoopMode,
@@ -433,12 +433,12 @@ def create_device_client(detected_device: DetectedDevice) -> DeviceClient:
     based on the detected device type (e.g., serial or telnet) and returns a 
     properly configured DeviceClient instance.
     """
-    if detected_device.transport == 'telnet':
+    if detected_device.transport == TransportType.TELNET:
         transport = TelnetProtocol(host = detected_device.identifier)
-    elif detected_device.transport == 'serial':
+    elif detected_device.transport == TransportType.SERIAL:
         transport = SerialProtocol(port = detected_device.identifier)
     else:
-        raise ValueError(f"Unsupported dtransport type: {detected_device.transport}")
+        raise ValueError(f"Unsupported transport type: {detected_device.transport}")
     
     # Return a DeviceClient initialized with the correct transport protocol
     return DeviceClient(transport)

@@ -78,7 +78,7 @@ async def send_udp_broadcast_async(local_ip : str) -> List[Tuple[bytes, Tuple[st
     return broadcast_responses
 
 
-def find_device_by_mac(device_list: List[Dict[str, str]], target_mac: str) -> Optional[str]:
+def find_device_by_mac(device_list: List[NetworkEndpoint], target_mac: str) -> Optional[str]:
     """
     Searches for a device by its MAC address in the list of discovered devices.
 
@@ -93,8 +93,8 @@ def find_device_by_mac(device_list: List[Dict[str, str]], target_mac: str) -> Op
             The IP address of the device if found, or None if the device is not found.
     """
     for dev in device_list:
-        if dev['MAC'] == target_mac:
-            return dev['IP']
+        if dev.mac == target_mac:
+            return dev.ip
     return None
 
 

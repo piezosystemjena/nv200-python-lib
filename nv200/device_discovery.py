@@ -47,7 +47,7 @@ async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevi
         return None
     
 
-async def example_callback(proto: TransportProtocol, device: DetectedDevice) -> None:
+async def _example_callback(proto: TransportProtocol, device: DetectedDevice) -> None:
     print("Example callback called")
 
 
@@ -67,7 +67,7 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
         List[DetectedDevice]: A list of detected and optionally enriched devices.
 
     Note:
-        Enrichment may involve additional communication with each device and take more time.
+        The flag EXTENDED_INFO may involve additional communication with each device and takes more time.
     """
     devices: List[DetectedDevice] = []
     tasks = []
@@ -85,7 +85,7 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
     eth_devs, serial_ports = await asyncio.gather(*tasks)
 
     if flags & DiscoverFlags.DETECT_ETHERNET:
-        devices.append(eth_devs)
+        devices.extend(eth_devs)
 
     if flags & DiscoverFlags.DETECT_SERIAL:
         for port in serial_ports:

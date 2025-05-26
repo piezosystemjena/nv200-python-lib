@@ -13,8 +13,9 @@ from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
 from nv200.utils import wait_until
-from nv200.shared_types import DetectedDevice, DiscoverFlags
+from nv200.shared_types import DetectedDevice, DiscoverFlags, TransportType
 from nv200.device_discovery import discover_devices, create_device_client
+import nv200.connection_utils
 import logging
 from functools import wraps
 
@@ -342,6 +343,15 @@ async def read_write_tests():
     await device_client.close()
 
 
+async def test_quick_connect():
+    """
+    Test the quick connect functionality to connect to a device.
+    """
+    device = await nv200.connection_utils.connect_to_single_device(TransportType.TELNET, "00:80:A3:79:C6:18")
+    print(f"Actuator name: {await device.get_actuator_name()}")
+    await device.close()
+
+
 
 if __name__ == "__main__":
     setup_logging()
@@ -353,7 +363,7 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    asyncio.run(test_discover_devices())
+    #asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
-
+    asyncio.run(test_quick_connect())

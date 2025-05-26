@@ -4,8 +4,70 @@ Connecting to device
 Quick Start
 ----------------------------
 
+Working with a single device
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This example demonstrates how to discover NV200 devices connected via USB or Ethernet
+If you work with only one single device, then the quickest way to connect to the deivce is to
+use the `connect_to_single_device()` function from the `nv200.connection_utils` module.
+With a single line of code you can discover the device and connect to it.
+
+If no parameters are passed to the function, it will first try to connect to the first device
+found via USB, and if no USB device is found, it will try to connect to the first device found via Ethernet.
+
+.. code-block:: python
+
+    from nv200.connection_utils import connect_to_single_device
+
+    async def main():
+        client = await connect_to_single_device()
+        print("Connected to device.")
+
+        # Perform your device operations here
+
+        await client.close()
+        print("Connection closed.")
+
+    if __name__ == "__main__":
+        import asyncio
+        asyncio.run(main())
+
+
+If you would like to limit the discovery to a specific interface or if you would like to connect
+to a device with a specific MAC address or IP address, you can pass additional parameters to the
+function. The following example shows how to connect to a device with a specific MAC address
+
+.. code-block:: python
+
+    from nv200.connection_utils import connect_to_single_device
+
+    async def main():
+        client = await connect_to_single_device(TransportType.TELNET, "00:80:A3:79:C6:18")
+        # Perform your device operations here
+        await client.close()
+
+    if __name__ == "__main__":
+        import asyncio
+        asyncio.run(main())
+
+For a detailed description of the parameters, please refer to the
+:func:`API Reference <nv200.connection_utils.connect_to_single_device>` of this function.
+
+.. admonition:: Important
+   :class: note
+
+    All device interactions are asynchronous. Make sure to use the `await` keyword
+    when calling any asynchronous function, such as `discover_devices()` or
+    `client.connect()`. These functions do not block the main thread and allow for
+    concurrent operations within an asynchronous application.
+
+
+Working with multiple devices
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you work with multiple devices, you can use the `discover_devices()` function from the
+`nv200.device_discovery` module to discover all devices connected via USB or Ethernetm and then connect
+to sepecific or all devices.
+The following example shows, how to discover NV200 devices connected via USB or Ethernet
 and connect to the first detected device using the asynchronous API.
 
 .. code-block:: python
@@ -36,14 +98,9 @@ and connect to the first detected device using the asynchronous API.
     if __name__ == "__main__":
         asyncio.run(main())
 
-.. admonition:: Important
-   :class: note
 
-    All device interactions are asynchronous. Make sure to use the `await` keyword
-    when calling any asynchronous function, such as `discover_devices()` or
-    `client.connect()`. These functions do not block the main thread and allow for
-    concurrent operations within an asynchronous application.
-
+If you would like to get some more detailed information about device discovery and connection, please refer to the
+next sections.
 
 Discovering Devices
 ----------------------------

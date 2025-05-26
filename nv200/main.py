@@ -364,6 +364,6 @@ if __name__ == "__main__":
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
     #asyncio.run(test_discover_devices())
-    #asyncio.run(test_device_type())
+    asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
-    asyncio.run(test_quick_connect())
+    #asyncio.run(test_quick_connect())

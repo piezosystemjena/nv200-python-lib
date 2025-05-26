@@ -9,6 +9,7 @@ Classes:
 """
 
 import asyncio
+from abc import ABC, abstractmethod
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
 from nv200.shared_types import TransportType
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
@@ -23,13 +24,16 @@ from nv200.shared_types import (
 )
 
 
-class DeviceClient:
+class PiezoController:
     """
-    A client for communicating with a NV200 device using a specified transport protocol.
+    PiezoController provides an asynchronous interface for communicating with a piezoelectric device
+    over various transport protocols (such as serial or telnet). It encapsulates low-level device commands,
+    response parsing, and synchronization mechanisms, allowing for atomic operations and convenient
+    methods to read and write device parameters.
 
-    Attributes:
-        transport (TransportProtocol): The transport protocol used for communication.
+    The class is the base class for concrete controller implementations like `DeviceClient`.
     """
+
     DEFAULT_TIMEOUT_SECS = 0.4
     
     def __init__(self, transport: TransportProtocol):
@@ -285,7 +289,14 @@ class DeviceClient:
         releasing any resources associated with it.
         """
         await self._transport.close()
-        
+
+
+class DeviceClient(PiezoController):
+    """
+    A high-level asynchronous client for communicating with NV200 piezo controllers.
+    This class extends the `PiezoController` base class and provides high-level methods
+    for setting and getting various device parameters, such as PID mode, setpoint,
+    """
     async def set_pid_mode(self, mode: PidLoopMode):
         """Sets the PID mode of the device to either open loop or closed loop."""
         await self.write(f"cl,{mode.value}")

@@ -1,15 +1,12 @@
 NV200 Python Library
 ==================================
 
+.. image:: images/header2.jpg
+
 The NV200 Python library provides a Python interface to control the 
 `NV200/D Compact Amplifier <https://www.piezosystem.com/product/nv-200-d-compact-amplifier/>`_  from 
 `piezosystem Jena <https://www.piezosystem.com>`_. It supports communication with the device via 
 both Ethernet and USB interfaces.
-
-.. image:: images/nv200.jpg
-   :align: center
-   :alt: Data recorder example
-   :width: 50%
 
 .. toctree::
    :maxdepth: 2

@@ -1,5 +1,5 @@
 import asyncio
-from nv200.device_interface import NV200Device, create_device_client
+from nv200.nv200_device import NV200Device 
 from nv200.shared_types import DiscoverFlags
 from nv200.device_discovery import discover_devices
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
@@ -17,7 +17,7 @@ async def data_recorder_test():
         print("No devices found.")
         return
 
-    device = create_device_client(detected_devices[0])
+    device = NV200Device.from_detected_device(detected_devices[0])
     await device.connect()
 
     # Move the device to its initial position and wait for a short duration to stabilize

@@ -1,5 +1,5 @@
 import asyncio
-from nv200.device_interface import NV200Device
+from nv200.nv200_device import NV200Device
 from nv200.transport_protocols import SerialProtocol
 
 

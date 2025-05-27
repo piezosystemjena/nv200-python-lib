@@ -341,7 +341,7 @@ async def test_quick_connect():
     """
     Test the quick connect functionality to connect to a device.
     """
-    device = await nv200.connection_utils.connect_to_single_device(TransportType.TELNET, "00:80:A3:79:C6:18")
+    device = await nv200.connection_utils.connect_to_single_device()
     print(f"Actuator name: {await device.get_actuator_name()}")
     await device.close()
 
@@ -350,7 +350,7 @@ async def test_quick_connect():
 if __name__ == "__main__":
     setup_logging()
 
-    asyncio.run(test_discover_devices())
+    #syncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())
@@ -360,4 +360,4 @@ if __name__ == "__main__":
     #asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
-    #asyncio.run(test_quick_connect())
+    asyncio.run(test_quick_connect())

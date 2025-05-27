@@ -227,8 +227,8 @@ class TelnetProtocol(TransportProtocol):
             devices = await xport.discover_lantronix_devices_async()
             if not devices:
                 raise RuntimeError("No devices found")
-            self.__host = devices[0]['IP']
-            self.__MAC = devices[0]['MAC']
+            self.__host = devices[0].ip
+            self.__MAC = devices[0].mac
 
         try:
             logger.debug("Connecting to device %s", self.__host)

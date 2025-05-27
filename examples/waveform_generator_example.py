@@ -1,7 +1,9 @@
 import asyncio
-from nv200.device_interface import NV200Device
+from nv200.nv200_device import NV200Device
 from nv200.transport_protocols import TelnetProtocol
 from nv200.waveform_generator import WaveformGenerator
+from nv200.shared_types import TransportType
+from nv200.connection_utils import connect_to_single_device
 
 async def waveform_generator_test():
     """
@@ -10,13 +12,11 @@ async def waveform_generator_test():
     sets up the waveform generator, and starts it with specified parameters.
     """
     # Create the device client using Telnet protocol
-    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-    client = NV200Device(transport)
-    await client.connect()
+    device = await connect_to_single_device(TransportType.SERIAL)
 
     # Initialize the waveform generator with the device client and
     # generate a sine wave that moves the piezo in a sine wave of 1 Hz from 0 to 80 µm
-    waveform_generator = WaveformGenerator(client)
+    waveform_generator = WaveformGenerator(device)
     sine = waveform_generator.generate_sine_wave(freq_hz=1, low_level=0, high_level=80)
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
@@ -31,7 +31,7 @@ async def waveform_generator_test():
     await waveform_generator.wait_until_finished()
 
     # Close the device client connection
-    await client.close()
+    await device.close()
 
 if __name__ == "__main__":
     asyncio.run(waveform_generator_test())

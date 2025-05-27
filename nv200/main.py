@@ -152,9 +152,7 @@ async def client_telnet_test():
     reads responses, and then closes the connection.
     """
     print(await TelnetProtocol.discover_devices())
-    #transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-    transport = TelnetProtocol(host="192.168.10.103")  
-    #transport = TelnetTransport()
+    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  # Replace with your device's MAC address
     client = NV200Device(transport)
     await client.connect()
     print(f"Connected to device with IP: {transport.host}")
@@ -350,14 +348,14 @@ async def test_quick_connect():
 if __name__ == "__main__":
     setup_logging()
 
-    #syncio.run(test_discover_devices())
+    #asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    #asyncio.run(test_discover_devices())
+    asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
-    asyncio.run(test_quick_connect())
+   # asyncio.run(test_quick_connect())

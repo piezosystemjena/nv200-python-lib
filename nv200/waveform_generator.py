@@ -12,7 +12,7 @@ Classes:
 import math
 from typing import List
 
-from nv200.device_interface import DeviceClient, ModulationSource
+from nv200.nv200_device import NV200Device, ModulationSource
 from nv200.utils import TimeSeries, wait_until
 
 
@@ -43,10 +43,10 @@ class WaveformGenerator:
             """
             return len(self.values) * self.sample_time_ms
         
-    _dev : DeviceClient = None
+    _dev : NV200Device = None
     _waveform : WaveformData = None
 
-    def __init__(self, device: DeviceClient):
+    def __init__(self, device: NV200Device):
         """
         Initializes the WaveformGenerator instance with the specified device client.
 

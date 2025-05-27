@@ -2,7 +2,7 @@
 This module provides access to the NV200 data recorder functionality.
 """
 import logging
-from nv200.device_interface import DeviceClient
+from nv200.nv200_device import NV200Device
 from nv200.utils import TimeSeries, wait_until
 import math
 from typing import List
@@ -149,7 +149,7 @@ class DataRecorder:
             return self._source
 
 
-    _dev : DeviceClient
+    _dev : NV200Device
     _sample_rate : int = None
 
     @property
@@ -159,7 +159,7 @@ class DataRecorder:
         """
         return self.NV200_RECORDER_BUFFER_SIZE
 
-    def __init__(self, device: DeviceClient):
+    def __init__(self, device: NV200Device):
         self._dev = device
 
 

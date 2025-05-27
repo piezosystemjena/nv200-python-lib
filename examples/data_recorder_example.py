@@ -1,5 +1,5 @@
 import asyncio
-from nv200.device_interface import DeviceClient, create_device_client
+from nv200.device_interface import NV200Device, create_device_client
 from nv200.shared_types import DiscoverFlags
 from nv200.device_discovery import discover_devices
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode

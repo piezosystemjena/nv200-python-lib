@@ -11,7 +11,7 @@ import logging
 from typing import List, Optional, Callable, Awaitable
 from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags, NetworkEndpoint
-from nv200.device_interface import create_device_client
+from nv200.nv200_device import NV200Device
 
 
 # Global module locker
@@ -28,7 +28,7 @@ async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevi
     """
     try:
         logger.debug("Enriching device info for %s...", dev_info.identifier)
-        dev = create_device_client(dev_info)
+        dev = NV200Device.from_detected_device(dev_info)
         await dev.connect(auto_adjust_comm_params=False)
         dev_type = await dev.get_device_type()
         logger.debug("Device type for %s is %s", dev_info.identifier, dev_type)

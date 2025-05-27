@@ -54,6 +54,7 @@ class TransportProtocol(ABC):
     CR = b'\x0D'
     CRLF = b'\x0D\x0A'
     DEFAULT_TIMEOUT_SECS = 0.4
+    rx_delimiter = XON  # Default delimiter for reading messages
 
     @abstractmethod
     async def connect(self, auto_adjust_comm_params: bool = True):
@@ -68,14 +69,14 @@ class TransportProtocol(ABC):
             Exception: If the connection fails or encounters an error.
         """
 
-    @abstractmethod
-    async def read_response(self, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
+    async def read_message(self, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
-        Asynchronously reads and returns a response as a string.
+        Asynchronously reads a complete delimited message from the device
 
         Returns:
             str: The response read from the source.
         """
+        return await self.read_until(self.rx_delimiter, timeout)
 
     @abstractmethod
     async def read_until(self, expected: bytes = XON, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
@@ -266,9 +267,6 @@ class TelnetProtocol(TransportProtocol):
         data = await asyncio.wait_for(self.__reader.readuntil(expected), timeout)
         return data.decode('utf-8').strip("\x11\x13") # strip XON and XOFF characters
         
-    async def read_response(self, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
-        return await self.read_until(TransportProtocol.XON, timeout)
-    
 
     async def close(self):
         if self.__writer:
@@ -450,9 +448,6 @@ class SerialProtocol(TransportProtocol):
         data = await asyncio.wait_for(self.__serial.read_until_async(expected), timeout)
         #return data.replace(TransportProtocol.XON, b'').replace(TransportProtocol.XOFF, b'') # strip XON and XOFF characters
         return data.decode('utf-8').strip("\x11\x13") # strip XON and XOFF characters
-
-    async def read_response(self, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
-        return await self.read_until(TransportProtocol.XON, timeout)
 
     async def close(self):
         if self.__serial:

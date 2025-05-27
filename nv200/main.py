@@ -1,42 +1,36 @@
 import asyncio
-import math
-import time
 import numpy as np
 import matplotlib.pyplot as plt
-import telnetlib3
 import aioserial
 import serial
-from matplotlib.ticker import AutoMinorLocator
-import numpy as np
-from nv200.device_interface import DeviceClient, PidLoopMode, StatusFlags
 from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
-from nv200.utils import wait_until
-from nv200.shared_types import DetectedDevice, DiscoverFlags, TransportType
-from nv200.device_discovery import discover_devices, create_device_client
+from nv200.shared_types import DiscoverFlags, TransportType, PidLoopMode, StatusFlags
+from nv200.device_discovery import discover_devices
+from nv200.nv200_device import NV200Device
+
 import nv200.connection_utils
 import logging
-from functools import wraps
 
 
 # Global module locker
 logger = logging.getLogger(__name__)
 
 
-async def basic_tests(client: DeviceClient):
+async def basic_tests(client: NV200Device):
     """
     Performs a series of basic tests on the provided DeviceClient instance.
     """
-    response = await client.read('')
+    response = await client.read_response_string('')
     print(f"Server response: {response}")    
     await client.write('modsrc,0')
     await client.write('cl,1')
     await client.write('set,40')
     await asyncio.sleep(0.1)
-    response = await client.read('meas')
+    response = await client.read_response_string('meas')
     print(f"Server response: {response}")
-    response = await client.read('cl')
+    response = await client.read_response_string('cl')
     print(f"Server response: {response}")
     print("Current position:", await client.get_current_position())
     await client.set_pid_mode(PidLoopMode.CLOSED_LOOP)
@@ -99,7 +93,7 @@ def show_plot():
 
 
 
-async def data_recorder_tests(device: DeviceClient):
+async def data_recorder_tests(device: NV200Device):
     """
     Asynchronous function to test the functionality of the DataRecorder with a given device.
     """
@@ -135,7 +129,7 @@ async def data_recorder_tests(device: DeviceClient):
     show_plot()
 
 
-async def run_tests(client: DeviceClient):
+async def run_tests(client: NV200Device):
     """
     Asynchronously runs a series of tests on a DeviceClient instance.
 
@@ -161,7 +155,7 @@ async def client_telnet_test():
     #transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
     transport = TelnetProtocol(host="192.168.10.103")  
     #transport = TelnetTransport()
-    client = DeviceClient(transport)
+    client = NV200Device(transport)
     await client.connect()
     print(f"Connected to device with IP: {transport.host}")
     await run_tests(client)
@@ -177,7 +171,7 @@ async def client_serial_test():
     """
     #print(await SerialProtocol.discover_devices())
     transport = SerialProtocol(port="COM3")
-    client = DeviceClient(transport)
+    client = NV200Device(transport)
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
     await run_tests(client)
@@ -192,7 +186,7 @@ async def waveform_generator_test():
     prepare_plot_style()
     transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
     #transport = SerialProtocol(port="COM3")
-    client = DeviceClient(transport)
+    client = NV200Device(transport)
     await client.connect()
 
     await client.write('setlpf,200')
@@ -283,7 +277,7 @@ async def test_device_client_interface():
     Asynchronously tests the DeviceClient interface by connecting to a device and performing basic operations.
     """
     transport = SerialProtocol(port="COM3")
-    client = DeviceClient(transport)
+    client = NV200Device(transport)
     await client.connect()
     print(f"Connected to device on serial port: {transport.port}")
     print("Actor: ", await client.get_actuator_name())
@@ -324,11 +318,11 @@ async def read_write_tests():
     Test some generic low-level read/write methods
     """
     transport = SerialProtocol(port="COM3")
-    device_client = DeviceClient(transport)
+    device_client = NV200Device(transport)
     await device_client.connect()
     print(f"Connected to device on serial port: {transport.port}")
     await device_client.write('cl,0')
-    response = await device_client.read('cl')
+    response = await device_client.read_response_string('cl')
     print(response)
     response = await device_client.read_response('set')
     print(response)
@@ -356,7 +350,7 @@ async def test_quick_connect():
 if __name__ == "__main__":
     setup_logging()
 
-    #asyncio.run(test_discover_devices())
+    asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
     #asyncio.run(waveform_generator_test())
@@ -364,6 +358,6 @@ if __name__ == "__main__":
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
     #asyncio.run(test_discover_devices())
-    asyncio.run(test_device_type())
+    #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
     #asyncio.run(test_quick_connect())

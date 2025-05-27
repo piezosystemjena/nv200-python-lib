@@ -1,5 +1,5 @@
 import asyncio
-from nv200.device_interface import DeviceClient
+from nv200.device_interface import NV200Device
 from nv200.transport_protocols import TelnetProtocol
 from nv200.waveform_generator import WaveformGenerator
 
@@ -11,7 +11,7 @@ async def waveform_generator_test():
     """
     # Create the device client using Telnet protocol
     transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-    client = DeviceClient(transport)
+    client = NV200Device(transport)
     await client.connect()
 
     # Initialize the waveform generator with the device client and

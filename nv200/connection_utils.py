@@ -1,4 +1,4 @@
-from nv200.device_interface import DeviceClient, create_device_client
+from nv200.nv200_device import NV200Device
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_discovery import discover_devices
 from nv200.transport_protocols import SerialProtocol, TelnetProtocol, TransportProtocol
@@ -7,7 +7,7 @@ from typing import List, Optional
 import nv200.lantronix_xport as xport
 
 
-async def connect_to_single_device(transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> DeviceClient:
+async def connect_to_single_device(transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> NV200Device:
     """
     Convenience function to quickly connect to a single device.
 
@@ -58,7 +58,7 @@ async def connect_to_single_device(transport_type : Optional[TransportType] = No
 
         >>> device = await nv200.connection_utils.connect_to_single_device(TransportType.SERIAL, "COM3")
     """
-    dev : DeviceClient = None
+    dev : NV200Device = None
     transport: TransportProtocol = None
     if transport_type is TransportType.SERIAL and interface_or_address:
         transport = SerialProtocol(port=interface_or_address)
@@ -71,7 +71,7 @@ async def connect_to_single_device(transport_type : Optional[TransportType] = No
             raise ValueError("Invalid IP address or MAC address provided for Telnet transport.")
 
     if transport:
-        dev = DeviceClient(transport=transport)
+        dev = NV200Device(transport=transport)
         await dev.connect(auto_adjust_comm_params=False)
         return dev
 
@@ -93,7 +93,7 @@ async def connect_to_single_device(transport_type : Optional[TransportType] = No
     
     if not detected_devices:
         raise RuntimeError("No devices found during discovery.")
-    device = create_device_client(detected_devices[0])
+    device = NV200Device.from_detected_device(detected_devices[0])
     await device.connect(auto_adjust_comm_params=False)
 
     return device

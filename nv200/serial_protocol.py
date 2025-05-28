@@ -1,7 +1,7 @@
 import asyncio
 import aioserial
 import logging
-from typing import List
+from typing import List, Optional
 import serial.tools.list_ports
 from nv200.transport_protocol import TransportProtocol
 from nv200.shared_types import DiscoverFlags, DetectedDevice, TransportType
@@ -37,7 +37,7 @@ class SerialProtocol(TransportProtocol):
         self.__baudrate = baudrate
 
 
-    async def detect_port(self)-> str | None:
+    async def detect_port(self, device : PiezoDeviceBase)-> str | None:
         """
         Asynchronously detects and configures the serial port for the NV200 device.
 
@@ -56,7 +56,7 @@ class SerialProtocol(TransportProtocol):
             self.__serial.close()
             self.__serial.port = port.device
             self.__serial.open()
-            if await self.detect_device():
+            if await device.check_device_type():
                 return port.device
             else:
                 self.__serial.close()
@@ -104,7 +104,7 @@ class SerialProtocol(TransportProtocol):
         return [dev for dev in results if dev]
     
 
-    async def connect(self, auto_adjust_comm_params: bool = True):
+    async def connect(self, auto_adjust_comm_params: bool = True, device : Optional['PiezoDeviceBase'] = None):
         """
         Establishes an asynchronous connection to the NV200 device using the specified serial port settings.
 
@@ -117,7 +117,7 @@ class SerialProtocol(TransportProtocol):
         """
         self.__serial = aioserial.AioSerial(port=self.__port, xonxoff=False, baudrate=self.__baudrate)
         if self.__port is None:
-            self.__port = await self.detect_port()
+            self.__port = await self.detect_port(device)
         if self.__port is None:
             raise RuntimeError("NV200 device not found")
 

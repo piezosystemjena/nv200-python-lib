@@ -120,7 +120,7 @@ class PiezoDeviceBase:
             Exception: If the connection fails, an exception may be raised
                        depending on the implementation of the transport layer.
         """
-        await self._transport.connect(auto_adjust_comm_params)
+        await self._transport.connect(auto_adjust_comm_params, self)
 
     async def write(self, cmd: str):
         """
@@ -291,6 +291,16 @@ class PiezoDeviceBase:
         await self._transport.write("\r\n")
         response = await self._transport.read_until(b"\n")
         return response.strip("\x01\n\r\x00<>")
+    
+    async def check_device_type(self) -> bool:
+        """
+        Checks if the device type matches the given device ID.
+
+        Returns:
+            bool: True if the device type matches, False otherwise.
+        """
+        current_device_type = await self.get_device_type()
+        return current_device_type == self.DEVICE_ID
     
     async def get_device_info(self, detected_device : DetectedDevice) -> None :
         """

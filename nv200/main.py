@@ -261,7 +261,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.DETECT_ETHERNET | DiscoverFlags.READ_DEVICE_INFO)
+    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
     
     if not devices:
         print("No devices found.")
@@ -336,6 +336,16 @@ async def test_quick_connect():
     await device.close()
 
 
+async def test_serial_protocol_auto_detect():
+    """
+    Test the automatic detection of serial ports for NV200 devices.
+    """
+    transport = SerialProtocol()
+    client = NV200Device(transport)
+    await client.connect()
+    print(f"Connected to device on serial port: {transport.port}")
+    await client.close()
+
 
 if __name__ == "__main__":
     setup_logging()
@@ -347,7 +357,8 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    asyncio.run(test_discover_devices())
+    #asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
-   # asyncio.run(test_quick_connect())
+    asyncio.run(test_quick_connect())
+    #asyncio.run(test_serial_protocol_auto_detect())

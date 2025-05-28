@@ -27,8 +27,11 @@ Example:
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Callable, Awaitable
+from typing import TYPE_CHECKING, Callable, Awaitable, Optional
 from nv200.shared_types import DetectedDevice, TransportType
+
+if TYPE_CHECKING:
+    from nv200.device_base import PiezoDeviceBase
 
 
 # Global module locker
@@ -51,7 +54,7 @@ class TransportProtocol(ABC):
     rx_delimiter = XON  # Default delimiter for reading messages
 
     @abstractmethod
-    async def connect(self, auto_adjust_comm_params: bool = True):
+    async def connect(self, auto_adjust_comm_params: bool = True, device : Optional['PiezoDeviceBase'] = None):
         """
         Establishes an asynchronous connection to the NV200 device.
 
@@ -118,5 +121,6 @@ class TransportProtocol(ABC):
         Raises:
             Exception: If an error occurs while attempting to close the resource.
         """
+
 
 

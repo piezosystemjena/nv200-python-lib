@@ -69,7 +69,7 @@ class TelnetProtocol(TransportProtocol):
         """
         return await xport.configure_flow_control(host)
 
-    async def connect(self, auto_adjust_comm_params: bool = True):
+    async def connect(self, auto_adjust_comm_params: bool = True, device : Optional['PiezoDeviceBase'] = None):
         """
         Establishes a connection to a Lantronix device.
 

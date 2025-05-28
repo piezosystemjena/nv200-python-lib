@@ -7,7 +7,7 @@ from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
-from nv200.shared_types import DiscoverFlags, PidLoopMode, StatusFlags
+from nv200.shared_types import DiscoverFlags, PidLoopMode, StatusFlags, TransportType
 from nv200.device_discovery import discover_devices
 from nv200.nv200_device import NV200Device
 

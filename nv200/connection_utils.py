@@ -1,3 +1,4 @@
+from typing import Type
 from nv200.nv200_device import NV200Device
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_discovery import discover_devices
@@ -5,11 +6,12 @@ from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.eth_utils import is_valid_ip, is_valid_mac
+from nv200.device_base import PiezoDeviceBase
 from typing import List, Optional
 import nv200.lantronix_xport as xport
 
 
-async def connect_to_single_device(transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> NV200Device:
+async def connect_to_single_device(device_class: Type[PiezoDeviceBase], transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> PiezoDeviceBase:
     """
     Convenience function to quickly connect to a single device.
 
@@ -60,7 +62,7 @@ async def connect_to_single_device(transport_type : Optional[TransportType] = No
 
         >>> device = await nv200.connection_utils.connect_to_single_device(TransportType.SERIAL, "COM3")
     """
-    dev : NV200Device = None
+    dev : PiezoDeviceBase = None
     transport: TransportProtocol = None
     if transport_type is TransportType.SERIAL and interface_or_address:
         transport = SerialProtocol(port=interface_or_address)
@@ -73,7 +75,7 @@ async def connect_to_single_device(transport_type : Optional[TransportType] = No
             raise ValueError("Invalid IP address or MAC address provided for Telnet transport.")
 
     if transport:
-        dev = NV200Device(transport=transport)
+        dev = device_class(transport=transport)
         await dev.connect(auto_adjust_comm_params=False)
         return dev
 

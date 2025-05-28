@@ -1,6 +1,6 @@
 import asyncio
 from nv200.nv200_device import NV200Device
-from nv200.transport_protocols import SerialProtocol
+from nv200.transport_protocol import SerialProtocol
 
 
 async def serial_port_auto_detect():

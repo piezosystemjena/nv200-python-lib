@@ -1,7 +1,9 @@
 from nv200.nv200_device import NV200Device
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_discovery import discover_devices
-from nv200.transport_protocols import SerialProtocol, TelnetProtocol, TransportProtocol
+from nv200.transport_protocol import TransportProtocol
+from nv200.telnet_protocol import TelnetProtocol
+from nv200.serial_protocol import SerialProtocol
 from nv200.eth_utils import is_valid_ip, is_valid_mac
 from typing import List, Optional
 import nv200.lantronix_xport as xport

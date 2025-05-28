@@ -1,6 +1,6 @@
 from nv200.device_base import PiezoDeviceBase
 from nv200.shared_types import PidLoopMode, ModulationSource, StatusRegister, StatusFlags, DetectedDevice, TransportType
-from nv200.transport_protocols import TelnetProtocol, SerialProtocol
+
 
 
 class NV200Device(PiezoDeviceBase):
@@ -9,6 +9,21 @@ class NV200Device(PiezoDeviceBase):
     This class extends the `PiezoController` base class and provides high-level methods
     for setting and getting various device parameters, such as PID mode, setpoint,
     """
+    DEVICE_ID = "NV200/D_NET"
+
+    async def get_device_info(self, detected_device : DetectedDevice) -> None :
+        """
+        Get additional information about the device.
+
+        A derived class should implement this method to enrich the device information in the given
+        detected_device object.
+
+        Args:
+            detected_device (DetectedDevice): The detected device object to enrich with additional information.
+        """
+        detected_device.actuator_name = await self.get_actuator_name()
+        detected_device.actuator_serial = await self.get_actuator_serial_number()
+
     async def set_pid_mode(self, mode: PidLoopMode):
         """Sets the PID mode of the device to either open loop or closed loop."""
         await self.write(f"cl,{mode.value}")
@@ -98,15 +113,6 @@ class NV200Device(PiezoDeviceBase):
         name = await self.get_actuator_name()
         serial_number = await self.get_actuator_serial_number()   
         return f"{name} #{serial_number}"
-    
-    async def get_device_type(self) -> str:
-        """
-        Retrieves the type of the device.
-        The device type is the string that is returned if you just press enter after connecting to the device.
-        """
-        await self._transport.write("\r\n")
-        response = await self._transport.read_until(b"\n")
-        return response.strip("\x01\n\r\x00")
     
     async def get_slew_rate(self) -> float:
         """

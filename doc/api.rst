@@ -5,7 +5,8 @@ The NV200 library API consists of the following modules:
 
 * :ref:`device_discovery`: The NV200 device discovery module.
 * :ref:`connection_utils`: Helper functions for device connection.
-* :ref:`device_interface`: The NV200 device interface module.
+* :ref:`device_base`: Generic piezosystem device base class
+* :ref:`nv200_device`: A high-level asynchronous client for communicating with NV200 piezo controllers.
 * :ref:`shared_types`: Various device types used by various modules.
 * :ref:`transport_protocols`: The transport_protocols module.
 * :ref:`data_recorder`: The data_recorder module.
@@ -29,10 +30,19 @@ connection_utils
    :undoc-members:
 
 
-device_interface
+device_base
 ------------------------
 
-.. automodule:: nv200.device_interface
+.. automodule:: nv200.device_base
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+nv200_device
+------------------------
+
+.. automodule:: nv200.nv200_device
    :members:
    :show-inheritance:
    :undoc-members:

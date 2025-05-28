@@ -3,10 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import aioserial
 import serial
-from nv200.transport_protocols import  TelnetProtocol, SerialProtocol
+from nv200.telnet_protocol import TelnetProtocol
+from nv200.serial_protocol import SerialProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
-from nv200.shared_types import DiscoverFlags, TransportType, PidLoopMode, StatusFlags
+from nv200.shared_types import DiscoverFlags, PidLoopMode, StatusFlags
 from nv200.device_discovery import discover_devices
 from nv200.nv200_device import NV200Device
 
@@ -260,7 +261,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.DETECT_ETHERNET)
+    devices = await discover_devices(DiscoverFlags.DETECT_ETHERNET | DiscoverFlags.READ_DEVICE_ID) 
     
     if not devices:
         print("No devices found.")
@@ -310,6 +311,14 @@ def setup_logging():
         format='%(asctime)s.%(msecs)03d | %(levelname)-6s | %(name)-25s | %(message)s',
         datefmt='%H:%M:%S'
     )
+
+    # List all loggers
+    for name in logging.root.manager.loggerDict:
+        print(name)
+
+    logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
+    logging.getLogger("nv200.telnet_protocol").setLevel(logging.DEBUG)
+
 
 async def read_write_tests():
     """

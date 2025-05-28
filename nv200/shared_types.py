@@ -229,6 +229,7 @@ class DetectedDevice:
     transport: TransportType
     identifier: str  # e.g., IP or serial port
     mac: Optional[str] = None
+    device_id: Optional[str] = None  # Unique identifier for the device, if available
     actuator_name: Optional[str] = None
     actuator_serial: Optional[str] = None
     
@@ -236,7 +237,11 @@ class DetectedDevice:
         """
         Returns a string representation of the transport type, capitalized.
         """
-        return f"{self.transport} @ {self.identifier} - Actuator: {self.actuator_name} #{self.actuator_serial}"
+        device_info = f"{self.transport} @ {self.identifier}"
+        if self.device_id:
+            device_info += f" - {self.device_id}"
+        return f"{device_info} - Actuator: {self.actuator_name} #{self.actuator_serial}"
+
     
 
 class DiscoverFlags(Flag):
@@ -253,9 +258,10 @@ class DiscoverFlags(Flag):
     """
     DETECT_SERIAL: "DiscoverFlags" = auto()
     DETECT_ETHERNET: "DiscoverFlags" = auto()
+    READ_DEVICE_ID: "DiscoverFlags" = auto()
     EXTENDED_INFO: "DiscoverFlags" = auto()
     ALL_INTERFACES: "DiscoverFlags" = DETECT_SERIAL | DETECT_ETHERNET
-    ALL: "DiscoverFlags" = ALL_INTERFACES | EXTENDED_INFO
+    ALL: "DiscoverFlags" = ALL_INTERFACES | EXTENDED_INFO | READ_DEVICE_ID
     
 
     @staticmethod

@@ -1,6 +1,6 @@
 import asyncio
 from nv200.nv200_device import NV200Device
-from nv200.transport_protocols import TelnetProtocol
+from nv200.transport_protocol import TelnetProtocol
 
 
 async def ethernet_auto_detect():

@@ -9,17 +9,20 @@ Classes:
 """
 
 import asyncio
-from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
+from typing import Dict, Type
+from nv200.transport_protocol import TransportProtocol
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 from nv200.shared_types import (
     ErrorCode,
     DeviceError,
+    DetectedDevice
 )
+
 
 
 class PiezoDeviceBase:
     """
-    General piezosystem device base class.
+    Generic piezosystem device base class.
     
     AbstractPiezoDevice provides an asynchronous interface for communicating with a piezoelectric device
     over various transport protocols (such as serial or telnet). It encapsulates low-level device commands,
@@ -31,10 +34,16 @@ class PiezoDeviceBase:
 
     DEFAULT_TIMEOUT_SECS = 0.4
     frame_delimiter_write = "\r\n"
+    DEVICE_ID = None # Placeholder for device ID, to be set in subclasses
     
     def __init__(self, transport: TransportProtocol):
         self._transport = transport
         self._lock = _ReentrantAsyncLock()
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if cls.DEVICE_ID:
+            DEVICE_MODEL_REGISTRY[cls.DEVICE_ID] = cls
 
     @property
     def lock(self) -> _ReentrantAsyncLock:
@@ -44,25 +53,13 @@ class PiezoDeviceBase:
         Use with `async with client.lock:` to group operations atomically.
         """
         return self._lock
-
-    @property
-    def serial_protocol(self) -> SerialProtocol:
+    
+    @property 
+    def transport_protocol(self) -> TransportProtocol:
         """
-        Returns the transport as SerialProtocol or raises TypeError.
-        
-        Returns:
-            SerialProtocol: The transport instance as SerialProtocol.
+        Returns the transport protocol used by the device.
         """
-        if isinstance(self._transport, SerialProtocol):
-            return self._transport
-        raise TypeError("Transport is not a SerialTransport")
-
-    @property
-    def ethernet_protocol(self) -> TelnetProtocol:
-        """Returns the transport as TelnetProtocol or raises TypeError."""
-        if isinstance(self._transport, TelnetProtocol):
-            return self._transport
-        raise TypeError("Transport is not a TelnetTransport")
+        return self._transport
 
     async def _read_raw_message(self, timeout_param : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
@@ -285,4 +282,49 @@ class PiezoDeviceBase:
         releasing any resources associated with it.
         """
         await self._transport.close()
+
+    async def get_device_type(self) -> str:
+        """
+        Retrieves the type of the device.
+        The device type is the string that is returned if you just press enter after connecting to the device.
+        """
+        await self._transport.write("\r\n")
+        response = await self._transport.read_until(b"\n")
+        return response.strip("\x01\n\r\x00<>")
+    
+    async def get_device_info(self, detected_device : DetectedDevice) -> None :
+        """
+        Get additional information about the device.
+
+        A derived class should implement this method to enrich the device information in the given
+        detected_device object.
+
+        Args:
+            detected_device (DetectedDevice): The detected device object to enrich with additional information.
+        """
+        pass
+    
+
+DEVICE_MODEL_REGISTRY: Dict[str, Type[PiezoDeviceBase]] = {}
+
+
+def create_device_from_id(device_id: str, *args, **kwargs) -> PiezoDeviceBase:
+    """
+    Creates and returns an instance of a device class corresponding to the given device ID.
+
+    Args:
+        device_id (str): The identifier for the device model to instantiate.
+        *args: Positional arguments to pass to the device class constructor.
+        **kwargs: Keyword arguments to pass to the device class constructor.
+
+    Returns:
+        PiezoDeviceBase: An instance of the device class associated with the given device ID.
+
+    Raises:
+        ValueError: If the provided device_id is not supported or not found in the registry.
+    """
+    cls = DEVICE_MODEL_REGISTRY.get(device_id)
+    if cls is None:
+        raise ValueError(f"Unsupported device ID: {device_id}")
+    return cls(*args, **kwargs)
 

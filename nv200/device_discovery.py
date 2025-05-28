@@ -9,7 +9,9 @@ or serial port), and optionally a MAC address.
 import asyncio
 import logging
 from typing import List, Optional, Callable, Awaitable
-from nv200.transport_protocols import TelnetProtocol, SerialProtocol, TransportProtocol
+from nv200.transport_protocol import TransportProtocol
+from nv200.telnet_protocol import TelnetProtocol  
+from nv200.serial_protocol import SerialProtocol
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags, NetworkEndpoint
 from nv200.nv200_device import NV200Device
 
@@ -73,12 +75,12 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
     tasks = []
 
     if flags & DiscoverFlags.DETECT_ETHERNET:
-        tasks.append(TelnetProtocol.discover_devices())
+        tasks.append(TelnetProtocol.discover_devices(flags))
     else:
         tasks.append(asyncio.sleep(0, result=[]))  # Placeholder for parallel await
 
     if flags & DiscoverFlags.DETECT_SERIAL:
-        tasks.append(SerialProtocol.discover_devices())
+        tasks.append(SerialProtocol.discover_devices(flags))
     else:
         tasks.append(asyncio.sleep(0, result=[]))  # Placeholder for parallel await
 

@@ -1,6 +1,6 @@
 import asyncio
 from nv200.nv200_device import NV200Device
-from nv200.transport_protocols import TelnetProtocol
+from nv200.transport_protocol import TelnetProtocol
 from nv200.waveform_generator import WaveformGenerator
 from nv200.shared_types import TransportType
 from nv200.connection_utils import connect_to_single_device

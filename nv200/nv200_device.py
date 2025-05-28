@@ -1,5 +1,7 @@
 from nv200.device_base import PiezoDeviceBase
 from nv200.shared_types import PidLoopMode, ModulationSource, StatusRegister, StatusFlags, DetectedDevice, TransportType
+from nv200.telnet_protocol import TelnetProtocol
+from nv200.serial_protocol import SerialProtocol
 
 
 

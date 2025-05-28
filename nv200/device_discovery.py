@@ -12,16 +12,27 @@ from typing import List, Optional, Callable, Awaitable
 from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol  
 from nv200.serial_protocol import SerialProtocol
-from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags, NetworkEndpoint
-from nv200.nv200_device import NV200Device
+from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
+from nv200.device_base import PiezoDeviceBase, create_device_from_id
 
 
 # Global module locker
 logger = logging.getLogger(__name__)
 
 
+def _transport_from_detected_device(detected_device: DetectedDevice) -> "TransportProtocol":
+    """
+    Creates and returns a transport protocol instance based on the detected device's transport type.
+    """
+    if detected_device.transport == TransportType.TELNET:
+        return TelnetProtocol(host = detected_device.identifier)
+    elif detected_device.transport == TransportType.SERIAL:
+        return SerialProtocol(port = detected_device.identifier)
+    else:
+        raise ValueError(f"Unsupported transport type: {detected_device.transport}")
+    
 
-async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevice]:
+async def _enrich_device_info(detected_device: DetectedDevice) -> None:
     """
     Asynchronously enriches a DetectedDevice object with additional actuator information.
 
@@ -29,23 +40,16 @@ async def _enrich_device_info(dev_info: DetectedDevice) -> Optional[DetectedDevi
         DetectedDevice: The enriched device information object with actuator name and serial number populated.
     """
     try:
-        logger.debug("Enriching device info for %s...", dev_info.identifier)
-        dev = NV200Device.from_detected_device(dev_info)
-        await dev.connect(auto_adjust_comm_params=False)
-        dev_type = await dev.get_device_type()
-        logger.debug("Device type for %s is %s", dev_info.identifier, dev_type)
-        if not dev_type.startswith("NV200/D_NET"):
-            logger.debug("Device type %s is not supported.", dev_type)
-            await dev.close()
-            return None
-        dev_info.actuator_name = await dev.get_actuator_name()
-        dev_info.actuator_serial = await dev.get_actuator_serial_number()
-        await dev.close()
-        logger.debug("Enriching device info for %s finished", dev_info.identifier)
-        return dev_info
-    except Exception as e:
-        logger.debug("Error enriching device info for %s: %s", dev_info.identifier, e)
-        await dev.close()
+        logger.debug("Reading device ID from: %s", detected_device.identifier)
+        protocol = _transport_from_detected_device(detected_device)
+        await protocol.connect(auto_adjust_comm_params=False)
+        dev = PiezoDeviceBase(protocol)
+        detected_device.device_id = await dev.get_device_type()
+        logger.debug("Device ID detected: %s", detected_device.device_id)
+        dev = create_device_from_id(detected_device.device_id, protocol)
+        await dev.get_device_info(detected_device)
+        return detected_device
+    except Exception:
         return None
     
 
@@ -84,19 +88,15 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
     else:
         tasks.append(asyncio.sleep(0, result=[]))  # Placeholder for parallel await
 
-    eth_devs, serial_ports = await asyncio.gather(*tasks)
+    eth_devs, serial_devs = await asyncio.gather(*tasks)
 
     if flags & DiscoverFlags.DETECT_ETHERNET:
         devices.extend(eth_devs)
 
     if flags & DiscoverFlags.DETECT_SERIAL:
-        for port in serial_ports:
-            devices.append(DetectedDevice(
-                transport=TransportType.SERIAL,
-                identifier=port
-            ))
+        devices.extend(serial_devs)
 
-    if flags & DiscoverFlags.EXTENDED_INFO:
+    if flags & DiscoverFlags.READ_DEVICE_INFO:
         # Enrich each device with detailed info
         logger.debug("Enriching %d devices with detailed info...", len(devices))
         raw_results = await asyncio.gather(*(_enrich_device_info(d) for d in devices))

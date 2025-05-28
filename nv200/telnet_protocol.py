@@ -20,7 +20,7 @@ class TelnetProtocol(TransportProtocol):
     __MAC : str
     __port : int
     
-    def __init__(self, host: str = None, port: int = 23, MAC: str = None):
+    def __init__(self, host: str = "", port: int = 23, MAC: str = ""):
         """
         Initializes thetransport protocol.
 
@@ -87,11 +87,11 @@ class TelnetProtocol(TransportProtocol):
         Raises:
             RuntimeError: If no devices are found during discovery.
         """
-        if self.__host is None and self.__MAC is not None:
+        if not self.__host and self.__MAC:
             self.__host = await xport.discover_lantronix_device_async(self.__MAC)
-            if self.__host is None:
+            if self.__host:
                 raise RuntimeError(f"Device with MAC address {self.__MAC} not found")
-        elif self.__host is None and self.__MAC is None:
+        elif not self.__host and not self.__MAC:
             devices = await xport.discover_lantronix_devices_async()
             if not devices:
                 raise RuntimeError("No devices found")
@@ -157,7 +157,7 @@ class TelnetProtocol(TransportProtocol):
         return self.__MAC
     
     @classmethod
-    async def discover_devices(cls, flags: DiscoverFlags, on_connect: Optional[DiscoveryCallback] = None)  -> List[DetectedDevice]:
+    async def discover_devices(cls, flags: DiscoverFlags)  -> List[DetectedDevice]:
         """
         Asynchronously discovers all devices connected via ethernet interface
 
@@ -175,18 +175,7 @@ class TelnetProtocol(TransportProtocol):
                     identifier=network_endpoint.ip,
                     mac=network_endpoint.mac
                 )
-                if flags & DiscoverFlags.READ_DEVICE_ID:
-                    logger.debug("Reading device ID from: %s", detected_device.identifier)
-                    await protocol.connect(auto_adjust_comm_params=False)
-                    dev = PiezoDeviceBase(protocol)
-                    detected_device.device_id = await dev.get_device_type()
-                    logger.debug("Device ID detected: %s", detected_device.device_id)
-                    dev = create_device_from_id(detected_device.device_id, protocol)
-                    await dev.get_device_info(detected_device)
                     
-                if on_connect:
-                    await on_connect(protocol, detected_device)
-
                 return detected_device
             except Exception as e:
                 # We do ignore the exception - if it is not possible to connect to the device, we just return None

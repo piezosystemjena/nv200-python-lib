@@ -28,7 +28,7 @@ Example:
 import logging
 from abc import ABC, abstractmethod
 from typing import Callable, Awaitable
-from nv200.shared_types import DetectedDevice
+from nv200.shared_types import DetectedDevice, TransportType
 
 
 # Global module locker
@@ -118,20 +118,5 @@ class TransportProtocol(ABC):
         Raises:
             Exception: If an error occurs while attempting to close the resource.
         """
-
-    async def detect_device(self) -> bool:
-        """
-        Detects if the connected device is an NV200.
-
-        This asynchronous method sends a command to the device and checks the response
-        to determine if the device is an NV200. The detection is based on whether the
-        response starts with the byte sequence "NV200".
-
-        Returns:
-            bool: True if the device is detected as an NV200, False otherwise.
-        """
-        await self.write('\r\n')
-        response = await self.read_until(TransportProtocol.LF)
-        return response.startswith("NV200")
 
 

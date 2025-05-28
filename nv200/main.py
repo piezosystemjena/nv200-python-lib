@@ -152,7 +152,7 @@ async def client_telnet_test():
     This function establishes a connection to a device, sends a series of commands, 
     reads responses, and then closes the connection.
     """
-    print(await TelnetProtocol.discover_devices())
+    print(await TelnetProtocol.discover_devices(DiscoverFlags.DETECT_ETHERNET))
     transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  # Replace with your device's MAC address
     client = NV200Device(transport)
     await client.connect()
@@ -241,7 +241,7 @@ def test_numpy_waveform():
     Cycles=10
     dt=0.01 
 
-    t=np.arange(0, Cycles * TimePeriod , dt); 
+    t=np.arange(0, Cycles * TimePeriod , dt)
     pwm= t%TimePeriod<TimePeriod*percent/100 
 
 
@@ -261,7 +261,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.DETECT_ETHERNET | DiscoverFlags.READ_DEVICE_ID) 
+    devices = await discover_devices(DiscoverFlags.DETECT_ETHERNET | DiscoverFlags.READ_DEVICE_INFO)
     
     if not devices:
         print("No devices found.")
@@ -285,23 +285,6 @@ async def test_device_client_interface():
     await client.close()
 
 
-async def test_device_type():
-    logger.setLevel(logging.DEBUG)
-
-    print("Discovering devices...")
-    detected_devices = await discover_devices(DiscoverFlags.DETECT_SERIAL)
-    if not detected_devices:
-        print("No devices found.")
-        return
-
-    client = create_device_client(detected_devices[0])
-    print("Connecting...")
-    await client.connect()
-    print("Reading device type...")
-    logger.debug(await client.get_device_type())
-    await client.close()
-
-
 def setup_logging():
     """
     Configures the logging settings for the application.
@@ -313,8 +296,8 @@ def setup_logging():
     )
 
     # List all loggers
-    for name in logging.root.manager.loggerDict:
-        print(name)
+    #for name in logging.root.manager.loggerDict:
+    #    print(name)
 
     logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
     logging.getLogger("nv200.telnet_protocol").setLevel(logging.DEBUG)

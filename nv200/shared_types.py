@@ -127,10 +127,10 @@ class ModulationSource(Enum):
     """
     Enumeration for setpoint modulation source.
     """
-    USB_ETHERNET: int = 0
-    ANALOG_IN: int = 1
-    SPI: int = 2
-    WAVEFORM_GENERATOR: int = 3
+    USB_ETHERNET = 0
+    ANALOG_IN = 1
+    SPI = 2
+    WAVEFORM_GENERATOR = 3
 
 
 class StatusRegister:
@@ -253,15 +253,14 @@ class DiscoverFlags(Flag):
     Attributes:
         DETECT_SERIAL: Enables detection of serial devices.
         DETECT_ETHERNET: Enables detection of ethernet devices.
-        EXTENDED_INFO: Enriches discovered devices with additional information such as actuator name and actuator serial number.
+        READ_DEVICE_INF: Enriches discovered devices with additional information such as actuator name and actuator serial number.
         ALL: Enables all discovery actions (serial, ethernet, and enrichment).
     """
-    DETECT_SERIAL: "DiscoverFlags" = auto()
-    DETECT_ETHERNET: "DiscoverFlags" = auto()
-    READ_DEVICE_ID: "DiscoverFlags" = auto()
-    EXTENDED_INFO: "DiscoverFlags" = auto()
-    ALL_INTERFACES: "DiscoverFlags" = DETECT_SERIAL | DETECT_ETHERNET
-    ALL: "DiscoverFlags" = ALL_INTERFACES | EXTENDED_INFO | READ_DEVICE_ID
+    DETECT_SERIAL = auto()
+    DETECT_ETHERNET = auto()
+    READ_DEVICE_INFO = auto()
+    ALL_INTERFACES = DETECT_SERIAL | DETECT_ETHERNET
+    ALL = ALL_INTERFACES | READ_DEVICE_INFO
     
 
     @staticmethod

@@ -4,7 +4,9 @@ import logging
 from typing import List
 import serial.tools.list_ports
 from nv200.transport_protocol import TransportProtocol
-from nv200.shared_types import DiscoverFlags
+from nv200.shared_types import DiscoverFlags, DetectedDevice, TransportType
+from nv200.device_base import PiezoDeviceBase, create_device_from_id, DEVICE_MODEL_REGISTRY
+
 
 # Global module locker
 logger = logging.getLogger(__name__)
@@ -62,7 +64,7 @@ class SerialProtocol(TransportProtocol):
     
 
     @staticmethod
-    async def discover_devices(flags: DiscoverFlags)  -> List[str]:
+    async def discover_devices(flags: DiscoverFlags)  -> List[DetectedDevice]:
         """
         Asynchronously discovers all devices connected via serial interface.
 
@@ -72,12 +74,22 @@ class SerialProtocol(TransportProtocol):
         ports = serial.tools.list_ports.comports()
         valid_ports = [p.device for p in ports if p.manufacturer == "FTDI"]
 
-        async def detect_on_port(port_name: str) -> str | None:
+        async def detect_on_port(port_name: str) -> DetectedDevice | None:
             protocol = SerialProtocol(port_name)
             try:
+                detected_device = DetectedDevice(
+                    transport=TransportType.SERIAL,
+                    identifier=port_name
+                )
                 await protocol.connect()
-                detected = await protocol.detect_device()
-                return port_name if detected else None
+                dev = PiezoDeviceBase(protocol)
+                # We always read the device ID because for serial port this is required
+                detected_device.device_id = await dev.get_device_type()
+                print(f"Detected device ID: {detected_device.device_id} on port {port_name}")
+                if detected_device.device_id in DEVICE_MODEL_REGISTRY:
+                    return detected_device
+                else:
+                    return None     
             except Exception as e:
                 # We do ignore the exception - if it is not possible to connect to the device, we just return None
                 print(f"Error on port {port_name}: {e.__class__.__name__} {e}")
@@ -88,9 +100,9 @@ class SerialProtocol(TransportProtocol):
         # Run all detections concurrently
         tasks = [detect_on_port(port) for port in valid_ports]
         results = await asyncio.gather(*tasks)
-
         # Filter out Nones
-        return [port for port in results if port]
+        return [dev for dev in results if dev]
+    
 
     async def connect(self, auto_adjust_comm_params: bool = True):
         """

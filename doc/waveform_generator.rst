@@ -1,5 +1,5 @@
 Waveform Generator
-----------------------------
+=======================
 
 If a device provides waveform generator functionality, such as the NV200 amplifier, you can use the
 :class:`WaveformGenerator <nv200.waveform_generator.WaveformGenerator>` class to access this functionality.
@@ -8,24 +8,24 @@ The arbitrary waveform generator can generate a single or repetitive setpoint si
 can be freely defined by up to 1024 samples.
 
 The following example demonstrates how to use the :mod:`nv200.waveform_generator` module with the
-`DeviceClient` from the `nv200.device_interface`. It covers setting up the `WaveformGenerator`, 
+`NV200Device` from the `nv200.nv200_device`. It covers setting up the `WaveformGenerator`, 
 generating a sine wave, and starting the waveform generator.
 
 .. code-block:: python
 
    import asyncio
-   from nv200.device_interface import DeviceClient
-   from nv200.transport_protocols import TelnetProtocol
+   from nv200.nv200_device import NV200Device
+   from nv200.telnet_protocol import TelnetProtocol
    from nv200.waveform_generator import WaveformGenerator
 
    async def waveform_generator_test():
       # Create the device client using Telnet protocol
       transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-      client = DeviceClient(transport)
-      await client.connect()
+      device = NV200Device(transport)
+      await device.connect()
 
-      # Initialize the waveform generator with the device client
-      waveform_generator = WaveformGenerator(client)
+      # Initialize the waveform generator with the NV200 device
+      waveform_generator = WaveformGenerator(device)
 
       # Generate a sine wave with a frequency of 1 Hz, low level of 0, and high level of 80 µm
       sine = waveform_generator.generate_sine_wave(freq_hz=1, low_level=0, high_level=80)
@@ -41,13 +41,13 @@ generating a sine wave, and starting the waveform generator.
       await waveform_generator.wait_until_finished()
 
       # Close the device client connection
-      await client.close()
+      await device.close()
 
    if __name__ == "__main__":
       asyncio.run(waveform_generator_test())
 
 Step by step guide to using the Waveform Generator
-==================================================
+-----------------------------------------------------
 
 This guide will walk you through the steps to set up and use the waveform generator using the given
 example code.
@@ -57,42 +57,42 @@ Step 1: Import Necessary Modules
 
 To get started, you'll need to import the relevant modules. 
 The `WaveformGenerator` class is imported from the `nv200.waveform_generator` module,
-along with other necessary components such as `DeviceClient` and `TelnetProtocol`.
+along with other necessary components such as `NV200Device` and `TelnetProtocol`.
 
 .. code-block:: python
 
    import asyncio
-   from nv200.device_interface import DeviceClient
-   from nv200.transport_protocols import TelnetProtocol
+   from nv200.nv200_device import NV200Device
+   from nv200.telnet_protocol import TelnetProtocol
    from nv200.waveform_generator import WaveformGenerator
 
 
-Step 2: Create the DeviceClient
+Step 2: Create the NV200Device
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To interact with the NV200 device, you must create a `DeviceClient` 
+To interact with the NV200 device, you must create a `NV200Device` 
 instance. This client communicates with the device using the `TelnetProtocol`, 
 which requires the device's MAC address for connection.
 
 .. code-block:: python
 
    # Create the device client using Telnet protocol
-   transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-   client = DeviceClient(transport)
-   await client.connect()
+    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
+    device = NV200Device(transport)
+    await device.connect()
 
 
 Step 3: Initialize the Waveform Generator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 After setting up the device client, initialize the `WaveformGenerator` with the 
-device client instance. This allows you to interact with the waveform generation 
+device instance. This allows you to interact with the waveform generation 
 functionality.
 
 .. code-block:: python
 
-   # Initialize the waveform generator with the device client
-   waveform_generator = WaveformGenerator(client)
+   # Initialize the waveform generator with the NV200 device
+    waveform_generator = WaveformGenerator(device)
 
 
 Step 4: Generate the Waveform
@@ -154,7 +154,7 @@ completed its operation. It waits until the `is_running` function returns false.
    # Wait until the waveform generator finishes the move
    await waveform_generator.wait_until_finished()
 
-Step 8: Close the Device Client Connection
+Step 8: Close the Device Connection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once the waveform has finished executing, it is good practice to close the connection
@@ -163,12 +163,11 @@ to the device to free up resources.
 .. code-block:: python
 
    # Close the device client connection
-   await client.close()
+   await device.close()
 
 
 API Reference
-==============
+--------------
 .. automodule:: nv200.waveform_generator
    :members:
    :show-inheritance:
-   :undoc-members:

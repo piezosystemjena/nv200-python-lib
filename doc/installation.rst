@@ -2,7 +2,7 @@ Installation
 ================
 
 Quick Install
-^^^^^^^^^^^^^^^^
+----------------
 
 If you're already familiar with Python and just want to install the package quickly then:
 
@@ -20,12 +20,12 @@ or if you would like to install the package into a virtual environment:
 
 
 Step-by-Step Installation Guide
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------------
 
 This guide provides instructions for installing the `nv200` package.
 
 Prerequisites
-""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^
 
 Before installing the package, make sure that:
 
@@ -36,7 +36,7 @@ Before installing the package, make sure that:
 
 
 Step 1 - Install virtualenv (if not already installed)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you don't have `virtualenv` installed, you can install it by running the following command:
 
@@ -46,7 +46,7 @@ If you don't have `virtualenv` installed, you can install it by running the foll
 
 
 Step 2 - Create a Virtual Environment
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To create a new virtual environment, navigate to the directory where you want the environment to be created. 
 Then, run the following command:
@@ -60,7 +60,7 @@ different name for the environment if needed.
 
 
 Step 3 - Activate the Virtual Environment
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once the virtual environment is created, you need to activate it. The activation command depends 
 on your operating system.
@@ -71,7 +71,7 @@ on your operating system.
 
 
 Step 4 - Install the Wheel
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 With the virtual environment activated, you can now install the NV200 package.
 
@@ -81,7 +81,7 @@ With the virtual environment activated, you can now install the NV200 package.
 
 
 Summary
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 So to install the NV200 package into a virtual environment, you execute the following commands:
 

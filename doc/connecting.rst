@@ -130,7 +130,7 @@ and its capabilities.
         """
         print("\nDiscovering devices...")
         devices = await discover_devices()
-        
+
         if not devices:
             print("No devices found.")
         else:
@@ -139,8 +139,8 @@ and its capabilities.
                 print(device)
 
         print("\nDiscovering devices with extended information...")
-        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.EXTENDED_INFO)	
-        
+        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
+
         if not devices:
             print("No devices found.")
         else:
@@ -160,13 +160,13 @@ information. The output of the example may look like this:
 
     Discovering devices...
     Found 2 device(s):
-    Telnet @ 192.168.10.178 - Actuator: None #None
-    Serial @ COM3 - Actuator: None #None
+    Telnet @ 192.168.10.147 (MAC: 00:80:A3:79:C6:18) - Actuator: None #None
+    Serial @ COM3 - NV200/D_NET - Actuator: None #None
 
     Discovering devices with extended information...
     Found 2 device(s):
-    Telnet @ 192.168.10.178 - Actuator: TRITOR100SG  #85533
-    Serial @ COM3 - Actuator: TRITOR100SG  #85533
+    Telnet @ 192.168.10.147 (MAC: 00:80:A3:79:C6:18) - NV200/D_NET - Actuator: TRITOR100SG  #85533
+    Serial @ COM3 - NV200/D_NET - Actuator: TRITOR100SG  #85533
 
 
 Connecting To a Device
@@ -181,7 +181,6 @@ function from the :mod:`nv200.device_interface` module. So you just need to:
 .. code-block:: python
 
     import asyncio
-    from nv200.shared_types import DetectedDevice
     from nv200.device_discovery import discover_devices
     from nv200.nv200_device import NV200Device
 
@@ -196,10 +195,18 @@ function from the :mod:`nv200.device_interface` module. So you just need to:
         # Create a device client for the first detected device
         device = NV200Device.from_detected_device(detected_devices[0])
         await device.connect()
+        print(f"Connected to device: {device.device_info}")
 
     # Running the async main function
     if __name__ == "__main__":
         asyncio.run(main_async())
+
+The output of the example may look like this:
+
+.. code-block:: text
+
+    Discovering devices...
+    Connected to device: Telnet @ 192.168.10.147 - NV200/D_NET
 
 
 .. admonition:: Important
@@ -227,7 +234,7 @@ object and pass it to the :class:`DeviceClient <nv200.device_interface.DeviceCli
 constructor.
 
 Auto-detect serial port
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following example shows, how to connect to a NV200 device connected via USB.
 The example auto-detects the serial port and connects to the device.
@@ -236,12 +243,12 @@ Please note how to use the :code:`await` keyword when calling the asynchronous f
 .. code-block:: python
 
     import asyncio
-    from nv200.device_interface import DeviceClient
-    from nv200.transport_protocols import SerialProtocol
+    from nv200.nv200_device import NV200Device
+    from nv200.serial_protocol import SerialProtocol
 
     async def serial_port_auto_detect():
         transport = SerialProtocol()
-        client = DeviceClient(transport)
+        client = NV200Device(transport)
         await client.connect()
         print(f"Connected to device on serial port: {transport.port}")
         await client.close()
@@ -251,7 +258,7 @@ Please note how to use the :code:`await` keyword when calling the asynchronous f
 
 
 Connect to a specific serial port
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to connect to a device on a specific serial port, you can do 
 so by specifying the port in the constructor of the :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` class.
@@ -261,18 +268,18 @@ want to connect to a specific one.
 .. code-block:: python
 
     import asyncio
-    from nv200.device_interface import DeviceClient
-    from nv200.transport_protocols import SerialProtocol
+    from nv200.nv200_device import NV200Device
+    from nv200.serial_protocol import SerialProtocol
 
-    async def serial_port_connect():
+    async def serial_port_auto_detect():
         transport = SerialProtocol(port="COM3")
-        client = DeviceClient(transport)
+        client = NV200Device(transport)
         await client.connect()
         print(f"Connected to device on serial port: {transport.port}")
         await client.close()
 
     if __name__ == "__main__":
-        asyncio.run(serial_port_connect())
+        asyncio.run(serial_port_auto_detect())
 
 
 Ethernet Connection to NV200
@@ -285,7 +292,7 @@ object and pass it to the :class:`DeviceClient <nv200.device_interface.DeviceCli
 constructor.
 
 Auto-detect Ethernet connection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following example shows, how to connect to a NV200 device connected via Ethernet.
 The example scans all active network interfaces for NV200 devices using a special
@@ -294,13 +301,12 @@ UDP device discovery protocol. The function returns as soon as a device is found
 .. code-block:: python
 
     import asyncio
-    from nv200.device_interface import DeviceClient
-    from nv200.transport_protocols import TelnetProtocol
-
+    from nv200.nv200_device import NV200Device
+    from nv200.telnet_protocol import TelnetProtocol
 
     async def ethernet_auto_detect():
         transport = TelnetProtocol()
-        client = DeviceClient(transport)
+        client = NV200Device(transport)
         await client.connect()
         print(f"Connected to device with IP: {transport.host}")
         await client.close()
@@ -311,7 +317,7 @@ UDP device discovery protocol. The function returns as soon as a device is found
 
 
 Ethernet connection to a specific MAC address
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to connect to a device with a specific MAC address, 
 you can do so by specifying the MAC address in the constructor of 
@@ -324,24 +330,23 @@ The following example shows this:
 .. code-block:: python
 
     import asyncio
-    from nv200.device_interface import DeviceClient
-    from nv200.transport_protocols import TelnetProtocol
+    from nv200.nv200_device import NV200Device
+    from nv200.telnet_protocol import TelnetProtocol
 
-
-    async def ethernet_connect_to_mac():
+    async def ethernet_auto_detect():
         transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")
-        client = DeviceClient(transport)
+        client = NV200Device(transport)
         await client.connect()
-        print(f"Connected to device with IP: {transport.host}")
+        print(f"Connected to device with IP: {transport.host} - MAC: {transport.MAC}")
         await client.close()
 
 
     if __name__ == "__main__":
-        asyncio.run(ethernet_connect_to_mac())
+        asyncio.run(ethernet_auto_detect())
 
     
 Ethernet connection to a specific IP address
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to connect to a device with a specific IP address,
 you can do so by specifying the IP address in the constructor of 
@@ -350,18 +355,17 @@ the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
 .. code-block:: python
 
     import asyncio
-    from nv200.device_interface import DeviceClient
-    from nv200.transport_protocols import TelnetProtocol
+    from nv200.nv200_device import NV200Device
+    from nv200.telnet_protocol import TelnetProtocol
 
-
-    async def ethernet_connect_to_ip():
+    async def ethernet_auto_detect():
         transport = TelnetProtocol(host="192.168.10.182")
-        client = DeviceClient(transport)
+        client = NV200Device(transport)
         await client.connect()
-        print(f"Connected to device with IP: {transport.host}")
+        print(f"Connected to device with IP: {transport.host} - MAC: {transport.MAC}")
         await client.close()
 
 
     if __name__ == "__main__":
-        asyncio.run(ethernet_connect_to_ip())
+        asyncio.run(ethernet_auto_detect())
     

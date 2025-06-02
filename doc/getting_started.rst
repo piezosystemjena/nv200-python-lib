@@ -2,7 +2,7 @@ Getting Started with the API
 ==================================
 
 High-Level Device Functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------
 
 If you have a properly connected `DeviceClient` instance, you can start using the API of
 the NV200 library. The high-level functions provide a user-friendly interface for common device 
@@ -34,7 +34,7 @@ read the current position of the device using the high-level API:
 
 
 Generic Read/Write Methods
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 These methods offer low-level access to the device's command interface.
 They are useful for advanced users who need direct control or want to access features not 

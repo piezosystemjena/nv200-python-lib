@@ -1,5 +1,5 @@
 Data Recorder
-----------------------------
+=============================================
 
 If the device provides data recorder functionality, such as the NV200 amplifier
 you can use the :class:`DataRecorder <nv200.data_recorder.DataRecorder>` class to access the data 
@@ -16,17 +16,17 @@ piezo position and current of amplifier 1 for 25 ms.
 
 
 The following example demonstrates how to use the :mod:`nv200.data_recorder` module with the 
-`DeviceClient` from the `nv200.device_interface`. It covers setting up the `DataRecorder`, 
+`NV200Device` from the `nv200.nv200_device`. It covers setting up the `DataRecorder`, 
 configuring data sources, and recording data.
 
 .. code-block:: python
 
     import asyncio
     import matplotlib.pyplot as plt
-    from nv200.device_interface import DeviceClient
+    from nv200.nv200_device import NV200Device
     from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 
-    async def data_recorder_tests(device: DeviceClient):
+    async def data_recorder_tests(device: NV200Device):
         """
         Asynchronous function to test the functionality of the DataRecorder with a given device.
         """
@@ -58,12 +58,12 @@ configuring data sources, and recording data.
         # Use matplotlib to plot the recorded data
         prepare_plot_style()
         plt.plot(rec_data[0].sample_times_ms, rec_data[0].values, linestyle='-', color='orange', label=rec_data[0].source)
-        plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source)   
+        plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source)
         show_plot()
 
 
 Step by step guide to using the Data Recorder
-=============================================
+-----------------------------------------------
 
 This guide will walk you through the steps to set up and use the data recorder using the given
 example code.
@@ -73,24 +73,24 @@ Step 1: Import Necessary Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You will need to import the required modules to interact with the device and set 
-up the data recorder. These include `DeviceClient` from `nv200.device_interface`, 
+up the data recorder. These include `NV200Device` from `nv200.nv200_device`, 
 and `DataRecorder`, `DataRecorderSource`, and `RecorderAutoStartMode` from `nv200.data_recorder`.
 
 .. code-block:: python
 
     import asyncio
-    from nv200.device_interface import DeviceClient
+    from nv200.nv200_device import NV200Device
     from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 
-Step 2: Setup the DeviceClient
+Step 2: Setup the Device
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The `DeviceClient` instance is responsible for interacting with the hardware, allowing you 
+The `NV200Device` instance is responsible for interacting with the hardware, allowing you 
 to control the movement of the device and manage the data recorder.
 
 .. code-block:: python
 
-    async def data_recorder_tests(device: DeviceClient):
+    async def data_recorder_tests(device: NV200Device):
         await device.move_to_position(0)  # Move device to initial position (0)
         await asyncio.sleep(0.4)  # Allow the device to settle
 
@@ -98,7 +98,7 @@ Step 3: Create a DataRecorder Instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Once the device is ready, create an instance of the `DataRecorder` class, passing t
-he `DeviceClient` instance to it. This will allow the DataRecorder to manage data recording.
+he `NV200Device` instance to it. This will allow the DataRecorder to manage data recording.
 
 .. code-block:: python
     
@@ -119,7 +119,7 @@ Available options in `DataRecorderSource` include:
 - `PIEZO_POSITION`: Piezo position (μm or mrad)
 - `SETPOINT`: Setpoint (μm or mrad)
 - `PIEZO_VOLTAGE`: Piezo voltage (V)
-- `POSITION_ERROR``: Position error
+- `POSITION_ERROR`: Position error
 - `ABS_POSITION_ERROR`: Absolute position error
 - `PIEZO_CURRENT_1`: Piezo current 1 (A)
 - `PIEZO_CURRENT_2`: Piezo current 2 (A)
@@ -238,8 +238,8 @@ The expected output is a plot showing the recorded data from both channels:
          Depending on the chosen auto-start mode, recordings might begin automatically or require explicit start commands.
 
 API Reference
-==============
+--------------
+
 .. automodule:: nv200.data_recorder
    :members:
    :show-inheritance:
-   :undoc-members:

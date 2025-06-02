@@ -187,7 +187,7 @@ class DataRecorder:
         """
         Sets the sample buffer size for each of the two data recorder channels (0..6144)
         A value of 0 means infinite loop over maximum length until recorder is stopped manually.
-        If you would like to have an infinite loop, use the constant `INFINITE_RECORDING_DURATION`.
+        If you would like to have an infinite loop, use the constant `DataRecorder.INFINITE_RECORDING_DURATION`.
         You can get the maximum buffer size using the `max_sample_buffer_size` property.
         """
         if not 1 <= buffer_size <= self.NV200_RECORDER_BUFFER_SIZE:

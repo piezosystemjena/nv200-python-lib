@@ -1,6 +1,7 @@
 import asyncio
 import socket
 import telnetlib3
+import logging
 from enum import Enum, IntFlag
 from typing import List, Tuple, Dict, Optional
 from nv200.eth_utils import get_active_ethernet_ips
@@ -11,6 +12,9 @@ BROADCAST_IP = '255.255.255.255'
 UDP_PORT = 30718  # Lantronix Discovery Protocol port
 TELNET_PORT = 23  # Telnet Port (default: 23)
 TIMEOUT = 0.4  # Timeout for UDP response
+
+# Global module locker
+logger = logging.getLogger(__name__)
 
 
 class FlowControlMode(Enum):
@@ -70,7 +74,7 @@ async def send_udp_broadcast_async(local_ip : str) -> List[Tuple[bytes, Tuple[st
     except asyncio.TimeoutError:
         pass
     except (ValueError, IndexError) as e:
-        print(f"Error sending UDP broadcast: {e}")
+        logger.error("Error sending UDP broadcast: %s", e)
         broadcast_responses = []
     finally:
         s.close()
@@ -178,7 +182,7 @@ def send_udp_broadcast(local_ip : str) -> List[Tuple[bytes, Tuple[str, int]]]:
                 break  # Exit loop when no more responses arrive
 
     except (ValueError, IndexError) as e:
-        print(f"Error sending UDP broadcast: {e}")
+        logger.error("Error sending UDP broadcast: %s", e)
         broadcast_responses = []
 
     finally:
@@ -258,7 +262,7 @@ def parse_responses(response_list: List[Tuple[bytes, Tuple[str, int]]]) -> List[
                 continue
             parsed_devices.append(NetworkEndpoint(mac=mac_address, ip=address[0]))
         except Exception as e:
-            print(f"Error parsing response: {e}")
+            logger.error("Error parsing response: %s", e)
 
     return parsed_devices
 
@@ -277,7 +281,6 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
     PARAM_FLOW_CONTROL = 2
     STORE_CONFIG_MENU_OPTION = "9\r"
     port = 9999
-    debug : bool = False
 
 
     async def connect_telnet(host: str):
@@ -291,8 +294,7 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         Asnyc read data with debug output
         """
         data = await reader.read(size)
-        if debug:
-            print(f"[DEBUG] Read ({context}): {data!r}")
+        logger.debug("Read data (%s): %r", context, data)
         return data
 
     async def write_data(writer, data, context=""):
@@ -300,8 +302,7 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         Write data with debug output
         """
         writer.write(data)
-        if debug:
-            print(f"[DEBUG] Write ({context}): {data!r}")
+        logger.debug("Write data (%s): %r", context, data)
 
     async def verify_rebooted(timeout : int):
         """
@@ -322,7 +323,7 @@ async def configure_flow_control(host: str, mode: FlowControlMode = FlowControlM
         configuration = await read_data(reader, 4096, "configuration setup")
 
         if f"Flow 0{mode.value}" in configuration:
-            print(f"Flow control already set to {mode.name}")
+            logger.info("Flow control already set to %s", mode.name)
             return False
 
         await write_data(writer, "1\r", "enter channel 1 config")

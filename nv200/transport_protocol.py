@@ -28,7 +28,7 @@ Example:
 import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Awaitable, Optional
-from nv200.shared_types import DetectedDevice, TransportType
+from nv200.shared_types import DetectedDevice, TransportProtocolInfo
 
 if TYPE_CHECKING:
     from nv200.device_base import PiezoDeviceBase
@@ -88,6 +88,12 @@ class TransportProtocol(ABC):
         """
 
     @abstractmethod
+    def get_info(self) -> TransportProtocolInfo:
+        """
+        Returns metadata about the transport protocol, such as type and identifier.
+        """
+
+    @abstractmethod
     async def flush_input(self):
         """
         Asynchronously flushes or clears the input buffer of the transport protocol.
@@ -121,6 +127,5 @@ class TransportProtocol(ABC):
         Raises:
             Exception: If an error occurs while attempting to close the resource.
         """
-
 
 

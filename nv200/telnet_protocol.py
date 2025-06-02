@@ -4,8 +4,8 @@ import logging
 from typing import Optional, List
 from nv200.transport_protocol import TransportProtocol, DiscoveryCallback
 import nv200.lantronix_xport as xport
-from nv200.shared_types import NetworkEndpoint, DetectedDevice, TransportType, DiscoverFlags
-from nv200.device_base import PiezoDeviceBase, create_device_from_id
+from nv200.shared_types import NetworkEndpoint, DetectedDevice, TransportType, DiscoverFlags, TransportProtocolInfo
+from nv200.device_base import PiezoDeviceBase
 
 # Global module locker
 logger = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ class TelnetProtocol(TransportProtocol):
         """
         if not self.__host and self.__MAC:
             self.__host = await xport.discover_lantronix_device_async(self.__MAC)
-            if self.__host:
+            if not self.__host:
                 raise RuntimeError(f"Device with MAC address {self.__MAC} not found")
         elif not self.__host and not self.__MAC:
             devices = await xport.discover_lantronix_devices_async()
@@ -190,3 +190,14 @@ class TelnetProtocol(TransportProtocol):
 
         # Filter out Nones
         return [dev for dev in results if dev]
+
+
+    def get_info(self) -> TransportProtocolInfo:
+        """
+        Returns metadata about the transport protocol, such as type and identifier.
+        """
+        return TransportProtocolInfo(
+            transport=TransportType.TELNET,
+            identifier=self.__host,
+            mac=self.__MAC
+        )

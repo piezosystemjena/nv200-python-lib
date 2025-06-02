@@ -13,7 +13,7 @@ class NV200Device(PiezoDeviceBase):
     """
     DEVICE_ID = "NV200/D_NET"
 
-    async def get_device_info(self, detected_device : DetectedDevice) -> None :
+    async def enrich_device_info(self, detected_device : DetectedDevice) -> None :
         """
         Get additional information about the device.
 

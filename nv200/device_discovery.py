@@ -47,7 +47,7 @@ async def _enrich_device_info(detected_device: DetectedDevice) -> None:
         detected_device.device_id = await dev.get_device_type()
         logger.debug("Device ID detected: %s", detected_device.device_id)
         dev = create_device_from_id(detected_device.device_id, protocol)
-        await dev.get_device_info(detected_device)
+        await dev.enrich_device_info(detected_device)
         return detected_device
     except Exception:
         return None
@@ -64,7 +64,7 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
 
       - `DiscoverFlags.DETECT_ETHERNET` - detect devices connected via Ethernet
       - `DiscoverFlags.DETECT_SERIAL` - detect devices connected via Serial
-      - `DiscoverFlags.EXTENDED_INFO` - enrich device information with additional details such as actuator name and actuator serial number
+      - `DiscoverFlags.READ_DEVICE_INFO` - enrich device information with additional details such as actuator name and actuator serial number
 
     Args:
         flags (DiscoverFlags): Bitwise combination of discovery options. Defaults to ALL_INTERFACES.

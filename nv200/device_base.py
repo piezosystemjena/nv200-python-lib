@@ -3,9 +3,6 @@ Provides classes and enumerations for communicating with and interpreting respon
 
 This module includes an asynchronous client for issuing commands and parsing responses
 from NV200 devices over supported transport protocols (e.g., serial, Telnet).
-
-Classes:
-    - :class:`.DeviceClient`: High-level async client for device communication.
 """
 
 import asyncio
@@ -15,7 +12,8 @@ from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 from nv200.shared_types import (
     ErrorCode,
     DeviceError,
-    DetectedDevice
+    DetectedDevice,
+    DeviceInfo
 )
 
 
@@ -35,6 +33,7 @@ class PiezoDeviceBase:
     DEFAULT_TIMEOUT_SECS = 0.4
     frame_delimiter_write = "\r\n"
     DEVICE_ID = None # Placeholder for device ID, to be set in subclasses
+    _transport: TransportProtocol
     
     def __init__(self, transport: TransportProtocol):
         self._transport = transport
@@ -311,7 +310,7 @@ class PiezoDeviceBase:
         detected_device_type = await self.get_device_type()
         return (detected_device_type == self.DEVICE_ID, detected_device_type)
     
-    async def get_device_info(self, detected_device : DetectedDevice) -> None :
+    async def enrich_device_info(self, detected_device : DetectedDevice) -> None :
         """
         Get additional information about the device.
 
@@ -322,6 +321,32 @@ class PiezoDeviceBase:
             detected_device (DetectedDevice): The detected device object to enrich with additional information.
         """
         pass
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """
+        Returns detailed information about the connected device.
+
+        This property provides a DeviceInfo object that includes
+        the device's identifier and transport metadata. It requires
+        that the transport layer is initialized and connected.
+
+        Raises:
+            RuntimeError: If the transport is not initialized or the device
+                        is not connected.
+
+        Returns:
+            DeviceInfo: An object containing the device ID and transport info.
+        """
+        if self._transport is None:
+            raise RuntimeError("Cannot access device_info: transport is not initialized.")
+        
+        return DeviceInfo(
+            device_id=self.DEVICE_ID,
+            transport_info=self._transport.get_info()
+        )
+
+
 
    
 DEVICE_MODEL_REGISTRY: Dict[str, Type[PiezoDeviceBase]] = {}
@@ -346,4 +371,3 @@ def create_device_from_id(device_id: str, *args, **kwargs) -> PiezoDeviceBase:
     if cls is None:
         raise ValueError(f"Unsupported device ID: {device_id}")
     return cls(*args, **kwargs)
-

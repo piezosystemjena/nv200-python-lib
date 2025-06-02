@@ -214,6 +214,45 @@ class TransportType(str, Enum):
         Returns a string representation of the transport type, capitalized.
         """
         return self.name.capitalize()
+    
+@dataclass
+class TransportProtocolInfo:
+    """
+    Represents the protocol information for a transport type.
+    """
+    transport: TransportType
+    identifier: str  # e.g., IP or serial port
+    mac: Optional[str] = None   
+
+    def __str__(self):
+        """
+        Returns a string representation of the TransportProtocolInfo.
+        """
+        return f"{self.transport} @ {self.identifier}"
+    
+
+@dataclass
+class DeviceInfo:
+    """
+    Represents information about a device, including its transport type, identifier, and optional metadata.
+
+    Attributes:
+        transport (TransportType): The type of transport used to communicate with the device.
+        identifier (str): The primary identifier for the device (e.g., IP address or serial port).
+        mac (Optional[str]): The MAC address of the device, if available.
+        device_id (Optional[str]): A unique identifier for the device, if available.
+    """
+    transport_info: TransportProtocolInfo
+    device_id: Optional[str] = None  # Unique identifier for the device, if available
+
+    def __str__(self):
+        """
+        Returns a string representation of the transport type, capitalized.
+        """
+        device_info = f"{self.transport_info}"
+        if self.device_id:
+            device_info += f" - {self.device_id}"
+        return device_info
 
 
 @dataclass
@@ -225,6 +264,9 @@ class DetectedDevice:
         transport (TransportType): The transport type used to communicate with the device (e.g., Ethernet, Serial).
         identifier (str): A unique identifier for the device, such as an IP address or serial port name.
         mac (Optional[str]): The MAC address of the device, if available.
+        device_id (Optional[str]): A unique identifier for the device, if available. such as NV200/D_NET
+        actuator_name (Optional[str]): The name of the connected piezo actuator, if available - e.g., "TRITOR100SG".
+        actuator_serial (Optional[str]): The serial number of the connected piezo actuator, if available.
     """
     transport: TransportType
     identifier: str  # e.g., IP or serial port
@@ -238,6 +280,9 @@ class DetectedDevice:
         Returns a string representation of the transport type, capitalized.
         """
         device_info = f"{self.transport} @ {self.identifier}"
+        if self.mac:
+            device_info += f" (MAC: {self.mac})"
+
         if self.device_id:
             device_info += f" - {self.device_id}"
         return f"{device_info} - Actuator: {self.actuator_name} #{self.actuator_serial}"

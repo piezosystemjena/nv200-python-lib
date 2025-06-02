@@ -4,8 +4,8 @@ import logging
 from typing import List, Optional
 import serial.tools.list_ports
 from nv200.transport_protocol import TransportProtocol
-from nv200.shared_types import DiscoverFlags, DetectedDevice, TransportType
-from nv200.device_base import PiezoDeviceBase, create_device_from_id, DEVICE_MODEL_REGISTRY
+from nv200.shared_types import DiscoverFlags, DetectedDevice, TransportType, TransportProtocolInfo
+from nv200.device_base import PiezoDeviceBase, DEVICE_MODEL_REGISTRY
 
 
 # Global module locker
@@ -85,14 +85,14 @@ class SerialProtocol(TransportProtocol):
                 dev = PiezoDeviceBase(protocol)
                 # We always read the device ID because for serial port this is required
                 detected_device.device_id = await dev.get_device_type()
-                print(f"Detected device ID: {detected_device.device_id} on port {port_name}")
+                logger.debug("Detected device ID: %s on port %s", detected_device.device_id, port_name)
                 if detected_device.device_id in DEVICE_MODEL_REGISTRY:
                     return detected_device
                 else:
                     return None     
             except Exception as e:
                 # We do ignore the exception - if it is not possible to connect to the device, we just return None
-                print(f"Error on port {port_name}: {e.__class__.__name__} {e}")
+                logger.info(f"Error on port {port_name}: {e.__class__.__name__} {e}")
                 return None
             finally:
                 await protocol.close()
@@ -147,3 +147,12 @@ class SerialProtocol(TransportProtocol):
         """
         return self.__port
     
+
+    def get_info(self) -> TransportProtocolInfo:
+        """
+        Returns metadata about the transport protocol, such as type and identifier.
+        """
+        return TransportProtocolInfo(
+            transport=TransportType.SERIAL,
+            identifier=self.__port,
+        )

@@ -2,7 +2,7 @@ import asyncio
 import telnetlib3
 import logging
 from typing import Optional, List
-from nv200.transport_protocol import TransportProtocol, DiscoveryCallback
+from nv200.transport_protocol import TransportProtocol
 import nv200.lantronix_xport as xport
 from nv200.shared_types import NetworkEndpoint, DetectedDevice, TransportType, DiscoverFlags, TransportProtocolInfo
 from nv200.device_base import PiezoDeviceBase
@@ -22,7 +22,7 @@ class TelnetProtocol(TransportProtocol):
     
     def __init__(self, host: str = "", port: int = 23, MAC: str = ""):
         """
-        Initializes thetransport protocol.
+        Initializes the transport protocol.
 
         Args:
             host (str, optional): The hostname or IP address of the NV200 device. Defaults to None.

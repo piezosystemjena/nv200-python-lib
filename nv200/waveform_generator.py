@@ -10,11 +10,14 @@ Classes:
     - :class:`.WaveformData`: Represents waveform data with time, amplitude, and sample time.
 """
 import math
+import logging
 from typing import List
 
 from nv200.nv200_device import NV200Device, ModulationSource
 from nv200.utils import TimeSeries, wait_until
 
+# Global module locker
+logger = logging.getLogger(__name__)
 
 class WaveformGenerator:
     """
@@ -273,10 +276,10 @@ class WaveformGenerator:
             for t_ms in times_ms
         ]
 
-        print(f"Optimal sample time: {sample_time_us} µs, "
-              f"Buffer size: {len(values)}, "
-              f"Frequency: {freq_hz} Hz, "
-              f"Scale factor: {sample_factor}")
+        logger.debug(
+            "Optimal sample time: %s µs, Buffer size: %s, Frequency: %s Hz, Scale factor: %s",
+            sample_time_us, len(values), freq_hz, sample_factor
+        )
 
         return self.WaveformData(
             values=values,

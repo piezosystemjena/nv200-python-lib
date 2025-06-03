@@ -1,3 +1,4 @@
+import logging
 from typing import Type
 from nv200.nv200_device import NV200Device
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
@@ -10,6 +11,9 @@ from nv200.device_base import PiezoDeviceBase
 from typing import List, Optional
 import nv200.lantronix_xport as xport
 
+
+# Global module locker
+logger = logging.getLogger(__name__)
 
 async def connect_to_single_device(device_class: Type[PiezoDeviceBase], transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> PiezoDeviceBase:
     """
@@ -79,8 +83,7 @@ async def connect_to_single_device(device_class: Type[PiezoDeviceBase], transpor
         await dev.connect(auto_adjust_comm_params=False)
         return dev
 
-    
-    print("No transport type and address specified, attempting to discover devices...")
+    logger.info("No transport type and address specified, attempting to discover devices...")
     detected_devices: List[DetectedDevice] = []
     discover_flags = DiscoverFlags.flags_for_transport(transport_type)
     if discover_flags & DiscoverFlags.DETECT_SERIAL:

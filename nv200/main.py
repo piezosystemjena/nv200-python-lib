@@ -183,10 +183,9 @@ async def waveform_generator_test():
     sets up the waveform generator, and starts it with specified parameters.
     """
     prepare_plot_style()
-    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-    #transport = SerialProtocol(port="COM3")
-    client = NV200Device(transport)
-    await client.connect()
+    client = await nv200.connection_utils.connect_to_single_device(
+        device_class=NV200Device, 
+        transport_type=TransportType.SERIAL)   
 
     await client.write('setlpf,200')
     await client.write('setlpon,0')
@@ -197,7 +196,7 @@ async def waveform_generator_test():
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
-    #await waveform_generator.set_waveform(sine)
+    await waveform_generator.set_waveform(sine)
 
 
     recorder = DataRecorder(client)
@@ -353,12 +352,12 @@ if __name__ == "__main__":
     #asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    #asyncio.run(waveform_generator_test())
+    asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
     #asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
-    asyncio.run(test_quick_connect())
+    #asyncio.run(test_quick_connect())
     #asyncio.run(test_serial_protocol_auto_detect())

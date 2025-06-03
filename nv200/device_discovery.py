@@ -8,7 +8,7 @@ or serial port), and optionally a MAC address.
 
 import asyncio
 import logging
-from typing import List, Optional, Callable, Awaitable
+from typing import List
 from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol  
 from nv200.serial_protocol import SerialProtocol
@@ -52,10 +52,6 @@ async def _enrich_device_info(detected_device: DetectedDevice) -> None:
     except Exception:
         return None
     
-
-async def _example_callback(proto: TransportProtocol, device: DetectedDevice) -> None:
-    print("Example callback called")
-
 
 async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) -> List[DetectedDevice]:
     """

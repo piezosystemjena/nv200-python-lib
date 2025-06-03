@@ -6,6 +6,7 @@ from NV200 devices over supported transport protocols (e.g., serial, Telnet).
 """
 
 import asyncio
+import logging
 from typing import Dict, Type, List
 from nv200.transport_protocol import TransportProtocol
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
@@ -16,7 +17,8 @@ from nv200.shared_types import (
     DeviceInfo
 )
 
-
+# Global module locker
+logger = logging.getLogger(__name__)
 
 class PiezoDeviceBase:
     """
@@ -143,7 +145,8 @@ class PiezoDeviceBase:
         Example:
             >>> await device_client.write('set,80') 
         """
-        print(f"Writing command: {cmd}")
+        logger.debug("Writing command: %s", cmd)
+
         await self._transport.write(cmd + self.frame_delimiter_write)
         try:
             response = await self._transport.read_message(timeout=0.4)

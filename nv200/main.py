@@ -10,6 +10,8 @@ from nv200.waveform_generator import WaveformGenerator
 from nv200.shared_types import DiscoverFlags, PidLoopMode, StatusFlags, TransportType
 from nv200.device_discovery import discover_devices
 from nv200.nv200_device import NV200Device
+from rich.traceback import install as install_rich_traceback
+from rich.logging import RichHandler
 
 import nv200.connection_utils
 import logging
@@ -260,7 +262,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
+    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES, NV200Device)
     
     if not devices:
         print("No devices found.")
@@ -288,18 +290,28 @@ def setup_logging():
     """
     Configures the logging settings for the application.
     """
+    # logging.basicConfig(
+    #     level=logging.DEBUG,
+    #     format='%(asctime)s.%(msecs)03d | %(levelname)-6s | %(name)-25s | %(message)s',
+    #     datefmt='%H:%M:%S'
+    # )
+
+    # rich logging and exception handling
     logging.basicConfig(
-        level=logging.WARN,
-        format='%(asctime)s.%(msecs)03d | %(levelname)-6s | %(name)-25s | %(message)s',
-        datefmt='%H:%M:%S'
+        level=logging.INFO,
+        format='%(asctime)s.%(msecs)03d | %(name)-25s | %(message)s',
+        datefmt="[%X]",
+        handlers=[RichHandler(rich_tracebacks=True, )]
     )
+    install_rich_traceback(show_locals=True)
 
     # List all loggers
     #for name in logging.root.manager.loggerDict:
     #    print(name)
 
-    logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
-    logging.getLogger("nv200.telnet_protocol").setLevel(logging.DEBUG)
+    #logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
+    #logging.getLogger("nv200.telnet_protocol").setLevel(logging.DEBUG)
+
 
 
 async def read_write_tests():
@@ -349,14 +361,13 @@ async def test_serial_protocol_auto_detect():
 if __name__ == "__main__":
     setup_logging()
 
-    #asyncio.run(test_discover_devices())
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    asyncio.run(waveform_generator_test())
+    #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    #asyncio.run(test_discover_devices())
+    asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
     #asyncio.run(test_quick_connect())

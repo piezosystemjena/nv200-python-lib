@@ -25,8 +25,8 @@ Functionality:
 """    
 
 from enum import Enum, IntFlag, Flag, auto
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Optional, Dict
 
 
 class PidLoopMode(Enum):
@@ -127,7 +127,7 @@ class ModulationSource(Enum):
     """
     Enumeration for setpoint modulation source.
     """
-    USB_ETHERNET = 0
+    SET_CMD = 0
     ANALOG_IN = 1
     SPI = 2
     WAVEFORM_GENERATOR = 3
@@ -265,27 +265,29 @@ class DetectedDevice:
         identifier (str): A unique identifier for the device, such as an IP address or serial port name.
         mac (Optional[str]): The MAC address of the device, if available.
         device_id (Optional[str]): A unique identifier for the device, if available. such as NV200/D_NET
-        actuator_name (Optional[str]): The name of the connected piezo actuator, if available - e.g., "TRITOR100SG".
-        actuator_serial (Optional[str]): The serial number of the connected piezo actuator, if available.
+        device_info: Dictionary with additional information about the device, such as actuator name and serial number.
     """
     transport: TransportType
     identifier: str  # e.g., IP or serial port
     mac: Optional[str] = None
     device_id: Optional[str] = None  # Unique identifier for the device, if available
-    actuator_name: Optional[str] = None
-    actuator_serial: Optional[str] = None
+    device_info: Dict[str, str] = field(default_factory=dict)
     
     def __str__(self):
         """
         Returns a string representation of the transport type, capitalized.
         """
-        device_info = f"{self.transport} @ {self.identifier}"
+        result = f"{self.transport} @ {self.identifier}"
         if self.mac:
-            device_info += f" (MAC: {self.mac})"
+            result += f" (MAC: {self.mac})"
 
         if self.device_id:
-            device_info += f" - {self.device_id}"
-        return f"{device_info} - Actuator: {self.actuator_name} #{self.actuator_serial}"
+            result += f" - {self.device_id}"
+
+        if self.device_info:
+            return f"{result} - {self.device_info}"
+        else:
+            return result
 
     
 

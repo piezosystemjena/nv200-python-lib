@@ -8,7 +8,7 @@ or serial port), and optionally a MAC address.
 
 import asyncio
 import logging
-from typing import List
+from typing import List, Type, Optional
 from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol  
 from nv200.serial_protocol import SerialProtocol
@@ -51,28 +51,48 @@ async def _enrich_device_info(detected_device: DetectedDevice) -> None:
         return detected_device
     except Exception:
         return None
-    
+      
 
-async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) -> List[DetectedDevice]:
+async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES, device_class: Optional[Type[PiezoDeviceBase]] = None) -> List[DetectedDevice]:
     """
-    Asynchronously discovers available devices over Telnet and Serial protocols, with optional enrichment.
+    Asynchronously discovers devices on available interfaces based on the specified discovery flags and optional device class.
+
     The discovery process can be customized using flags to enable or disable:
 
-      - `DiscoverFlags.DETECT_ETHERNET` - detect devices connected via Ethernet
-      - `DiscoverFlags.DETECT_SERIAL` - detect devices connected via Serial
-      - `DiscoverFlags.READ_DEVICE_INFO` - enrich device information with additional details such as actuator name and actuator serial number
+    - `DiscoverFlags.DETECT_ETHERNET` - detect devices connected via Ethernet
+    - `DiscoverFlags.DETECT_SERIAL` - detect devices connected via Serial
+    - `DiscoverFlags.READ_DEVICE_INFO` - enrich device information with additional details such as actuator name and actuator serial number    
 
     Args:
-        flags (DiscoverFlags): Bitwise combination of discovery options. Defaults to ALL_INTERFACES.
+        flags (DiscoverFlags, optional): Flags indicating which interfaces to scan and whether to read device info. Defaults to DiscoverFlags.ALL_INTERFACES.
+        device_class (Optional[Type[PiezoDeviceBase]], optional): If specified, only devices matching this class will be returned. Also ensures device info is read.
 
     Returns:
-        List[DetectedDevice]: A list of detected and optionally enriched devices.
+        List[DetectedDevice]: A list of detected devices, optionally enriched with detailed information and filtered by device class.
 
-    Note:
-        The flag EXTENDED_INFO may involve additional communication with each device and takes more time.
+    Raises:
+        Any exceptions raised by underlying protocol discovery or enrichment functions.
+
+    Notes:
+        - Device discovery is performed in parallel for supported interfaces (Ethernet, Serial).
+        - If READ_DEVICE_INFO is set, each detected device is enriched with additional information.
+        - If device_class is specified, only devices matching the class's DEVICE_ID are returned.
+
+    Examples:
+        Discover all Devices on all interfaces
+
+        >>> device = await nv200.device_discovery.discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
+
+        Discover NV200 Devices connected via serial interface
+
+        >>> device = await nv200.device_discovery.discover_devices(DiscoverFlags.DETECT_SERIAL | DiscoverFlags.READ_DEVICE_INFO, NV200Device)
     """
+
     devices: List[DetectedDevice] = []
     tasks = []
+
+    if device_class:
+        flags |= DiscoverFlags.READ_DEVICE_INFO  # Ensure we read device info if a specific class is requested
 
     if flags & DiscoverFlags.DETECT_ETHERNET:
         tasks.append(TelnetProtocol.discover_devices(flags))
@@ -97,5 +117,9 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES) 
         logger.debug("Enriching %d devices with detailed info...", len(devices))
         raw_results = await asyncio.gather(*(_enrich_device_info(d) for d in devices))
         devices = [d for d in raw_results if d is not None]
+
+    if device_class:
+        # Filter devices by the specified device class
+        devices = [d for d in devices if d.device_id == device_class.DEVICE_ID]
 
     return devices

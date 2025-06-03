@@ -23,8 +23,10 @@ class NV200Device(PiezoDeviceBase):
         Args:
             detected_device (DetectedDevice): The detected device object to enrich with additional information.
         """
-        detected_device.actuator_name = await self.get_actuator_name()
-        detected_device.actuator_serial = await self.get_actuator_serial_number()
+        detected_device.device_info.clear()
+        detected_device.device_info['actuator_name'] = await self.get_actuator_name()
+        detected_device.device_info['actuator_serial'] = await self.get_actuator_serial_number()
+
 
     async def set_pid_mode(self, mode: PidLoopMode):
         """Sets the PID mode of the device to either open loop or closed loop."""
@@ -53,11 +55,13 @@ class NV200Device(PiezoDeviceBase):
     async def move_to_position(self, position: float):
         """Moves the device to the specified position in closed loop"""
         await self.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+        await self.set_modulation_source(ModulationSource.SET_CMD)
         await self.set_setpoint(position)
 
     async def move_to_voltage(self, voltage: float):
         """Moves the device to the specified voltage in open loop"""
         await self.set_pid_mode(PidLoopMode.OPEN_LOOP)
+        await self.set_modulation_source(ModulationSource.SET_CMD)
         await self.set_setpoint(voltage)
 
     async def move(self, target: float):
@@ -65,6 +69,7 @@ class NV200Device(PiezoDeviceBase):
         Moves the device to the specified target position or voltage.
         The target is interpreted as a position in closed loop or a voltage in open loop.
         """
+        await self.set_modulation_source(ModulationSource.SET_CMD)
         await self.set_setpoint(target)
 
     async def get_current_position(self) -> float:

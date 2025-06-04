@@ -154,7 +154,8 @@ async def client_telnet_test():
     This function establishes a connection to a device, sends a series of commands, 
     reads responses, and then closes the connection.
     """
-    print(await TelnetProtocol.discover_devices(DiscoverFlags.DETECT_ETHERNET))
+    #print(await TelnetProtocol.discover_devices(DiscoverFlags.DETECT_ETHERNET))
+    #transport = TelnetProtocol(host="192.168.101.5")
     transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  # Replace with your device's MAC address
     client = NV200Device(transport)
     await client.connect()
@@ -262,7 +263,7 @@ async def test_discover_devices():
     logging.getLogger("nv200.transport_protocols").setLevel(logging.DEBUG)   
     
     print("Discovering devices...")
-    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES, NV200Device)
+    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
     
     if not devices:
         print("No devices found.")
@@ -367,6 +368,7 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
+    asyncio.run(test_discover_devices())
     asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())

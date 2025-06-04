@@ -113,12 +113,16 @@ async def discover_lantronix_devices_async() -> List[NetworkEndpoint]:
             - mac (str): The MAC address of the responding device.
             - ip (str): The IP address of the responding device.
     """
-    device_list: List[Dict[str, str]] = []
+    device_list: List[NetworkEndpoint] = []
     ips = [ip for _, ip in get_active_ethernet_ips()]
 
-    async def discover_from_ip(ip: str) -> List[Dict[str, str]]:
+    async def discover_from_ip(ip: str) -> List[NetworkEndpoint]:
         responses = await send_udp_broadcast_async(ip)
-        return parse_responses(responses) if responses else []
+        network_endpoints = parse_responses(responses)
+        if network_endpoints:
+            for endpoint in network_endpoints:
+                logger.info("Interface %s detected device: %s", ip, endpoint)
+        return network_endpoints
 
     # Launch all discovery coroutines in parallel
     results = await asyncio.gather(*(discover_from_ip(ip) for ip in ips))

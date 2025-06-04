@@ -32,7 +32,7 @@ def _transport_from_detected_device(detected_device: DetectedDevice) -> "Transpo
         raise ValueError(f"Unsupported transport type: {detected_device.transport}")
     
 
-async def _enrich_device_info(detected_device: DetectedDevice) -> None:
+async def _enrich_device_info(detected_device: DetectedDevice) -> DetectedDevice:
     """
     Asynchronously enriches a DetectedDevice object with additional actuator information.
 
@@ -48,6 +48,7 @@ async def _enrich_device_info(detected_device: DetectedDevice) -> None:
         logger.debug("Device ID detected: %s", detected_device.device_id)
         dev = create_device_from_id(detected_device.device_id, protocol)
         await dev.enrich_device_info(detected_device)
+        await protocol.close()
         return detected_device
     except Exception:
         return None

@@ -299,9 +299,12 @@ class PiezoDeviceBase:
         Retrieves the type of the device.
         The device type is the string that is returned if you just press enter after connecting to the device.
         """
+        await self._transport.flush_input()  # Ensure no pending input
         await self._transport.write("\r\n")
         response = await self._transport.read_until(b"\n")
-        return response.strip("\x01\n\r\x00<>")
+        response = response.strip("\x01\n\r\x00<>")
+        logger.info("Device type response: %s", response)
+        return response
     
     async def check_device_type(self) -> tuple[bool, str]:
         """

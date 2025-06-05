@@ -1,5 +1,5 @@
 from nv200.device_base import PiezoDeviceBase
-from nv200.shared_types import PidLoopMode, ModulationSource, StatusRegister, StatusFlags, DetectedDevice, TransportType
+from nv200.shared_types import PidLoopMode, ModulationSource, StatusRegister, StatusFlags, DetectedDevice, TransportType, SPIMonitorSource
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 
@@ -43,6 +43,14 @@ class NV200Device(PiezoDeviceBase):
     async def get_modulation_source(self) -> ModulationSource:
         """Retrieves the current setpoint modulation source."""
         return ModulationSource(await self.read_int_value('modsrc'))
+    
+    async def set_spi_monitor_source(self, source: SPIMonitorSource):
+        """Sets the source for the SPI/Monitor value returned via SPI MISO."""
+        await self.write(f"spisrc,{source.value}")
+
+    async def get_spi_monitor_source(self) -> SPIMonitorSource:
+        """Returns the source for the SPI/Monitor value returned via SPI MISO."""
+        return SPIMonitorSource(await self.read_int_value('spisrc'))
     
     async def set_setpoint(self, setpoint: float):
         """Sets the setpoint value for the device."""

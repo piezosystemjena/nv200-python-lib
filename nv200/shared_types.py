@@ -26,7 +26,7 @@ Functionality:
 
 from enum import Enum, IntFlag, Flag, auto
 from dataclasses import dataclass, field
-from typing import Optional, Dict
+from typing import Generator, Optional, Dict
 
 
 class PidLoopMode(Enum):
@@ -131,6 +131,24 @@ class ModulationSource(Enum):
     ANALOG_IN = 1
     SPI = 2
     WAVEFORM_GENERATOR = 3
+
+
+class SPIMonitorSource(Enum):
+    """
+    Enum representing sources for SPI monitor return values via MISO.
+
+    Each value corresponds to a specific source of data returned over SPI.
+    """
+    ZERO = 0                  #: 0x0000 (constant zero value)
+    CLOSED_LOOP_POS = 1       #: Position in closed-loop mode
+    SETPOINT = 2              #: Setpoint value
+    PIEZO_VOLTAGE = 3         #: Piezo voltage (controller output)
+    POSITION_ERROR = 4        #: Position error
+    ABS_POSITION_ERROR = 5    #: Absolute position error
+    OPEN_LOOP_POS = 6         #: Position in open-loop mode
+    PIEZO_CURRENT_1 = 7       #: Piezo current channel 1
+    PIEZO_CURRENT_2 = 8       #: Piezo current channel 2
+    TEST_VALUE = 9            #: Test value (0x5A5A)
 
 
 class StatusRegister:
@@ -348,3 +366,59 @@ class NetworkEndpoint:
     def __str__(self) -> str:
         """Returns a user-friendly string representation of the endpoint."""
         return f"MAC={self.mac}, IP={self.ip}"
+
+
+class TimeSeries:
+    """
+    TimeSeries represents waveform data with amplitude values (values) and corresponding sample times (sample_times_ms).
+    It also includes a sample time in milliseconds.
+    """
+
+    def __init__(self, values: list, sample_time_ms: int):
+        """
+        Initialize the TimeSeries instance with amplitude values and sample time.
+
+        Args:
+            values (list): The amplitude values corresponding to the waveform.
+            sample_time_ms (int): The sample time in milliseconds (sampling interval).
+        """
+        self._values = values
+        self._sample_time_ms = sample_time_ms
+
+    @property
+    def sample_time_ms(self) -> float:
+        """Returns the sample time in milliseconds."""
+        return self._sample_time_ms
+
+    @property
+    def values(self) -> list:
+        """Return the amplitude values (values) as a list."""
+        return self._values
+
+    @values.setter
+    def values(self, values: list) -> None:
+        """Set the amplitude values (values)."""
+        self._values = values
+
+    def generate_sample_times_ms(self) -> Generator[float, None, None]:
+        """
+        Generator function to return time (sample_times_ms) values as they are requested.
+        This will calculate and yield the corresponding time values based on sample_time_us.
+        """
+        for i in range(len(self.values)):
+            yield i * self._sample_time_ms
+
+    @property
+    def sample_times_ms(self) -> list:
+        """
+        Return all time (sample_times_ms) values as a list, calculated based on the sample time.
+        """
+        return list(self.generate_sample_times_ms())
+
+    def __str__(self):
+        """
+        Return a string representation of the TimeSeries object, showing pairs of time and value.
+        Example: [(0, 1.2), (10, 2.5), (20, 3.7), ...]
+        """
+        time_value_pairs = list(zip(self.sample_times_ms, self.values))
+        return f"TimeSeries({time_value_pairs})"

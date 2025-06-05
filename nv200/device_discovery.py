@@ -14,23 +14,13 @@ from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_base import PiezoDeviceBase, create_device_from_id
+from nv200.transport_factory import transport_from_detected_device
 
 
 # Global module locker
 logger = logging.getLogger(__name__)
 
 
-def _transport_from_detected_device(detected_device: DetectedDevice) -> "TransportProtocol":
-    """
-    Creates and returns a transport protocol instance based on the detected device's transport type.
-    """
-    if detected_device.transport == TransportType.TELNET:
-        return TelnetProtocol(host = detected_device.identifier)
-    elif detected_device.transport == TransportType.SERIAL:
-        return SerialProtocol(port = detected_device.identifier)
-    else:
-        raise ValueError(f"Unsupported transport type: {detected_device.transport}")
-    
 
 async def _enrich_device_info(detected_device: DetectedDevice) -> DetectedDevice:
     """
@@ -41,7 +31,7 @@ async def _enrich_device_info(detected_device: DetectedDevice) -> DetectedDevice
     """
     try:
         logger.debug("Reading device ID from: %s", detected_device.identifier)
-        protocol = _transport_from_detected_device(detected_device)
+        protocol = transport_from_detected_device(detected_device)
         await protocol.connect(auto_adjust_comm_params=False)
         dev = PiezoDeviceBase(protocol)
         detected_device.device_id = await dev.get_device_type()

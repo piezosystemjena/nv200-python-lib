@@ -3,7 +3,8 @@ This module provides access to the NV200 data recorder functionality.
 """
 import logging
 from nv200.nv200_device import NV200Device
-from nv200.utils import TimeSeries, wait_until
+from nv200.shared_types import TimeSeries
+from nv200.utils import wait_until
 import math
 from typing import List
 from enum import Enum

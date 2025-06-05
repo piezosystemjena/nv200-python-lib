@@ -1,7 +1,7 @@
 from nv200.device_base import PiezoDeviceBase
 
 
-class SpiBox(PiezoDeviceBase):
+class SpiBoxDevice(PiezoDeviceBase):
     """
     A high-level asynchronous client for communicating with NV200 piezo controllers.
     This class extends the `PiezoController` base class and provides high-level methods

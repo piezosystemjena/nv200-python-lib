@@ -14,7 +14,8 @@ import logging
 from typing import List
 
 from nv200.nv200_device import NV200Device, ModulationSource
-from nv200.utils import TimeSeries, wait_until
+from nv200.shared_types import TimeSeries
+from nv200.utils import wait_until
 
 # Global module locker
 logger = logging.getLogger(__name__)

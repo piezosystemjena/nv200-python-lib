@@ -7,7 +7,7 @@ from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.eth_utils import is_valid_ip, is_valid_mac
-from nv200.device_base import PiezoDeviceBase, create_device_from_id
+from nv200.device_base import PiezoDeviceBase, create_device_from_id, PiezoDeviceType
 from nv200.transport_factory import transport_from_detected_device
 from typing import List, Optional
 import nv200.lantronix_xport as xport
@@ -16,7 +16,7 @@ import nv200.lantronix_xport as xport
 # Global module locker
 logger = logging.getLogger(__name__)
 
-async def connect_to_single_device(device_class: Type[PiezoDeviceBase], transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> PiezoDeviceBase:
+async def connect_to_single_device(device_class: Type[PiezoDeviceType], transport_type : Optional[TransportType] = None, interface_or_address : str = None) -> PiezoDeviceType:
     """
     Convenience function to quickly connect to a single device.
 

@@ -14,23 +14,33 @@ read the current position of the device using the high-level API:
 
 .. code-block:: python
 
-      import asyncio
-      from nv200.device_interface import DeviceClient, PidLoopMode, StatusFlags
+   import asyncio
+   from nv200.nv200_device import NV200Device
+   from nv200.shared_types import PidLoopMode
+   from nv200.connection_utils import connect_to_single_device
 
-      async def move_closed_loop(client: DeviceClient):
-         await client.move_to_position(80)
-         await asyncio.sleep(0.2)
-         print(f"Current position: {await client.get_current_position()}")
 
-         # instead of using move_to_position, you can also use two separate commands
-         # to set the PID mode and the setpoint
-         await client.set_pid_mode(PidLoopMode.CLOSED_LOOP)
-         await client.set_setpoint(0)
-         await asyncio.sleep(0.2)
-         print(f"Current position: {await client.get_current_position()}")
+   async def move_closed_loop():
+      """
+      Moves the device to a specified position using closed-loop control.
+      """
+      dev = await connect_to_single_device(NV200Device)
+      print(f"Connected to device: {dev.device_info}")
 
-      if __name__ == "__main__":
-         asyncio.run(move_closed_loop())
+      await dev.move_to_position(20)
+      await asyncio.sleep(0.2)
+      print(f"Current position: {await dev.get_current_position()}")
+
+      # instead of using move_to_position, you can also use two separate commands
+      # to set the PID mode and the setpoint
+      await dev.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+      await dev.set_setpoint(0)
+      await asyncio.sleep(0.2)
+      print(f"Current position: {await dev.get_current_position()}")
+
+
+   if __name__ == "__main__":
+      asyncio.run(move_closed_loop())
 
 
 Generic Read/Write Methods
@@ -55,31 +65,29 @@ device parameters in a generic low-level way:
 .. code-block:: python
 
    import asyncio
-   from nv200.device_interface import DeviceClient
-   from nv200.transport_protocols import SerialProtocol
+   from nv200.nv200_device import NV200Device
+   from nv200.connection_utils import connect_to_single_device
 
    async def read_write_tests():
       """
       Test some generic low-level read/write methods
       """
-      transport = SerialProtocol(port="COM3")
-      device_client = DeviceClient(transport)
-      await device_client.connect()
-      print(f"Connected to device on serial port: {transport.port}")
-      await device_client.write('cl,0')
-      response = await device_client.read('cl')
+      dev = await connect_to_single_device(NV200Device)
+      print(f"Connected to device: {dev.device_info}")
+      await dev.write('cl,0')
+      response = await dev.read_response_string('cl')
+      print(repr(response))
+      response = await dev.read_response('set')
       print(response)
-      response = await device_client.read_response('set')
+      response = await dev.read_values('recout,0,0,1')
       print(response)
-      response = await device_client.read_values('recout,0,0,1')
+      response = await dev.read_float_value('set')
       print(response)
-      response = await device_client.read_float_value('set')
+      response = await dev.read_int_value('cl')
       print(response)
-      response = await device_client.read_int_value('cl')
+      response = await dev.read_string_value('desc')
       print(response)
-      response = await device_client.read_string_value('desc')
-      print(response)
-      await device_client.close()
+      await dev.close()
 
 
    if __name__ == "__main__":
@@ -89,13 +97,13 @@ The expected output of the above example is:
 
 .. code-block:: text
 
-   Connected to device on serial port: COM3
-   b'cl,0\r\n'
-   ('set', ['111.011'])
-   ['0', '0', '0.029']
-   111.011
+   Connected to device: Telnet @ 192.168.101.2 - NV200/D_NET
+   'cl,0\r\x00\n'
+   ('set', ['0.000'])
+   ['0', '0', '2.580']
+   0.0
    0
-   TRITOR100SG 
+   PSH20  
 
 So if you do not find a specific function in the high-level API, you can use the generic read/write methods
 to access the device parameters directly. The generic methods are also useful for debugging purposes.

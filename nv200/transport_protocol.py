@@ -28,7 +28,7 @@ Example:
 import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Awaitable, Optional
-from nv200.shared_types import DetectedDevice, TransportProtocolInfo
+from nv200.shared_types import TransportProtocolInfo
 
 if TYPE_CHECKING:
     from nv200.device_base import PiezoDeviceBase

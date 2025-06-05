@@ -7,7 +7,7 @@ from NV200 devices over supported transport protocols (e.g., serial, Telnet).
 
 import asyncio
 import logging
-from typing import Dict, Type, List
+from typing import Dict, Type, List, TypeVar
 from nv200.transport_protocol import TransportProtocol
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 from nv200.shared_types import (
@@ -353,6 +353,7 @@ class PiezoDeviceBase:
         )
 
 
+PiezoDeviceType = TypeVar("PiezoDeviceType", bound=PiezoDeviceBase)
 
    
 DEVICE_MODEL_REGISTRY: Dict[str, Type[PiezoDeviceBase]] = {}

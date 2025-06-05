@@ -179,6 +179,7 @@ async def client_serial_test():
     await run_tests(client)
     await client.close()
 
+
 async def waveform_generator_test():
     """
     Asynchronous function to test the functionality of the WaveformGenerator class.

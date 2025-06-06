@@ -13,7 +13,6 @@ The NV200 library API consists of the following modules:
   
   * :ref:`device_base` — Generic piezosystem device base class.
   * :ref:`nv200_device` — High-level async client for NV200 piezo controllers.
-  * :ref:`spibox_device` — High-level async client for SPI-Box.
   * :ref:`shared_types` — Shared data structures and enums.
 
 * **Transport Protocols**

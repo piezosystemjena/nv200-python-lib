@@ -262,6 +262,7 @@ class DeviceInfo:
     """
     transport_info: TransportProtocolInfo
     device_id: Optional[str] = None  # Unique identifier for the device, if available
+    extended_info: Dict[str, str] = field(default_factory=dict)
 
     def __str__(self):
         """
@@ -270,7 +271,10 @@ class DeviceInfo:
         device_info = f"{self.transport_info}"
         if self.device_id:
             device_info += f" - {self.device_id}"
-        return device_info
+        if self.extended_info:
+            return f"{device_info} - {self.extended_info}"
+        else:
+            return device_info
 
 
 @dataclass

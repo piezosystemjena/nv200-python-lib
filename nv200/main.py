@@ -183,18 +183,16 @@ async def client_serial_test():
 async def waveform_generator_test():
     """
     Asynchronous function to test the functionality of the WaveformGenerator class.
-    This function initializes a DeviceClient and a WaveformGenerator instance, 
-    sets up the waveform generator, and starts it with specified parameters.
     """
     prepare_plot_style()
     client = await nv200.connection_utils.connect_to_single_device(
         device_class=NV200Device, 
         transport_type=TransportType.SERIAL)   
 
-    await client.write('setlpf,200')
-    await client.write('setlpon,0')
-    await client.write('poslpf,1000')
-    await client.write('poslpon,1')
+    #await client.write('setlpf,200')
+    #await client.write('setlpon,0')
+    #await client.write('poslpf,1000')
+    #await client.write('poslpon,1')
     waveform_generator = WaveformGenerator(client)
     sine = waveform_generator.generate_sine_wave(freq_hz=0.25, low_level=0, high_level=80)
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
@@ -365,12 +363,12 @@ if __name__ == "__main__":
 
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    #asyncio.run(waveform_generator_test())
+    asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
-    asyncio.run(test_discover_devices())
-    asyncio.run(test_discover_devices())
+    #asyncio.run(test_discover_devices())
+    #asyncio.run(test_discover_devices())
     #asyncio.run(test_device_type())
     #asyncio.run(read_write_tests())
     #asyncio.run(test_quick_connect())

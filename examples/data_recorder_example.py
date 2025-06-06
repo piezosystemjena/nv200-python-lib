@@ -11,14 +11,18 @@ async def data_recorder_test():
     """
     Asynchronous function to test the functionality of the DataRecorder with a given device.
     """
-    print("Discovering devices...")
-    detected_devices = await discover_devices(DiscoverFlags.DETECT_SERIAL)
+
+    # Discover devices connected via USB interface
+    print("Discovering devices connected via USB interface...")
+    detected_devices = await discover_devices(DiscoverFlags.DETECT_SERIAL | DiscoverFlags.READ_DEVICE_INFO)
     if not detected_devices:
         print("No devices found.")
         return
 
+    # connect to the first detected device
     device = NV200Device.from_detected_device(detected_devices[0])
     await device.connect()
+    print(f"Connected to device: {device.device_info}")
 
     # Move the device to its initial position and wait for a short duration to stabilize
     await device.move_to_position(0)
@@ -50,7 +54,7 @@ async def data_recorder_test():
     plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source)   
     maptplotlib_helpers.show_plot()
 
-    device.close()
+    await device.close()
 
 
 if __name__ == "__main__":

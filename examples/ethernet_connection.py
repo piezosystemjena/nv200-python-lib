@@ -1,6 +1,6 @@
 import asyncio
 from nv200.nv200_device import NV200Device
-from nv200.transport_protocol import TelnetProtocol
+from nv200.telnet_protocol import TelnetProtocol
 
 
 async def ethernet_auto_detect():
@@ -13,7 +13,7 @@ async def ethernet_auto_detect():
     transport = TelnetProtocol()
     client = NV200Device(transport)
     await client.connect()
-    print(f"Connected to device with IP: {transport.host}")
+    print(f"Connected to device: {client.device_info}")
     await client.close()
 
 

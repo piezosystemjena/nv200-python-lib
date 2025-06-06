@@ -18,7 +18,7 @@ async def main_async():
             print(device)
 
     print("\nDiscovering devices with extended information...")
-    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.EXTENDED_INFO)	
+    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)	
     
     if not devices:
         print("No devices found.")

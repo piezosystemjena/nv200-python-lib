@@ -19,6 +19,7 @@ both Ethernet and USB interfaces.
    data_recorder.rst
    waveform_generator.rst
    api.rst
+   examples.rst
 
 Indices and tables
 --------------------

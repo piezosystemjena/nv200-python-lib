@@ -9,6 +9,10 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 - **Device Discovery** Device discovery for specific devices such as NV200Device or SpiBoxDevice
 
+### Improved
+
+- Improved documentation and examples
+
 ### Fixed
 
 - fixed some small communication bugs

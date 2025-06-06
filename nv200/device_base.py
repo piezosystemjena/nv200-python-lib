@@ -351,7 +351,7 @@ class PiezoDeviceBase:
             device_id=self.DEVICE_ID,
             transport_info=self._transport.get_info()
         )
-
+    
 
 PiezoDeviceType = TypeVar("PiezoDeviceType", bound=PiezoDeviceBase)
 

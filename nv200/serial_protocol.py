@@ -22,6 +22,7 @@ class SerialProtocol(TransportProtocol):
     """
     __port : str
     __baudrate : int
+    __serial : aioserial.AioSerial = None
     
     def __init__(self, port : str = None, baudrate : int = 115200):
         """
@@ -35,6 +36,16 @@ class SerialProtocol(TransportProtocol):
         self.__serial = None
         self.__port = port
         self.__baudrate = baudrate
+
+
+    @property
+    def serial(self) -> aioserial.AioSerial:
+        """
+        Provides access to the internal AioSerial interface.
+        Returns:
+            AioSerial: The internal AioSerial instance.
+        """
+        return self.__serial
 
 
     async def detect_port(self, device : PiezoDeviceBase)-> str | None:

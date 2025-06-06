@@ -103,7 +103,7 @@ async def connect_to_single_device(device_class: Type[PiezoDeviceType], transpor
     
     if not detected_devices:
         raise RuntimeError("No devices found during discovery.")
-    device = NV200Device.from_detected_device(detected_devices[0])
+    device = create_device_from_detected_device(detected_devices[0])
     await device.connect(auto_adjust_comm_params=False)
 
     return device

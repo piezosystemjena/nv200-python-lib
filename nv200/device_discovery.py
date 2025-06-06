@@ -9,11 +9,12 @@ or serial port), and optionally a MAC address.
 import asyncio
 import logging
 from typing import List, Type, Optional
+from nv200.device_factory import create_device_from_id
 from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol  
 from nv200.serial_protocol import SerialProtocol
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
-from nv200.device_base import PiezoDeviceBase, create_device_from_id
+from nv200.device_base import PiezoDeviceBase
 from nv200.transport_factory import transport_from_detected_device
 
 

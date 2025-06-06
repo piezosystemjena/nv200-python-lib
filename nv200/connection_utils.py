@@ -1,5 +1,6 @@
 import logging
 from typing import Type
+from nv200.device_factory import create_device_from_id
 from nv200.nv200_device import NV200Device
 from nv200.shared_types import DetectedDevice, TransportType, DiscoverFlags
 from nv200.device_discovery import discover_devices
@@ -7,8 +8,9 @@ from nv200.transport_protocol import TransportProtocol
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.eth_utils import is_valid_ip, is_valid_mac
-from nv200.device_base import PiezoDeviceBase, create_device_from_id, PiezoDeviceType
+from nv200.device_base import PiezoDeviceBase, PiezoDeviceType
 from nv200.transport_factory import transport_from_detected_device
+from nv200.device_factory import create_device_from_detected_device
 from typing import List, Optional
 import nv200.lantronix_xport as xport
 
@@ -107,7 +109,7 @@ async def connect_to_single_device(device_class: Type[PiezoDeviceType], transpor
     return device
 
 
-async def connect_to_detected_device(detected_device: DetectedDevice) -> PiezoDeviceBase:
+async def connect_to_detected_device(detected_device: DetectedDevice, auto_adjust_comm_params : bool = False) -> PiezoDeviceBase:
     """
     Connects to a device using the provided DetectedDevice instance.
 
@@ -117,10 +119,6 @@ async def connect_to_detected_device(detected_device: DetectedDevice) -> PiezoDe
     Returns:
         PiezoDeviceBase: An instance of PiezoDeviceBase connected to the specified device.
     """
-    if not detected_device:
-        raise ValueError("No detected device provided for connection.")
-
-    transport_protcol = transport_from_detected_device(detected_device)
-    device = create_device_from_id(detected_device.device_id, transport=transport_protcol)
-    await device.connect(auto_adjust_comm_params=False)
+    device = create_device_from_detected_device(detected_device)
+    await device.connect(auto_adjust_comm_params)
     return device

@@ -113,9 +113,9 @@ The `discover_devices` function accepts a `DiscoverFlags` parameter to specify t
 
 - Telnet discovery - `DiscoverFlags.DETECT_ETHERNET`
 - Serial discovery - `DiscoverFlags.DETECT_SERIAL`
-- Device info enrichment - `DiscoverFlags.ENRICH`
+- Device info enrichment - `DiscoverFlags.READ_DEVICE_INFO`
 
-The `DiscoverFlags.ENRICH` flag is used to enrich the device information with additional details such as the
+The `DiscoverFlags.READ_DEVICE_INFO` flag is used to enrich the device information with additional details such as the
 name and serial number of the actuator connected to the amplifier. This is useful for identifying the device
 and its capabilities.
 
@@ -159,14 +159,18 @@ information. The output of the example may look like this:
 .. code-block:: text
 
     Discovering devices...
-    Found 2 device(s):
-    Telnet @ 192.168.10.147 (MAC: 00:80:A3:79:C6:18) - Actuator: None #None
-    Serial @ COM3 - NV200/D_NET - Actuator: None #None
+    Found 4 device(s):
+    Telnet @ 192.168.101.3 (MAC: 00:80:A3:5A:7F:CB)
+    Telnet @ 192.168.101.2 (MAC: 00:80:A3:79:C6:1E)
+    Telnet @ 192.168.101.4 (MAC: 00:80:A3:6F:60:F5)
+    Serial @ COM5 - SPI Controller Box
 
     Discovering devices with extended information...
-    Found 2 device(s):
-    Telnet @ 192.168.10.147 (MAC: 00:80:A3:79:C6:18) - NV200/D_NET - Actuator: TRITOR100SG  #85533
-    Serial @ COM3 - NV200/D_NET - Actuator: TRITOR100SG  #85533
+    Found 4 device(s):
+    Telnet @ 192.168.101.4 (MAC: 00:80:A3:6F:60:F5) - NV200/D_NET - {'actuator_name': 'PSH15SG_Y   ', 'actuator_serial': '123910'}
+    Telnet @ 192.168.101.2 (MAC: 00:80:A3:79:C6:1E) - NV200/D_NET - {'actuator_name': 'PSH20       ', 'actuator_serial': '123910'}
+    Telnet @ 192.168.101.3 (MAC: 00:80:A3:5A:7F:CB) - SPI Controller Box
+    Serial @ COM5 - SPI Controller Box
 
 
 Connecting To a Device

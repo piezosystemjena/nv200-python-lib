@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2025-06-05
+
+### Added
+
+- **Device Discovery** Device discovery for specific devices such as NV200Device or SpiBoxDevice
+
+### Fixed
+
+- fixed some small communication bugs
+
 ## [1.0.3] - 2025-06-02
 
 ### Added

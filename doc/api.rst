@@ -7,11 +7,13 @@ The NV200 library API consists of the following modules:
   
   * :ref:`device_discovery` — The NV200 device discovery module.
   * :ref:`connection_utils` — Helper functions for device connection.
+  * :ref:`device_factory` — Factory for creating device instances from discovery results.
 
 * **Device Abstractions**
   
   * :ref:`device_base` — Generic piezosystem device base class.
   * :ref:`nv200_device` — High-level async client for NV200 piezo controllers.
+  * :ref:`spibox_device` — High-level async client for SPI-Box.
   * :ref:`shared_types` — Shared data structures and enums.
 
 * **Transport Protocols**
@@ -25,6 +27,10 @@ The NV200 library API consists of the following modules:
   * :ref:`data_recorder` — Module for recording experimental data.
   * :ref:`waveform_generator` — Interface to arbitrary waveform generator.
 
+* **Utilities**
+
+  * :ref:`utils` — General utility functions and classes.
+
 
 Device Discovery and Connection
 --------------------------------
@@ -36,6 +42,16 @@ device_discovery
    :members:
    :show-inheritance:
    :undoc-members:
+
+
+device_factory
+^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: nv200.device_factory
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 
 connection_utils
 ^^^^^^^^^^^^^^^^^^^^
@@ -62,6 +78,15 @@ nv200_device
 ^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: nv200.nv200_device
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+spibox_device
+^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: nv200.spibox_device
    :members:
    :show-inheritance:
    :undoc-members:
@@ -101,6 +126,9 @@ telnet_protocol
    :members:
    :show-inheritance:
 
+Data and Signal Modules
+--------------------------
+
 data_recorder
 ^^^^^^^^^^^^^^^^
 
@@ -118,7 +146,7 @@ waveform_generator
    :show-inheritance:
 
 
-Data and Signal Modules
+Utilities
 --------------------------
 
 utils

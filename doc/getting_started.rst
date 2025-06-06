@@ -4,7 +4,7 @@ Getting Started with the API
 High-Level Device Functions
 -------------------------------
 
-If you have a properly connected `DeviceClient` instance, you can start using the API of
+If you have a properly connected `NV200Device` instance, you can start using the API of
 the NV200 library. The high-level functions provide a user-friendly interface for common device 
 operations such as setting control modes, updating setpoints, or querying the current position. 
 They are designed to cover typical use cases and abstract away low-level communication details.

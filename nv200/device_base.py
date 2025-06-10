@@ -175,6 +175,15 @@ class PiezoDeviceBase:
         """
         await self._transport.write(cmd + self.frame_delimiter_write)
         return await self._read_raw_message(timeout)
+    
+
+    async def read_stripped_response_string(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
+        """
+        Reads a response string from the device, stripping any leading/trailing whitespace.
+        This method is a placeholder and should be implemented based on actual response handling.
+        """
+        response = await self.read_response_string(cmd, timeout)
+        return response.strip("\x01\n\r\x00")
    
    
     async def read_response(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> tuple:

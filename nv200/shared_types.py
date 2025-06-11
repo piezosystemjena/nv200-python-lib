@@ -322,12 +322,15 @@ class DiscoverFlags(Flag):
     Attributes:
         DETECT_SERIAL: Enables detection of serial devices.
         DETECT_ETHERNET: Enables detection of ethernet devices.
-        READ_DEVICE_INF: Enriches discovered devices with additional information such as actuator name and actuator serial number.
+        READ_DEVICE_INFO: Enriches discovered devices with additional information such as actuator name and actuator serial number.
+        ADJUST_COMM_PARAMS: Automatically adjusts communication parameters for discovered devices. This may take some
+           additional time, as it may involve reading and writing to the device or even resetting it.
         ALL: Enables all discovery actions (serial, ethernet, and enrichment).
     """
     DETECT_SERIAL = auto()
     DETECT_ETHERNET = auto()
     READ_DEVICE_INFO = auto()
+    ADJUST_COMM_PARAMS = auto()  # Adjust communication parameters automatically
     ALL_INTERFACES = DETECT_SERIAL | DETECT_ETHERNET
     ALL = ALL_INTERFACES | READ_DEVICE_INFO
     

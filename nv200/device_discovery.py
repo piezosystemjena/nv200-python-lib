@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 
-async def _enrich_device_info(detected_device: DetectedDevice) -> DetectedDevice:
+async def _enrich_device_info(detected_device: DetectedDevice, flags: DiscoverFlags) -> DetectedDevice:
     """
     Asynchronously enriches a DetectedDevice object with additional actuator information.
 
@@ -33,7 +33,7 @@ async def _enrich_device_info(detected_device: DetectedDevice) -> DetectedDevice
     try:
         logger.debug("Reading device ID from: %s", detected_device.identifier)
         protocol = transport_from_detected_device(detected_device)
-        await protocol.connect(auto_adjust_comm_params=False)
+        await protocol.connect(auto_adjust_comm_params=bool(flags & DiscoverFlags.ADJUST_COMM_PARAMS))
         dev = PiezoDeviceBase(protocol)
         detected_device.device_id = await dev.get_device_type()
         logger.debug("Device ID detected: %s", detected_device.device_id)
@@ -107,7 +107,7 @@ async def discover_devices(flags: DiscoverFlags = DiscoverFlags.ALL_INTERFACES, 
     if flags & DiscoverFlags.READ_DEVICE_INFO:
         # Enrich each device with detailed info
         logger.debug("Enriching %d devices with detailed info...", len(devices))
-        raw_results = await asyncio.gather(*(_enrich_device_info(d) for d in devices))
+        raw_results = await asyncio.gather(*(_enrich_device_info(d, flags) for d in devices))
         devices = [d for d in raw_results if d is not None]
 
     if device_class:

@@ -3,13 +3,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import aioserial
 import serial
+import time
+from typing import cast, Tuple, List
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
+from nv200.transport_protocol import TransportProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
 from nv200.waveform_generator import WaveformGenerator
 from nv200.shared_types import DiscoverFlags, PidLoopMode, StatusFlags, TransportType
 from nv200.device_discovery import discover_devices
 from nv200.nv200_device import NV200Device
+from nv200.spibox_device import SpiBoxDevice
 from rich.traceback import install as install_rich_traceback
 from rich.logging import RichHandler
 
@@ -357,13 +361,165 @@ async def test_serial_protocol_auto_detect():
     print(f"Connected to device on serial port: {transport.port}")
     await client.close()
 
+def generate_sine_wave(
+    freq: float,
+    low: float = 0.0,
+    high: float = 100.0,
+    phase_deg: float = 0.0,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Generates one full cycle of a sine wave as a NumPy array with specified frequency,
+    amplitude range, and phase. The number of samples is calculated to achieve
+    one full cycle at a fixed sample rate.
+
+    Args:
+        freq (float): Frequency of the sine wave in Hertz. Must be > 0.
+        low (float, optional): Minimum value of the output wave. Defaults to 0.0.
+        high (float, optional): Maximum value of the output wave. Defaults to 1.0.
+        phase_deg (float, optional): Phase offset in degrees. Defaults to 0.0.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: A tuple containing:
+            - The time array (np.ndarray) for one cycle.
+            - The generated sine wave samples for one cycle, scaled to the [low, high] range (np.ndarray).
+    Raises:
+        ValueError: If freq is not positive.
+    """
+    if freq <= 0:
+        raise ValueError("Frequency (freq) must be a positive value.")
+
+    # Fixed sample rate as per device specification
+    sample_rate: int = 20000 # Hz
+
+    # Calculate the number of samples required for exactly one full cycle
+    # samples_per_cycle = sample_rate / freq
+    # We need to ensure we get an integer number of samples.
+    # If samples_per_cycle is not an integer, np.linspace will handle it,
+    # but for clarity regarding discrete samples, it's often floored or ceiled.
+    # For a *full* cycle, we need enough samples.
+    
+    # Calculate the period of the wave (time for one cycle)
+    period = 1.0 / freq # seconds
+
+    # Calculate the number of samples needed for one period at the given sample_rate
+    # We take ceil to ensure we get at least one full cycle if freq is very low or
+    # if sample_rate is not an exact multiple of freq.
+    samples_required = int(np.ceil(period * sample_rate))
+    
+    # Ensure a minimum of 2 samples to define a wave (e.g., for very high frequencies)
+    if samples_required < 2:
+        samples_required = 2
+    
+    # The `linspace` function defines the time points for the generated samples.
+    # It will span exactly one period (from 0 up to, but not including, the end of the period)
+    # The endpoint=False ensures we don't duplicate the start point if samples_required
+    # happens to be exactly sample_rate / freq.
+    t = np.linspace(0, period, samples_required, endpoint=False)
+    
+    phase_rad = np.deg2rad(phase_deg)  # Convert phase to radians
+    wave = np.sin(2 * np.pi * freq * t + phase_rad)
+    
+    # Scale from [-1, 1] to [low, high]
+    scaled_wave = low + (wave + 1) * (high - low) / 2
+    
+    print(f"Generated wave for {freq} Hz: {samples_required} samples (duration: {period:.4f}s)")
+    
+    return t, scaled_wave
+
+
+
+async def spi_box_test():
+    prepare_plot_style()
+    transport = SerialProtocol(port="COM5")
+    dev = SpiBoxDevice(transport)
+    await dev.connect(auto_adjust_comm_params=False)
+
+    #dev = await nv200.connection_utils.connect_to_single_device(SpiBoxDevice, TransportType.SERIAL)
+    await asyncio.sleep(0.1)
+    #print(await dev.get_device_type())
+    await asyncio.sleep(0.1)
+
+    ch1 = generate_sine_wave(freq=1, low=0.0, high=100.0)
+    ch2 = generate_sine_wave(freq=1, low=0.0, high=100.0)
+    ch3 = generate_sine_wave(freq=1, low=0.0, high=100.0)
+    plt.plot(ch1[0], ch3[1], linestyle='-', color='green', label="Channel 1 TX")
+    print(len(ch1[1]))
+    values : List[np.ndarray] 
+    values = await dev.set_waveforms(ch1[1], ch2[1], ch3[1])
+    print(values)
+    plt.plot(ch1[0], values[2], linestyle='-', color='orange', label="Channel RX")
+    show_plot()
+
+    # print(await dev.set_setpoints_percent(0, 0, 0))
+    # await asyncio.sleep(1)
+    # print(await dev.set_setpoints_percent(100, 100, 100))
+    # await asyncio.sleep(1)
+    
+    transport = cast(SerialProtocol, dev.transport_protocol)
+    # await transport.write('usbdata,0000,0000,0000\r\n')
+    # s = transport.serial
+    # await asyncio.sleep(0.1)
+    # print(s.read_all())
+    # await asyncio.sleep(0.1)
+    # respone = await dev.read_response_string('usbdata,0000,0000,0000\r\n')
+    # print(f"Response 1: {respone}")
+    # await asyncio.sleep(0.1)
+    # respone = await dev.read_response_string('usbdata,0001,0002,0003\r\n')
+    # print(f"Response 2: {respone}")
+    # await asyncio.sleep(0.1)
+    # respone = await dev.read_response_string('usbdata,0000,0000,0000')
+    # print(f"Response: {respone}")
+    # await asyncio.sleep(0.1)
+
+    # transport = cast(SerialProtocol, dev.transport_protocol)
+    # await transport.write('totalsamplex,200\r\n')
+    # await transport.write('totalsampley,200\r\n')
+    # await transport.write('totalsamplez,200\r\n')
+
+    # print("Writing multiple values...")
+    # await transport.write('usbdata,')
+    # for i in range(100):
+    #     await transport.write('0000,0000,0000\r')
+    # for i in range(100):
+    #     await transport.write('fffe,fffe,fffe\r')
+    # await transport.write('\n')
+    
+    # print("Done writing values - reading response...")
+    # print(await transport.read_message(10))
+    #print(await transport.read_until(TransportProtocol.LF, timeout=10))
+
+    # s = transport.serial
+    # for i in range(10):
+    #     await asyncio.sleep(0.1)
+    #     print(s.read_all())
+
+    # await transport.write('0001,0002,0003\r')
+    # await asyncio.sleep(0.2)
+    # print(s.read_all())  
+    # await transport.write('0010,0020,0030\r\n')
+    # await asyncio.sleep(0.1)
+    # print(s.read_all())  
+    # await asyncio.sleep(0.1)
+    # print(s.read_all())  
+        
+    
+    #respone = await dev.read_response_string('usbdata,0000,0000,0000\r0001,0002,0003\r0010,0020,0030\r\n', 2)
+    #print(f"Response: {respone}")
+    
+    #print(await s.read_until_async(b'\n'))
+
+    #response = await dev.write('usbdata,0000,0000,0000')
+    #print(repr(response))
+    await dev.close()
+
+
 
 if __name__ == "__main__":
     setup_logging()
 
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    asyncio.run(waveform_generator_test())
+    #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
@@ -373,3 +529,4 @@ if __name__ == "__main__":
     #asyncio.run(read_write_tests())
     #asyncio.run(test_quick_connect())
     #asyncio.run(test_serial_protocol_auto_detect())
+    asyncio.run(spi_box_test())

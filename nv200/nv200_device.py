@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 import os
 import configparser
 from nv200.device_base import PiezoDeviceBase
@@ -90,6 +90,54 @@ class NV200Device(PiezoDeviceBase):
         For actuators without sensor: Piezo voltage in V
         """
         return await self.read_float_value('meas')
+    
+    async def get_max_position(self) -> float:
+        """
+        Retrieves the maximum position of the device.
+        For actuators with sensor: Maximum position in actuator units (μm or mrad)
+        For actuators without sensor: Maximum piezo voltage in V
+        """
+        return await self.read_float_value('posmax')
+    
+    async def get_min_position(self) -> float:
+        """
+        Retrieves the minimum position of the device.
+        For actuators with sensor: Minimum position in actuator units (μm or mrad)
+        For actuators without sensor: Minimum piezo voltage in V
+        """
+        return await self.read_float_value('posmin')
+    
+    async def get_position_range(self) -> Tuple[float, float]:
+        """
+        Retrieves the position range of the device.
+        Returns a tuple containing the minimum and maximum position.
+        """
+        min_pos = await self.get_min_position()
+        max_pos = await self.get_max_position()
+        return (min_pos, max_pos)
+    
+    async def get_max_voltage(self) -> float:
+        """
+        Retrieves the maximum voltage of the device.
+        This is the maximum voltage that can be applied to the piezo actuator.
+        """
+        return await self.read_float_value('avmax')
+    
+    async def get_min_voltage(self) -> float:
+        """
+        Retrieves the minimum voltage of the device.
+        This is the minimum voltage that can be applied to the piezo actuator.
+        """
+        return await self.read_float_value('avmin')
+    
+    async def get_voltage_range(self) -> Tuple[float, float]:
+        """
+        Retrieves the voltage range of the device.
+        Returns a tuple containing the minimum and maximum voltage.
+        """
+        min_voltage = await self.get_min_voltage()
+        max_voltage = await self.get_max_voltage()
+        return (min_voltage, max_voltage)
 
     async def get_heat_sink_temperature(self) -> float:
         """

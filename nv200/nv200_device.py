@@ -1,3 +1,6 @@
+from typing import Dict
+import os
+import configparser
 from nv200.device_base import PiezoDeviceBase
 from nv200.shared_types import PidLoopMode, ModulationSource, StatusRegister, StatusFlags, DetectedDevice, TransportType, SPIMonitorSource
 from nv200.telnet_protocol import TelnetProtocol
@@ -167,6 +170,98 @@ class NV200Device(PiezoDeviceBase):
         Retrieves the cutoff frequency of the low-pass filter for the setpoint.
         """
         return await self.read_int_value('setlpf')
+    
+    async def export_actuator_config(self, path : str = "", filename: str = "") -> str:
+        """
+        Asynchronously exports the actuator configuration parameters to an INI file.
+        This method reads a predefined set of actuator configuration parameters from the device,
+        and writes them to an INI file. The file can be saved to a specified path and filename,
+        or defaults will be used based on the actuator's description and serial number.
+
+        Args:
+            path (str, optional): Directory path where the configuration file will be saved.
+                If not provided, the file will be saved in the current working directory.
+            filename (str, optional): Name of the configuration file. If not provided,
+                a default name in the format 'actuator_conf_{desc}_{acserno}.ini' will be used.
+
+        Returns:
+            The full path to the saved configuration file.
+
+        Raises:
+            Any exceptions raised during file writing or parameter reading will propagate.
+        """
+        export_keys = [
+            "desc",
+            "acserno",
+            "sr",
+            "setlpon",
+            "setlpf",
+            "kp",
+            "kd",
+            "ki",
+            "notchf",
+            "notchb",
+            "notchon",
+            "poslpon",
+            "poslpf",
+            "modsrc",
+            "cl",
+            "pcf",
+        ]
+        config_values: Dict[str, str] = {}
+        for key in export_keys:
+            value = await self.read_response_parameters_string(key)
+            config_values[key] = value
+
+        config_data: Dict[str, Dict[str, str]] = {}
+        config_data['Actuator Configuration'] = config_values
+        config = configparser.ConfigParser()
+        config.read_dict(config_data)
+        if not filename:
+            filename = f"actuator_conf_{config_values["desc"]}_{config_values["acserno"]}.ini"
+
+        full_path = os.path.join(path, filename) if path else filename
+        with open(full_path, 'w') as configfile:
+            config.write(configfile)
+        return full_path
+
+
+    async def import_actuator_config(self, filepath: str):
+        """
+        Imports actuator configuration from an INI file.
+
+        Args:
+            filepath: Path to the INI file with the actuator configuration.
+        """
+        import_keys = {
+            "sr",
+            "setlpon",
+            "setlpf",
+            "kp",
+            "kd",
+            "ki",
+            "notchf",
+            "notchb",
+            "notchon",
+            "poslpon",
+            "poslpf",
+            "modsrc",
+            "cl",
+            "pcf",
+        }
+
+        config = configparser.ConfigParser()
+        config.read(filepath)
+
+        if "Actuator Configuration" not in config:
+            raise ValueError(f"'Actuator Configuration' section not found in {filepath}")
+
+        for key, value in config["Actuator Configuration"].items():
+            if key not in import_keys:
+                continue
+            command = f"{key},{value}"
+            await self.write(command)
+
 
     @staticmethod
     def from_detected_device(detected_device: DetectedDevice) -> "NV200Device":

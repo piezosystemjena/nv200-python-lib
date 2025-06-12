@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import aioserial
 import serial
 import time
-from typing import cast, Tuple, List
+import configparser
+from typing import cast, Tuple, List, Dict
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.transport_protocol import TransportProtocol
@@ -512,6 +513,15 @@ async def spi_box_test():
     #print(repr(response))
     await dev.close()
 
+async def export_actuator_config(filename: str = ""):
+    """
+    Exports the configuration of the connected actuator to a file.
+    """
+    device = await nv200.connection_utils.connect_to_single_device(NV200Device, TransportType.TELNET, "192.168.101.2")
+    filepath = await device.export_actuator_config()
+    await device.import_actuator_config(filepath)
+    await device.close()
+
 
 
 if __name__ == "__main__":
@@ -529,4 +539,5 @@ if __name__ == "__main__":
     #asyncio.run(read_write_tests())
     #asyncio.run(test_quick_connect())
     #asyncio.run(test_serial_protocol_auto_detect())
-    asyncio.run(spi_box_test())
+    #asyncio.run(spi_box_test())
+    asyncio.run(export_actuator_config())

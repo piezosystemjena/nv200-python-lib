@@ -109,7 +109,7 @@ class NV200Device(PiezoDeviceBase):
     
     async def get_position_range(self) -> Tuple[float, float]:
         """
-        Retrieves the position range of the device.
+        Retrieves the position range of the device for closed loop control.
         Returns a tuple containing the minimum and maximum position.
         """
         min_pos = await self.get_min_position()
@@ -132,12 +132,24 @@ class NV200Device(PiezoDeviceBase):
     
     async def get_voltage_range(self) -> Tuple[float, float]:
         """
-        Retrieves the voltage range of the device.
+        Retrieves the voltage range of the device for open loop control.
         Returns a tuple containing the minimum and maximum voltage.
         """
         min_voltage = await self.get_min_voltage()
         max_voltage = await self.get_max_voltage()
         return (min_voltage, max_voltage)
+    
+    async def get_setpoint_range(self) -> Tuple[float, float]:
+        """
+        Retrieves the setpoint range of the device.
+        Returns a tuple containing the minimum and maximum setpoint.
+        The setpoint range is determined by the position range for closed loop control
+        and the voltage range for open loop control.
+        """
+        if await self.get_pid_mode() == PidLoopMode.CLOSED_LOOP:
+            return await self.get_position_range()
+        else:
+            return await self.get_voltage_range()
 
     async def get_heat_sink_temperature(self) -> float:
         """

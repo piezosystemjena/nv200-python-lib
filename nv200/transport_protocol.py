@@ -50,7 +50,7 @@ class TransportProtocol(ABC):
     LF = b'\x0A'
     CR = b'\x0D'
     CRLF = b'\x0D\x0A'
-    DEFAULT_TIMEOUT_SECS = 0.4
+    DEFAULT_TIMEOUT_SECS = 0.6
     rx_delimiter = XON  # Default delimiter for reading messages
 
     @abstractmethod

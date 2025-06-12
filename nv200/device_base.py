@@ -32,7 +32,7 @@ class PiezoDeviceBase:
     The class is the base class for concrete controller implementations like `DeviceClient`.
     """
 
-    DEFAULT_TIMEOUT_SECS = 0.4
+    DEFAULT_TIMEOUT_SECS = 0.6
     frame_delimiter_write = "\r\n"
     DEVICE_ID = None # Placeholder for device ID, to be set in subclasses
     _transport: TransportProtocol

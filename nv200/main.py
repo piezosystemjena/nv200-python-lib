@@ -190,23 +190,25 @@ async def waveform_generator_test():
     Asynchronous function to test the functionality of the WaveformGenerator class.
     """
     prepare_plot_style()
-    client = await nv200.connection_utils.connect_to_single_device(
+    device = await nv200.connection_utils.connect_to_single_device(
         device_class=NV200Device, 
-        transport_type=TransportType.SERIAL)   
+        transport_type=TransportType.SERIAL)  
 
     #await client.write('setlpf,200')
     #await client.write('setlpon,0')
     #await client.write('poslpf,1000')
     #await client.write('poslpon,1')
-    waveform_generator = WaveformGenerator(client)
-    sine = waveform_generator.generate_sine_wave(freq_hz=0.25, low_level=0, high_level=80)
+    await device.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+    pos_range = await device.get_position_range()
+    waveform_generator = WaveformGenerator(device)
+    sine = waveform_generator.generate_sine_wave(freq_hz=1, low_level=pos_range[0], high_level=pos_range[1])
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
     await waveform_generator.set_waveform(sine)
 
 
-    recorder = DataRecorder(client)
+    recorder = DataRecorder(device)
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN)
@@ -227,7 +229,7 @@ async def waveform_generator_test():
     print(f"rec_data[1].source: {rec_data[1].source}")
 
     # Display the plot
-    await client.close()
+    await device.close()
     show_plot()
 
 
@@ -519,7 +521,7 @@ async def export_actuator_config(filename: str = ""):
     """
     device = await nv200.connection_utils.connect_to_single_device(NV200Device, TransportType.TELNET, "192.168.101.2")
     filepath = await device.export_actuator_config()
-    await device.import_actuator_config(filepath)
+    #await device.import_actuator_config(filepath)
     await device.close()
 
 
@@ -529,7 +531,7 @@ if __name__ == "__main__":
 
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    #asyncio.run(waveform_generator_test())
+    asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
@@ -540,4 +542,4 @@ if __name__ == "__main__":
     #asyncio.run(test_quick_connect())
     #asyncio.run(test_serial_protocol_auto_detect())
     #asyncio.run(spi_box_test())
-    asyncio.run(export_actuator_config())
+    #asyncio.run(export_actuator_config())

@@ -184,6 +184,25 @@ class PiezoDeviceBase:
         """
         response = await self.read_response_string(cmd, timeout)
         return response.strip("\x01\n\r\x00")
+    
+
+    async def read_response_parameters_string(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
+        """
+        Asynchronously sends a command and retrieves the parameters portion of the response string.
+
+        Args:
+            cmd (str): The command string to send.
+            timeout (float, optional): The maximum time to wait for a response, in seconds. Defaults to DEFAULT_TIMEOUT_SECS.
+
+        Returns:
+            str: The parameters part of the response string (after the first comma), or an empty string if no parameters are present.
+        """
+        response = await self.read_stripped_response_string(cmd, timeout)
+        parts = response.split(',', 1)
+        if len(parts) > 1:
+            return parts[1]
+        else:
+            return ""
    
    
     async def read_response(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> tuple:

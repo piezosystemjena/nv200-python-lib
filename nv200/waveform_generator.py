@@ -258,14 +258,14 @@ class WaveformGenerator:
               of the sine wave.
             - The sine wave is scaled and offset to match the specified low and high levels.
         """
-        BUFFER_SIZE = self.NV200_WAVEFORM_BUFFER_SIZE
-        BASE_SAMPLE_TIME_US = self.NV200_BASE_SAMPLE_TIME_US
+        buf_size = self.NV200_WAVEFORM_BUFFER_SIZE
+        base_sample_time_us = self.NV200_BASE_SAMPLE_TIME_US
 
         period_us = 1_000_000 / freq_hz
-        ideal_sample_time_us = period_us / BUFFER_SIZE
+        ideal_sample_time_us = period_us / buf_size
 
-        sample_factor = math.ceil(ideal_sample_time_us / BASE_SAMPLE_TIME_US)
-        sample_time_us = sample_factor * BASE_SAMPLE_TIME_US
+        sample_factor = math.ceil(ideal_sample_time_us / base_sample_time_us)
+        sample_time_us = sample_factor * base_sample_time_us
         sample_time_s = sample_time_us / 1_000_000
         required_buffer = int(period_us / sample_time_us)
         amplitude = (high_level - low_level) / 2.0
@@ -284,5 +284,5 @@ class WaveformGenerator:
 
         return self.WaveformData(
             values=values,
-            sample_time_ms=sample_time_us / 1000
+            sample_time_ms=int(sample_time_us / 1000)
         )

@@ -150,6 +150,31 @@ class NV200Device(PiezoDeviceBase):
             return await self.get_position_range()
         else:
             return await self.get_voltage_range()
+        
+    async def get_voltage_unit(self) -> str:
+        """
+        Retrieves the voltage unit of the device.
+        This is typically "V" for volts.
+        """
+        return await self.read_string_value('unitol')
+    
+    async def get_position_unit(self) -> str:
+        """
+        Retrieves the position unit of the device.
+        This is typically "μm" for micrometers for linear actuatros or "mrad" for 
+        milliradians for tilting actuators.
+        """
+        return await self.read_string_value('unitcl')
+    
+    async def get_setpoint_unit(self) -> str:
+        """
+        Retrieves the current setpoint unit of the device.
+        This is typically "V" for volts in open loop or the position unit in closed loop.
+        """
+        if await self.get_pid_mode() == PidLoopMode.CLOSED_LOOP:
+            return await self.get_position_unit()
+        else:
+            return await self.get_voltage_unit()
 
     async def get_heat_sink_temperature(self) -> float:
         """

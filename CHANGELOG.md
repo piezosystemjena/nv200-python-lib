@@ -3,11 +3,31 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.5] - 2025-06-16
+
+### Added
+
+- **Position Reading** Functions to read open loop and closed loop position units
+- **Setpoint Range** Function to read `setpoint_range` depending on the current control mode
+- **Range Reading** Functions to read position and voltage ranges
+- **Actuator Config** Functions to export and import actuator configuration for `NV200Device`
+- **Device Flags** Added `ADJUST_COMM_PARAMS` device discovery flag
+
+### Improved
+
+- **Waveform Test** Improved `waveform_generator` test to consider position ranges of the device
+- **Timeouts** Increased minimum default communication timeouts from 0.4 to 0.6 seconds
+- **Debug Output** Updated debug output messages
+
+### Fixed
+
+- **Device Creation** Fixed device creation in `connection_utils.py` to correctly use `device_factory`
+
 ## [1.0.4] - 2025-06-05
 
 ### Added
 
-- **Device Discovery** Device discovery for specific devices such as NV200Device or SpiBoxDevice
+- **Device Discovery** Device discovery for specific devices such as `NV200Device` or `SpiBoxDevice`
 
 ### Improved
 

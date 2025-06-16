@@ -145,7 +145,7 @@ class PiezoDeviceBase:
         Example:
             >>> await device_client.write('set,80') 
         """
-        logger.debug("Writing command: %s", cmd)
+        logger.debug("Writing cmd.: %s", cmd)
 
         await self._transport.write(cmd + self.frame_delimiter_write)
         try:

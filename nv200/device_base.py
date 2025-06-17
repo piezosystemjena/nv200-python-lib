@@ -23,13 +23,34 @@ logger = logging.getLogger(__name__)
 class PiezoDeviceBase:
     """
     Generic piezosystem device base class.
-    
-    AbstractPiezoDevice provides an asynchronous interface for communicating with a piezoelectric device
-    over various transport protocols (such as serial or telnet). It encapsulates low-level device commands,
-    response parsing, and synchronization mechanisms, allowing for atomic operations and convenient
-    methods to read and write device parameters.
 
-    The class is the base class for concrete controller implementations like `DeviceClient`.
+    PiezoDeviceBase provides an asynchronous interface for communicating with a piezoelectric device
+    over various transport protocols (such as serial or telnet). It encapsulates low-level device commands,
+    response parsing, synchronization mechanisms, and optional command result caching.
+
+    This class is intended to be subclassed by concrete device implementations (e.g., `DeviceClient`),
+    which define specific device behaviors and cacheable commands.
+
+    Concrete device classes support caching of command parameters/values. This mechanism is designed 
+    to reduce frequent read access over the physical communication interface by serving previously 
+    retrieved values from a local cache. Since each read operation over the interface introduces latency, 
+    caching can significantly improve the performance of parameter access — particularly in scenarios 
+    like graphical user interfaces where many values are queried repeatedly.
+
+    Note:
+        Caching should only be used if it is guaranteed that no other external application modifies the 
+        device state in parallel. For example, if access is made via the Python library over a Telnet 
+        connection, no other software (e.g., via a serial interface) should modify the same parameters 
+        concurrently. In such multi-access scenarios, caching can lead to inconsistent or outdated data. 
+        To ensure correctness, disable caching globally by setting the class variable 
+        `CMD_CACHE_ENABLED` to `False`.
+
+    Attributes:
+        CMD_CACHE_ENABLED (bool): 
+            Class-level flag that controls whether command-level caching is enabled. When set to True 
+            (default), values read from or written to the device for cacheable commands will be stored 
+            and retrieved from an internal cache (`_cache`). Setting this to False disables the caching 
+            behavior globally for all instances unless explicitly overridden at the instance level.
     """
     CMD_CACHE_ENABLED = True  # Enable command caching by default - set to False to disable caching
     CACHEABLE_COMMANDS: set[str] = set() # set of commands that can be cached

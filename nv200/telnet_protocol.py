@@ -132,7 +132,7 @@ class TelnetProtocol(TransportProtocol):
 
     async def read_until(self, expected: bytes = TransportProtocol.XON, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
         data = await asyncio.wait_for(self.__reader.readuntil(expected), timeout)
-        return data.decode('utf-8').strip("\x11\x13") # strip XON and XOFF characters
+        return data.decode('latin1').strip("\x11\x13") # strip XON and XOFF characters
         
 
     async def close(self):

@@ -140,12 +140,12 @@ class SerialProtocol(TransportProtocol):
 
     async def write(self, cmd: str):
         await self.flush_input()
-        await self.__serial.write_async(cmd.encode('utf-8'))
+        await self.__serial.write_async(cmd.encode('latin1'))
 
     async def read_until(self, expected: bytes = TransportProtocol.XON, timeout : float = TransportProtocol.DEFAULT_TIMEOUT_SECS) -> str:
         data = await asyncio.wait_for(self.__serial.read_until_async(expected), timeout)
         #return data.replace(TransportProtocol.XON, b'').replace(TransportProtocol.XOFF, b'') # strip XON and XOFF characters
-        return data.decode('utf-8').strip("\x11\x13") # strip XON and XOFF characters
+        return data.decode('latin1').strip("\x11\x13") # strip XON and XOFF characters
 
     async def close(self):
         if self.__serial:

@@ -7,7 +7,7 @@ from NV200 devices over supported transport protocols (e.g., serial, Telnet).
 
 import asyncio
 import logging
-from typing import Dict, Type, List, TypeVar
+from typing import Dict, Type, List, TypeVar, Union
 from nv200.transport_protocol import TransportProtocol
 from nv200._internal._reentrant_lock import _ReentrantAsyncLock
 from nv200.shared_types import (
@@ -31,11 +31,14 @@ class PiezoDeviceBase:
 
     The class is the base class for concrete controller implementations like `DeviceClient`.
     """
+    CMD_CACHE_ENABLED = True  # Enable command caching by default - set to False to disable caching
+    CACHEABLE_COMMANDS: set[str] = set() # set of commands that can be cached
 
     DEFAULT_TIMEOUT_SECS = 0.6
     frame_delimiter_write = "\r\n"
     DEVICE_ID = None # Placeholder for device ID, to be set in subclasses
     _transport: TransportProtocol
+    _cache: Dict[str, str] = {}  # Cache: cmd -> value
     
     def __init__(self, transport: TransportProtocol):
         self._transport = transport
@@ -153,6 +156,42 @@ class PiezoDeviceBase:
             return self._parse_response(response)
         except asyncio.TimeoutError:
             return None  # Or handle it differently
+        
+
+    async def write_value(self, cmd: str, value: Union[int, float, str]):
+        """
+        Asynchronously writes a value to the device using the specified command.
+
+        Args:
+            cmd (str): The command string to send to the device.
+            value (Union[int, float, str]): The value to write, which can be an integer, float, or string.
+
+        Example:
+            >>> await device_client.write('set', 80) 
+        """
+        logger.debug("Writing value: %s,%f", cmd, value)
+        await self.write(f"{cmd},{value}")
+        if self.CMD_CACHE_ENABLED and cmd in self.CACHEABLE_COMMANDS:
+            logger.debug("Caching write value: %s,%f", cmd, value)
+            self._cache[cmd] = str(value)
+        
+       
+    async def write_string_value(self, cmd: str, value: str):
+        """
+        Sends a command with a string value to the transport layer.
+
+        This asynchronous method writes a command string followed by a carriage return
+        to the transport layer. It is used for commands that require a string value.
+
+        Args:
+            cmd (str): The command string to be sent.
+            value (str): The string value to be included in the command.
+
+        Example:
+            >>> await device_client.write_string_value('set', '80.000')
+        """
+        logger.debug("Writing string value: %s,%s", cmd, value)
+        await self.write(f"{cmd},{value}")
 
     async def read_response_string(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
@@ -246,49 +285,6 @@ class PiezoDeviceBase:
             ['0', '0', '0.029']
         """
         return (await self.read_response(cmd, timeout))[1]
-
-
-    async def read_float_value(self, cmd: str, param_index : int = 0) -> float:
-        """
-        Asynchronously reads a single float value from device.
-        For example, if you write the command `set`, to read the current setpoint,
-        it will return `80.000` if the setpoint is 80.000. The response is parsed into a
-        float value. Use this function for command that returns a single floating point value.
-
-        Args:
-            cmd (str): The command string to be sent.
-            param_index (int): Parameter index (default 0) to read from the response.
-
-        Returns:
-            float: The value as a floating-point number.
-
-        Example:
-            >>> value = await device_client.read_float_value('set')
-            >>> print(value)
-            80.000
-        """
-        return float((await self.read_values(cmd))[param_index])
-
-
-    async def read_int_value(self, cmd: str, param_index : int = 0) -> int:
-        """
-        Asynchronously reads a single float value from device.
-        For example, if you write `cl` to the device, the response will be `0` or `1`
-        depending on the current PID mode. The response is parsed into an integer value.
-
-        Args:
-            cmd (str): The command string to be sent.
-            param_index (int): Parameter index (default 0) to read from the response
-
-        Returns:
-            float: The value as a floating-point number.
-
-        Example:
-            >>> value = await device_client.read_int_value('cl')
-            >>> print(value)
-            1
-        """
-        return int((await self.read_values(cmd))[param_index])
     
 
     async def read_string_value(self, cmd: str, param_index : int = 0) -> str:
@@ -310,7 +306,60 @@ class PiezoDeviceBase:
             >>> print(value)
             TRITOR100SG
         """
-        return (await self.read_values(cmd))[param_index]
+        if self.CMD_CACHE_ENABLED and cmd in self._cache:
+            logger.debug("Read cache hit for command: %s -> %s", cmd, self._cache[cmd])
+            return self._cache[cmd]
+        
+
+        logger.debug("Reading string value for command: %s, param_index: %d", cmd, param_index)
+        value = (await self.read_values(cmd))[param_index]
+        if self.CMD_CACHE_ENABLED and cmd in self.CACHEABLE_COMMANDS:
+            self._cache[cmd] = value
+            logger.debug("Cached value after read: %s -> %s", cmd, value)
+        return value
+
+
+    async def read_float_value(self, cmd: str, param_index : int = 0) -> float:
+        """
+        Asynchronously reads a single float value from device.
+        For example, if you write the command `set`, to read the current setpoint,
+        it will return `80.000` if the setpoint is 80.000. The response is parsed into a
+        float value. Use this function for command that returns a single floating point value.
+
+        Args:
+            cmd (str): The command string to be sent.
+            param_index (int): Parameter index (default 0) to read from the response.
+
+        Returns:
+            float: The value as a floating-point number.
+
+        Example:
+            >>> value = await device_client.read_float_value('set')
+            >>> print(value)
+            80.000
+        """
+        return float(await self.read_string_value(cmd, param_index))
+
+
+    async def read_int_value(self, cmd: str, param_index : int = 0) -> int:
+        """
+        Asynchronously reads a single float value from device.
+        For example, if you write `cl` to the device, the response will be `0` or `1`
+        depending on the current PID mode. The response is parsed into an integer value.
+
+        Args:
+            cmd (str): The command string to be sent.
+            param_index (int): Parameter index (default 0) to read from the response
+
+        Returns:
+            float: The value as a floating-point number.
+
+        Example:
+            >>> value = await device_client.read_int_value('cl')
+            >>> print(value)
+            1
+        """
+        return int(await self.read_string_value(cmd, param_index))
 
 
     async def close(self):
@@ -379,6 +428,13 @@ class PiezoDeviceBase:
             device_id=self.DEVICE_ID,
             transport_info=self._transport.get_info()
         )
+    
+    def clear_cmd_cache(self):
+        """
+        Clears the cache of previously issued commands.
+        """
+        self._cache.clear()
+        logger.debug("Command cache cleared.")
     
 
 PiezoDeviceType = TypeVar("PiezoDeviceType", bound=PiezoDeviceBase)

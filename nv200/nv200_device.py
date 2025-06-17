@@ -15,6 +15,7 @@ class NV200Device(PiezoDeviceBase):
     for setting and getting various device parameters, such as PID mode, setpoint,
     """
     DEVICE_ID = "NV200/D_NET"
+    CACHEABLE_COMMANDS = {"cl", "unitcl", "unitol", "avmin", "avmax", "posmin", "posmax"}
 
     async def enrich_device_info(self, detected_device : DetectedDevice) -> None :
         """
@@ -33,7 +34,7 @@ class NV200Device(PiezoDeviceBase):
 
     async def set_pid_mode(self, mode: PidLoopMode):
         """Sets the PID mode of the device to either open loop or closed loop."""
-        await self.write(f"cl,{mode.value}")
+        await self.write_value('cl', mode.value)
 
     async def get_pid_mode(self) -> PidLoopMode:
         """Retrieves the current PID mode of the device."""
@@ -41,7 +42,7 @@ class NV200Device(PiezoDeviceBase):
     
     async def set_modulation_source(self, source: ModulationSource):
         """Sets the setpoint modulation source."""
-        await self.write(f"modsrc,{source.value}")
+        await self.write_value("modsrc", source.value)
 
     async def get_modulation_source(self) -> ModulationSource:
         """Retrieves the current setpoint modulation source."""
@@ -57,7 +58,7 @@ class NV200Device(PiezoDeviceBase):
     
     async def set_setpoint(self, setpoint: float):
         """Sets the setpoint value for the device."""
-        await self.write(f"set,{setpoint}")
+        await self.write_value("set", setpoint)
 
     async def get_setpoint(self) -> float:
         """Retrieves the current setpoint of the device."""
@@ -230,13 +231,13 @@ class NV200Device(PiezoDeviceBase):
         0.0000008 ... 2000.0 %ms⁄ (2000 = disabled)
         """
         async with self.lock:
-            await self.write(f"sr,{slew_rate}")
+            await self.write_value("sr", slew_rate)
 
     async def enable_setpoint_lowpass_filter(self, enable: bool):
         """
         Enables the low-pass filter for the setpoint.
         """
-        await self.write(f"setlpon,{int(enable)}")
+        await self.write_value("setlpon", int(enable))
 
     async def is_setpoint_lowpass_filter_enabled(self) -> bool:
         """
@@ -248,7 +249,7 @@ class NV200Device(PiezoDeviceBase):
         """
         Sets the cutoff frequency of the low-pass filter for the setpoint from 1..10000 Hz.
         """
-        await self.write(f"setlpf,{frequency}")
+        await self.write_value("setlpf", frequency)
 
     async def get_setpoint_lowpass_filter_cutoff_freq(self) -> int:
         """

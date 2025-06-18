@@ -25,7 +25,7 @@ def parse_hex_to_floats_percent(data: str) -> List[float]:
     for hex_val in hex_values:
         int_val = int(hex_val, 16)
         if int_val > MAX_VALID_HEX:
-            raise ValueError(f"Invalid value 0xFFFF encountered: {hex_val}")
+            int_val = MAX_VALID_HEX  # Clip to max valid value
         percent = (int_val / MAX_VALID_HEX) * 100.0
         percents.append(percent)
 

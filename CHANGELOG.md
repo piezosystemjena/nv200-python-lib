@@ -3,7 +3,19 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
-## [1.0.5] - 2025-06-16
+## [1.2.0] - 2025-06-18
+
+### Added
+
+- **Command Caching** – Added support for command result caching in `device_base.py` to speed up data access.
+- **Documentation** – Added a section on actuator configuration backup in Getting Started section
+- **Documentation** – Documented cache functionality for the `PiezoDeviceBase` class.
+
+### Fixed
+
+- **Encoding** – Fixed bug by switching to `latin1` encoding (instead of `utf-8`) for data received from the device.
+
+## [1.1.0] - 2025-06-16
 
 ### Added
 

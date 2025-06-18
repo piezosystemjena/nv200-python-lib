@@ -28,7 +28,7 @@ class PiezoDeviceBase:
     over various transport protocols (such as serial or telnet). It encapsulates low-level device commands,
     response parsing, synchronization mechanisms, and optional command result caching.
 
-    This class is intended to be subclassed by concrete device implementations (e.g., `DeviceClient`),
+    This class is intended to be subclassed by concrete device implementations (e.g., `NV200Device`),
     which define specific device behaviors and cacheable commands.
 
     Concrete device classes support caching of command parameters/values. This mechanism is designed 
@@ -43,13 +43,13 @@ class PiezoDeviceBase:
         connection, no other software (e.g., via a serial interface) should modify the same parameters 
         concurrently. In such multi-access scenarios, caching can lead to inconsistent or outdated data. 
         To ensure correctness, disable caching globally by setting the class variable 
-        `CMD_CACHE_ENABLED` to `False`.
+        `CMD_CACHE_ENABLED` to ``False``.
 
     Attributes:
         CMD_CACHE_ENABLED (bool): 
             Class-level flag that controls whether command-level caching is enabled. When set to True 
             (default), values read from or written to the device for cacheable commands will be stored 
-            and retrieved from an internal cache (`_cache`). Setting this to False disables the caching 
+            and retrieved from an internal cache. Setting this to ``False`` disables the caching 
             behavior globally for all instances unless explicitly overridden at the instance level.
     """
     CMD_CACHE_ENABLED = True  # Enable command caching by default - set to False to disable caching
@@ -75,7 +75,7 @@ class PiezoDeviceBase:
         """
         Lock that can be used by external code to synchronize access to the device.
 
-        Use with `async with client.lock:` to group operations atomically.
+        Use with ``async with client.lock:`` to group operations atomically.
         """
         return self._lock
     
@@ -140,7 +140,7 @@ class PiezoDeviceBase:
             auto_adjust_comm_params (bool): If True, the Telnet transport will
                 automatically adjust the internal communication parameters of
                 the XPORT ethernet module. It will set the flow control mode to#
-                `XON_XOFF_PASS_TO_HOST`. This is required for the library to work+
+                ``XON_XOFF_PASS_TO_HOST``. This is required for the library to work+
                 properly.
 
         Raises:
@@ -217,7 +217,7 @@ class PiezoDeviceBase:
     async def read_response_string(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
         Sends a command to the transport layer and reads the response asynchronously.
-        For example, if you write `cl` to the device, it will return `cl,0` or `cl,1`
+        For example, if you write ``cl`` to the device, it will return ``cl,0`` or ``cl,1``
         depending on the current PID mode. That means, this function returns the
         complete string ``cl,0\\r\\n`` or ``cl,1\\r\\n`` including the carriage return and line feed.
 
@@ -268,9 +268,9 @@ class PiezoDeviceBase:
     async def read_response(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> tuple:
         """
         Asynchronously sends a command to read values and returnes the response as a tuple.
-        For example, if you write the command `set`, it will return `set,80.000` if
-        the setpoint is 80.000. The response is parsed into a tuple containing the command `set`
-        and a list of parameter strings, in this case `[80.000]`.
+        For example, if you write the command ``set``, it will return ``set,80.000`` if
+        the setpoint is 80.000. The response is parsed into a tuple containing the command ``set``
+        and a list of parameter strings, in this case ``[80.000]``.
 
         Args:
             cmd (str): The command string to be sent.
@@ -290,8 +290,8 @@ class PiezoDeviceBase:
     async def read_values(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> list[str]:
         """
         Asynchronously sends a command and returns the values as a list of strings.
-        For example, if you write the command `'recout,0,0,1`, to read the first data recorder
-        value, it will return `['0', '0', '0.029']` if the first data recorder value is `0.029`.
+        For example, if you write the command ``recout,0,0,1``, to read the first data recorder
+        value, it will return ``['0', '0', '0.029']`` if the first data recorder value is ``0.029``.
         So it returns a list of 3 strings.
 
         Args:
@@ -311,8 +311,8 @@ class PiezoDeviceBase:
     async def read_string_value(self, cmd: str, param_index : int = 0) -> str:
         """
         Asynchronously reads a single string value from device.
-        For example, if you write the command `desc`, the device will return
-        the name of the actuator i.e. `TRITOR100SG` . The response is parsed 
+        For example, if you write the command ``desc``, the device will return
+        the name of the actuator i.e. TRITOR100SG . The response is parsed 
         into a string value.
 
         Args:
@@ -343,8 +343,8 @@ class PiezoDeviceBase:
     async def read_float_value(self, cmd: str, param_index : int = 0) -> float:
         """
         Asynchronously reads a single float value from device.
-        For example, if you write the command `set`, to read the current setpoint,
-        it will return `80.000` if the setpoint is 80.000. The response is parsed into a
+        For example, if you write the command ``set``, to read the current setpoint,
+        it will return ``80.000`` if the setpoint is 80.000. The response is parsed into a
         float value. Use this function for command that returns a single floating point value.
 
         Args:
@@ -365,7 +365,7 @@ class PiezoDeviceBase:
     async def read_int_value(self, cmd: str, param_index : int = 0) -> int:
         """
         Asynchronously reads a single float value from device.
-        For example, if you write `cl` to the device, the response will be `0` or `1`
+        For example, if you write ``cl`` to the device, the response will be ``0`` or ``1``
         depending on the current PID mode. The response is parsed into an integer value.
 
         Args:

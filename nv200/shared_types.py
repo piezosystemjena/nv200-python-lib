@@ -317,7 +317,7 @@ class DiscoverFlags(Flag):
     """
     Flags to configure the behavior of the device discovery process.
 
-    These flags can be combined using the bitwise OR (`|`) operator.
+    These flags can be combined using the bitwise OR (``|``) operator.
 
     Attributes:
         DETECT_SERIAL: Enables detection of serial devices.

@@ -15,7 +15,7 @@ class NV200Device(PiezoDeviceBase):
     for setting and getting various device parameters, such as PID mode, setpoint,
     """
     DEVICE_ID = "NV200/D_NET"
-    CACHEABLE_COMMANDS = {"cl", "unitcl", "unitol", "avmin", "avmax", "posmin", "posmax"}
+    CACHEABLE_COMMANDS = {"cl", "unitcl", "unitol", "avmin", "avmax", "posmin", "posmax", "modsrc", "spisrc"}
 
     async def enrich_device_info(self, detected_device : DetectedDevice) -> None :
         """

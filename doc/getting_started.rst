@@ -111,7 +111,7 @@ to access the device parameters directly. The generic methods are also useful fo
 Command Parameter Caching
 ------------------------------------
 
-The ``PiezoDeviceBase`` class provides an optional **command result caching** mechanism to optimize read 
+The `PiezoDeviceBase` class provides an optional **command result caching** mechanism to optimize read 
 performance for piezoelectric device communication. This section explains the purpose of this cache, 
 how to control it, when to use it, and provides usage examples.
 
@@ -212,9 +212,134 @@ You can clear the local cache manually using the `clear_cmd_cache()` method. Thi
 
 
 Summary
--------
+^^^^^^^^^^
 
 Caching in `PiezoDeviceBase` is a powerful tool to reduce communication overhead and
 latency when interacting with piezo devices. `CMD_CACHE_ENABLED` provides a simple global 
 toggle, and all commands listed in `CACHEABLE_COMMANDS` in each concrete subclass will
 automatically benefit from caching when enabled.
+
+
+Actuator Configuration Backup
+-------------------------------------------------
+
+The `NV200Device` class provides functionality to interact with the actuator's nonvolatile 
+memory (EEPROM), which stores actuator-specific control parameters such as filter settings, 
+control loop gains, and modulation modes. 
+
+Because these parameters are persistent and **can be overwritten** during normal use 
+of the Python library, it is essential to **back up the original configuration** before 
+making changes. This enables safe experimentation with tuning or settings, 
+while ensuring the ability to restore the default factory configuration if needed.
+
+
+Why Back Up Actuator Parameters?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Actuators connected to the NV200 amplifier store important default control parameters in their EEPROM. These include:
+
+- Low-pass and notch filter settings
+- PID gains (kp, ki, kd)
+- Closed-loop control settings
+
+Changing these values programmatically will overwrite them in the actuator's nonvolatile memory. 
+If the new parameters are incorrect or unstable, it may degrade device performance or behavior.
+
+.. warning::
+
+   Always **export and save** the actuator configuration **before** writing or experimenting with actuator parameters.
+
+
+Exporting Actuator Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Use the `export_actuator_config()` method to read and save the current actuator configuration to an INI file.
+
+.. code-block:: python
+
+    saved_path = await device.export_actuator_config(path="configs")
+
+This will:
+
+- Query a predefined list of parameters from the actuator EEPROM.
+- Save them to a standard INI file.
+- Use the actuator's description and serial number for the default filename if not specified.
+
+Parameters saved include:
+
+.. code-block:: python
+
+        export_keys = [
+            "desc",
+            "acserno",
+            "sr",
+            "setlpon",
+            "setlpf",
+            "kp",
+            "kd",
+            "ki",
+            "notchf",
+            "notchb",
+            "notchon",
+            "poslpon",
+            "poslpf",
+            "modsrc",
+            "cl",
+            "pcf",
+        ]
+
+If no path or filename is provided, the file will be saved in the current directory under a name like:
+
+.. code-block:: text
+
+    actuator_conf_<desc>_<acserno>.ini
+
+So for example, if the actuator description is "TRITOR100SG" and the serial number is "85533",
+the file will be named:
+
+.. code-block:: text
+
+    actuator_conf_TRITOR100SG _85533.ini
+
+This is the layout of the exported INI file for a TRITOR100SG actuator with serial number 85533:
+
+.. code-block:: ini
+
+   [Actuator Configuration]
+   desc = TRITOR100SG 
+   acserno = 85533
+   sr = 50.000
+   setlpon = 0
+   setlpf = 200
+   kp = 0.000
+   kd = 0.000
+   ki = 70.000
+   notchf = 100
+   notchb = 200
+   notchon = 0
+   poslpon = 1
+   poslpf = 1000.000
+   modsrc = 0
+   cl = 1
+   pcf = 0.000000e+00,0.000000e+00,0.000000e+00
+
+
+Restoring Actuator Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If needed, you can restore a previously saved configuration using the `import_actuator_config()` method:
+
+.. code-block:: python
+
+    await device.import_actuator_config("configs/actuator_conf_TRITOR100SG _85533.ini")
+
+This will restore the actuator parameters from the specified INI file, 
+overwriting the current settings in the actuator's EEPROM.
+
+
+Best Practices
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Always export** actuator settings before making changes.
+- Use version control (e.g., Git) to track configuration history in team projects.
+- Consider re-importing the backup configuration after tests to reset the actuator to its original state.

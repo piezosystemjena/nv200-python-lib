@@ -11,7 +11,8 @@ Classes:
 """
 import math
 import logging
-from typing import List
+import numpy as np
+from typing import List, Union, Sequence
 
 from nv200.nv200_device import NV200Device, ModulationSource
 from nv200.shared_types import TimeSeries
@@ -19,6 +20,25 @@ from nv200.utils import wait_until
 
 # Global module locker
 logger = logging.getLogger(__name__)
+
+
+def calculate_sampling_time_ms(time_samples: Union[Sequence[float], np.ndarray]) -> float:
+    """
+    Calculates the sampling time in milliseconds from a sequence of time samples.
+
+    Args:
+        time_samples (Union[Sequence[float], np.ndarray]): A list or NumPy array of time samples in milliseconds.
+
+    Returns:
+        float: The sampling time in milliseconds.
+
+    Raises:
+        ValueError: If the sequence has fewer than 2 time samples.
+    """
+    if len(time_samples) < 2:
+        raise ValueError("At least two time samples are required to calculate sampling time.")
+    return (time_samples[-1] - time_samples[0]) / (len(time_samples) - 1)      #
+ 
 
 class WaveformGenerator:
     """
@@ -193,7 +213,7 @@ class WaveformGenerator:
         """
         await self.set_waveform_buffer(waveform.values)
         self._waveform = waveform
-        await self.set_output_sampling_time(waveform.sample_time_ms * 1000)
+        await self.set_output_sampling_time(int(waveform.sample_time_ms * 1000))
         if not adjust_loop:
             return
         # Adjust loop indices based on the waveform data
@@ -202,6 +222,38 @@ class WaveformGenerator:
             loop_start_index=0,
             loop_end_index=len(waveform.values) - 1,
         )
+
+    async def set_waveform_from_samples(
+        self,
+        time_samples: Union[Sequence[float], np.ndarray],
+        values: Union[Sequence[float], np.ndarray],
+        adjust_loop: bool = True
+    ):
+        """
+        Sets the waveform data in the device from separate time samples and values.
+
+        Args:
+            time_samples (Sequence[float] or np.ndarray): Time samples in milliseconds.
+            values (Sequence[float] or np.ndarray): Corresponding waveform amplitude values.
+            adjust_loop (bool): If True, adjusts loop indices based on data length.
+
+        Raises:
+            ValueError: If inputs are invalid or lengths mismatch.
+        """
+        if len(time_samples) != len(values):
+            raise ValueError("Time samples and values must have the same length.")
+        if len(time_samples) == 0:
+            raise ValueError("Input arrays cannot be empty.")
+        
+        # Calculate sample_time_ms from time_samples
+        sample_time_ms = calculate_sampling_time_ms(time_samples)
+
+        # Create WaveformData object (assuming it takes values and sample_time_ms)
+        waveform = self.WaveformData(values=list(values), sample_time_ms=sample_time_ms)
+
+        # Use existing set_waveform method to actually send data
+        await self.set_waveform(waveform, adjust_loop=adjust_loop)
+
 
     async def is_running(self) -> bool:
         """
@@ -228,10 +280,52 @@ class WaveformGenerator:
             poll_interval_s=0.1,
             timeout_s=timeout_s
         )
+    
+    @classmethod
+    def generate_time_samples_list(cls, freq_hz: float) -> List[float]:
+        """
+        Generates a list of time samples (in milliseconds) for one period of a waveform at the specified frequency.
+        Sampling is adjusted based on hardware base sample time and buffer constraints.
 
+        Args:
+            freq_hz (float): The frequency of the waveform in Hertz.
 
+        Returns:
+            List[float]: Time samples (in milliseconds).
+        """
+        if freq_hz <= 0:
+            raise ValueError("Frequency must be greater than zero.")
+
+        buf_size = cls.NV200_WAVEFORM_BUFFER_SIZE
+        base_sample_time_us = cls.NV200_BASE_SAMPLE_TIME_US
+
+        period_us = 1_000_000 / freq_hz
+        ideal_sample_time_us = period_us / buf_size
+
+        sample_factor = math.ceil(ideal_sample_time_us / base_sample_time_us)
+        sample_time_us = sample_factor * base_sample_time_us
+        sample_time_s = sample_time_us / 1_000_000
+
+        required_buffer = int(period_us / sample_time_us)
+        return [i * sample_time_s * 1000 for i in range(required_buffer)]
+    
+
+    @classmethod
+    def generate_time_samples_array(cls, freq_hz: float) -> np.ndarray:
+        """
+        Generates a NumPy array of time samples (in milliseconds) for one period of a waveform at the specified frequency.
+
+        Args:
+            freq_hz (float): The frequency of the waveform in Hertz.
+
+        Returns:
+            np.ndarray: Time samples (in milliseconds).
+        """
+        return np.array(cls.generate_time_samples_list(freq_hz))
+
+    @classmethod
     def generate_sine_wave(
-        self,
+        cls,
         freq_hz: float,
         low_level: float,
         high_level: float,
@@ -257,32 +351,17 @@ class WaveformGenerator:
             - The buffer size is adjusted to ensure the generated waveform fits within one period
               of the sine wave.
             - The sine wave is scaled and offset to match the specified low and high levels.
-        """
-        buf_size = self.NV200_WAVEFORM_BUFFER_SIZE
-        base_sample_time_us = self.NV200_BASE_SAMPLE_TIME_US
+        """                                                                                 
+        times_ms = cls.generate_time_samples_list(freq_hz)
 
-        period_us = 1_000_000 / freq_hz
-        ideal_sample_time_us = period_us / buf_size
-
-        sample_factor = math.ceil(ideal_sample_time_us / base_sample_time_us)
-        sample_time_us = sample_factor * base_sample_time_us
-        sample_time_s = sample_time_us / 1_000_000
-        required_buffer = int(period_us / sample_time_us)
         amplitude = (high_level - low_level) / 2.0
         offset = (high_level + low_level) / 2.0
-
-        times_ms: List[float] = [i * sample_time_s * 1000 for i in range(required_buffer)]
         values: List[float] = [
             offset + amplitude * math.sin(2 * math.pi * freq_hz * (t_ms / 1000) + phase_shift_rad)
             for t_ms in times_ms
         ]
 
-        logger.debug(
-            "Optimal sample time: %s µs, Buffer size: %s, Frequency: %s Hz, Scale factor: %s",
-            sample_time_us, len(values), freq_hz, sample_factor
-        )
-
-        return self.WaveformData(
+        return cls.WaveformData(
             values=values,
-            sample_time_ms=int(sample_time_us / 1000)
+            sample_time_ms=calculate_sampling_time_ms(times_ms)
         )

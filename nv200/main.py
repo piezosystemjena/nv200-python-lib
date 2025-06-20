@@ -198,10 +198,14 @@ async def waveform_generator_test():
     #await client.write('setlpon,0')
     #await client.write('poslpf,1000')
     #await client.write('poslpon,1')
+
     await device.set_pid_mode(PidLoopMode.CLOSED_LOOP)
     pos_range = await device.get_position_range()
     waveform_generator = WaveformGenerator(device)
-    sine = waveform_generator.generate_sine_wave(freq_hz=1, low_level=pos_range[0], high_level=pos_range[1])
+    waveform_generator.generate_time_samples_list(freq_hz=1)
+
+    sine = waveform_generator.generate_sine_wave(freq_hz=10, low_level=pos_range[0], high_level=pos_range[1])
+    print(sine.cycle_time_ms)
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
@@ -216,7 +220,7 @@ async def waveform_generator_test():
     await recorder.start_recording()
 
     print("Starting waveform generator...")
-    await waveform_generator.start(cycles=1, start_index=0)
+    await waveform_generator.start(cycles=20, start_index=0)
     print(f"Is running: {await waveform_generator.is_running()}")
     #await waveform_generator.wait_until_finished()
     await recorder.wait_until_finished()
@@ -317,7 +321,7 @@ def setup_logging():
     #    print(name)
 
     #logging.getLogger("nv200.device_discovery").setLevel(logging.DEBUG)
-    #logging.getLogger("nv200.telnet_protocol").setLevel(logging.DEBUG)
+    logging.getLogger("nv200.telnet_protocol").setLevel(logging.DEBUG)
 
 
 
@@ -442,9 +446,9 @@ async def spi_box_test():
     #print(await dev.get_device_type())
     await asyncio.sleep(0.1)
 
-    ch1 = generate_sine_wave(freq=1, low=0.0, high=100.0)
-    ch2 = generate_sine_wave(freq=1, low=0.0, high=100.0)
-    ch3 = generate_sine_wave(freq=1, low=0.0, high=100.0)
+    ch1 = generate_sine_wave(freq=20, low=0.0, high=100.0)
+    ch2 = generate_sine_wave(freq=20, low=0.0, high=100.0)
+    ch3 = generate_sine_wave(freq=20, low=0.0, high=100.0)
     plt.plot(ch1[0], ch3[1], linestyle='-', color='green', label="Channel 1 TX")
     print(len(ch1[1]))
     values : List[np.ndarray] 

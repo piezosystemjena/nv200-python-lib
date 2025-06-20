@@ -54,16 +54,14 @@ class PiezoDeviceBase:
     """
     CMD_CACHE_ENABLED = True  # Enable command caching by default - set to False to disable caching
     CACHEABLE_COMMANDS: set[str] = set() # set of commands that can be cached
-
     DEFAULT_TIMEOUT_SECS = 0.6
-    frame_delimiter_write = "\r\n"
     DEVICE_ID = None # Placeholder for device ID, to be set in subclasses
-    _transport: TransportProtocol
-    _cache: Dict[str, str] = {}  # Cache: cmd -> value
     
     def __init__(self, transport: TransportProtocol):
-        self._transport = transport
+        self._transport : TransportProtocol = transport
         self._lock = _ReentrantAsyncLock()
+        self._cache: Dict[str, str] = {}
+        self.frame_delimiter_write : str= "\r\n"  # Default frame delimiter for writing commands
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

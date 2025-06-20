@@ -381,7 +381,7 @@ class TimeSeries:
     It also includes a sample time in milliseconds.
     """
 
-    def __init__(self, values: list, sample_time_ms: int):
+    def __init__(self, values: list, sample_time_ms: float):
         """
         Initialize the TimeSeries instance with amplitude values and sample time.
 

@@ -16,10 +16,6 @@ class TelnetProtocol(TransportProtocol):
     with piezosystem devices over Telnet. It provides methods to establish a connection,
     send commands, read responses, and close the connection.
     """
-    __host : str
-    __MAC : str
-    __port : int
-    
     def __init__(self, host: str = "", port: int = 23, MAC: str = ""):
         """
         Initializes the transport protocol.
@@ -29,9 +25,10 @@ class TelnetProtocol(TransportProtocol):
             port (int, optional): The port number to connect to. Defaults to 23.
             MAC (str, optional): The MAC address of the NV200 device. Defaults to None.
         """
-        self.__host = host
-        self.__port = port
-        self.__MAC = MAC
+        super().__init__()
+        self.__host : str = host
+        self.__port : int = port
+        self.__MAC : str = MAC
         self.__reader = None
         self.__writer = None
 

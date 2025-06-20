@@ -19,12 +19,8 @@ class SerialProtocol(TransportProtocol):
         will try to auto detect the port.
         baudrate (int): The baud rate for the serial connection. Defaults to 115200.
         serial (AioSerial): The AioSerial instance for asynchronous serial communication.
-    """
-    __port : str
-    __baudrate : int
-    __serial : aioserial.AioSerial = None
-    
-    def __init__(self, port : str = None, baudrate : int = 115200):
+    """   
+    def __init__(self, port : str | None  = None, baudrate : int = 115200):
         """
         Initializes the NV200 driver with the specified serial port settings.
 
@@ -33,13 +29,14 @@ class SerialProtocol(TransportProtocol):
                                   If port is None, the class will try to auto detect the port.
             baudrate (int, optional): The baud rate for the serial connection. Defaults to 115200.
         """
-        self.__serial = None
-        self.__port = port
-        self.__baudrate = baudrate
+        super().__init__()
+        self.__serial : aioserial.AioSerial | None = None
+        self.__port : str  | None = port
+        self.__baudrate : int= baudrate
 
 
     @property
-    def serial(self) -> aioserial.AioSerial:
+    def serial(self) -> aioserial.AioSerial | None:
         """
         Provides access to the internal AioSerial interface.
         Returns:

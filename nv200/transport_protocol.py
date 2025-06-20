@@ -51,7 +51,13 @@ class TransportProtocol(ABC):
     CR = b'\x0D'
     CRLF = b'\x0D\x0A'
     DEFAULT_TIMEOUT_SECS = 0.6
-    rx_delimiter = XON  # Default delimiter for reading messages
+
+    def __init__(self):
+        """
+        Initializes the TransportProtocol base class.
+        Subclasses may extend this constructor to initialize protocol-specific state.
+        """
+        self.rx_delimiter = TransportProtocol.XON  # Default delimiter for reading messages
 
     @abstractmethod
     async def connect(self, auto_adjust_comm_params: bool = True, device : Optional['PiezoDeviceBase'] = None):

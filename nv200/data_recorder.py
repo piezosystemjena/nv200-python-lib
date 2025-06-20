@@ -127,8 +127,6 @@ class DataRecorder:
             sample_time_us (int): The sampling time in microseconds.
             sample_factor (int): A factor used to calculate the sample time from the base sample time.
         """
-        _source : DataRecorderSource = None
-
         def __init__(self, values: list, sample_time_ms: int, source: DataRecorderSource):
             """
             Initialize the ChannelData instance with amplitude values, sample time, and source.
@@ -140,7 +138,7 @@ class DataRecorder:
             """
             # Call the parent constructor (TimeSeries) to initialize the values and sample time
             super().__init__(values, sample_time_ms)
-            self._source = source  # Private member for source
+            self._source : DataRecorderSource = source  # Private member for source
         
         @property
         def source(self) -> DataRecorderSource:
@@ -150,9 +148,6 @@ class DataRecorder:
             return self._source
 
 
-    _dev : NV200Device
-    _sample_rate : int = None
-
     @property
     def max_sample_buffer_size(self) -> int:
         """
@@ -161,7 +156,18 @@ class DataRecorder:
         return self.NV200_RECORDER_BUFFER_SIZE
 
     def __init__(self, device: NV200Device):
-        self._dev = device
+        """
+        Initializes the data recorder with the specified NV200 device.
+
+        Args:
+            device (NV200Device): The NV200 device instance to be used by the data recorder.
+
+        Attributes:
+            _dev (NV200Device): Stores the provided NV200 device instance.
+            _sample_rate (int | None): The sample rate for data recording, initially set to None.
+        """
+        self._dev : NV200Device = device
+        self._sample_rate : int | None = None
 
 
     async def set_data_source(self, channel: int, source: DataRecorderSource):

@@ -96,6 +96,13 @@ class WaveformGenerator:
         await self._dev.set_modulation_source(ModulationSource.WAVEFORM_GENERATOR)
         await self._dev.write(f"grun,{int(start)}")
 
+    async def stop(self):
+        """
+        Stops the waveform generator.
+        This is equivalent to calling start(False).
+        """
+        await self._dev.write(f"grun,{0}")
+
 
     async def set_loop_start_index(self, start_index: int):
         """

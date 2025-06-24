@@ -170,12 +170,13 @@ class PiezoDeviceBase:
         """
         logger.debug("Writing cmd.: %s", cmd)
 
-        await self._transport.write(cmd + self.frame_delimiter_write)
-        try:
-            response = await self._transport.read_message(timeout=0.4)
-            return self._parse_response(response)
-        except asyncio.TimeoutError:
-            return None  # Or handle it differently
+        async with self.lock:
+            await self._transport.write(cmd + self.frame_delimiter_write)
+            try:
+                response = await self._transport.read_message(timeout=0.4)
+                return self._parse_response(response)
+            except asyncio.TimeoutError:
+                return None  # Or handle it differently
         
 
     async def write_value(self, cmd: str, value: Union[int, float, str]):
@@ -232,8 +233,9 @@ class PiezoDeviceBase:
             >>> print(response)
             b'cl,1\\r\\n'
         """
-        await self._transport.write(cmd + self.frame_delimiter_write)
-        return await self._read_raw_message(timeout)
+        async with self.lock:
+            await self._transport.write(cmd + self.frame_delimiter_write)
+            return await self._read_raw_message(timeout)
     
 
     async def read_stripped_response_string(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:

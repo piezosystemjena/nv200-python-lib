@@ -26,7 +26,19 @@ Functionality:
 
 from enum import Enum, IntFlag, Flag, auto
 from dataclasses import dataclass, field
-from typing import Generator, Optional, Dict
+from typing import Generator, Optional, Dict, Awaitable, Protocol
+
+
+class ProgressCallback(Protocol):
+    """
+    A callback to report progress during long running tasks
+
+    Args:
+        current_index (int): The current item being processed (1-based).
+        total_count (int): The total number of items.
+    """
+    def __call__(self, current_index: int, total: int) -> Awaitable[None]:
+        ...
 
 
 class PidLoopMode(Enum):

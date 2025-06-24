@@ -12,10 +12,10 @@ Classes:
 import math
 import logging
 import numpy as np
-from typing import List, Union, Sequence
+from typing import List, Union, Sequence, Optional
 
 from nv200.nv200_device import NV200Device, ModulationSource
-from nv200.shared_types import TimeSeries
+from nv200.shared_types import TimeSeries, ProgressCallback
 from nv200.utils import wait_until
 
 # Global module locker
@@ -175,13 +175,14 @@ class WaveformGenerator:
             raise ValueError(f"Buffer index must be in the range from 0 to {self.NV200_WAVEFORM_BUFFER_SIZE} , got {value}")
         await self._dev.write(f"gparb,{index},{value}")
 
-    async def set_waveform_buffer(self, buffer: list[float]):
+    async def set_waveform_buffer(self, buffer: list[float], on_progress: Optional[ProgressCallback] = None):
         """
         Writes a full waveform buffer to the device by setting each value
         using set_waveform_value.
 
         Parameters:
             buffer (list of float): The waveform values in length units (μm or mrad).
+            on_progress (Optional[ProgressCallback]): Optional callback for progress updates.
 
         Raises:
             ValueError: If the buffer size exceeds the maximum buffer length.
@@ -191,10 +192,13 @@ class WaveformGenerator:
                 f"Buffer too large: max size is {self.NV200_WAVEFORM_BUFFER_SIZE}, got {len(buffer)}"
             )
 
+        total = len(buffer)
         for index, value in enumerate(buffer):
             await self.set_waveform_value(index, value)
+            if on_progress:
+                await on_progress(index + 1, total)
 
-    async def set_waveform(self, waveform: WaveformData, adjust_loop: bool = True):
+    async def set_waveform(self, waveform: WaveformData, adjust_loop: bool = True, on_progress: Optional[ProgressCallback] = None):
         """
         Sets the waveform data in the device.
 
@@ -207,11 +211,12 @@ class WaveformGenerator:
                                 - start_index = 0 (first waveform value)
                                 - loop_start_index = 0 (first waveform value)
                                 - loop_end_index = last waveform value
+            on_progress (Optional[ProgressCallback]): Optional callback for progress updates.
 
         Raises:
             ValueError: If the waveform data is invalid.
         """
-        await self.set_waveform_buffer(waveform.values)
+        await self.set_waveform_buffer(waveform.values, on_progress=on_progress)
         self._waveform = waveform
         await self.set_output_sampling_time(int(waveform.sample_time_ms * 1000))
         if not adjust_loop:

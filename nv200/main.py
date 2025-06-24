@@ -189,6 +189,10 @@ async def waveform_generator_test():
     """
     Asynchronous function to test the functionality of the WaveformGenerator class.
     """
+    async def print_progress(current_index: int, total: int):
+        percent = 100 * current_index / total
+        print(f"[{percent:.1f}%] Set value {current_index} of {total}")
+
     prepare_plot_style()
     device = await nv200.connection_utils.connect_to_single_device(
         device_class=NV200Device, 
@@ -209,7 +213,7 @@ async def waveform_generator_test():
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
-    await waveform_generator.set_waveform(sine)
+    await waveform_generator.set_waveform(sine, on_progress=print_progress)
 
 
     recorder = DataRecorder(device)

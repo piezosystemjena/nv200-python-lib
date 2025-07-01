@@ -5,6 +5,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/nv200)](https://pypi.org/project/nv200/)
 [![Python Version](https://img.shields.io/pypi/pyversions/nv200)](https://www.python.org/downloads/)
 [![Docs](https://img.shields.io/badge/docs-online-success)](https://nv200-python-lib-e9158a.gitlab.io/)
+![Monthly Downloads](https://img.shields.io/pypi/dm/nv200)
 
 ---
 

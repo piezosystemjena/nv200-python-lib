@@ -236,7 +236,7 @@ class PiezoDeviceBase:
         async with self.lock:
             await self._transport.write(cmd + self.frame_delimiter_write)
             return await self._read_raw_message(timeout)
-    
+          
 
     async def read_stripped_response_string(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
         """
@@ -264,6 +264,30 @@ class PiezoDeviceBase:
             return parts[1]
         else:
             return ""
+        
+
+    async def read_cached_response_parameters_tring(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> str:
+        """
+        Asynchronously reads the response parameters string for a given command, utilizing a cache if enabled.
+        If caching is enabled and the command's response is present in the cache, returns the cached response.
+        Otherwise, reads the response using `read_response_parameters_string`, caches it if applicable, and returns it.
+
+        Args:
+            cmd (str): The command string to send.
+            timeout (float, optional): Timeout in seconds for the response. Defaults to DEFAULT_TIMEOUT_SECS.
+
+        Returns:
+            str: The parameters part of the response string (after the first comma), or an empty string if no parameters are present.
+        """
+        if self.CMD_CACHE_ENABLED and cmd in self._cache:
+            logger.debug("Read cache hit for command: %s -> %s", cmd, self._cache[cmd])
+            return self._cache[cmd]
+        
+        response = await self.read_response_parameters_string(cmd, timeout)
+        if self.CMD_CACHE_ENABLED and cmd in self.CACHEABLE_COMMANDS:
+            self._cache[cmd] = response
+            logger.debug("Cached value after read: %s -> %s", cmd, response)
+        return response
    
    
     async def read_response(self, cmd: str, timeout : float = DEFAULT_TIMEOUT_SECS) -> tuple:

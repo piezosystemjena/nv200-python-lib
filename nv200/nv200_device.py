@@ -1,21 +1,59 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, TYPE_CHECKING
 import os
 import configparser
 from nv200.device_base import PiezoDeviceBase
-from nv200.shared_types import PidLoopMode, ModulationSource, StatusRegister, StatusFlags, DetectedDevice, TransportType, SPIMonitorSource
+from nv200.shared_types import (
+    PidLoopMode,
+    ModulationSource,
+    StatusRegister,
+    StatusFlags,
+    DetectedDevice,
+    TransportType,
+    SPIMonitorSource,
+    PIDGains,
+    PCFGains,
+    ValueRange
+)
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
+from nv200.transport_protocol import TransportProtocol
 
+if TYPE_CHECKING:
+    # For forward reference of NV200Device within inner classes
+    from typing import Any
 
 
 class NV200Device(PiezoDeviceBase):
     """
     A high-level asynchronous client for communicating with NV200 piezo controllers.
+
     This class extends the `PiezoDeviceBase` base class and provides high-level methods
-    for setting and getting various device parameters, such as PID mode, setpoint,
+    for setting and getting various device parameters, such as PID mode, setpoint, etc.
+
+    Attributes:
+        setpoint_lpf (NV200Device.LowpassFilter): Interface for the setpoint low-pass filter.
+        position_lpf (NV200Device.LowpassFilter): Interface for the position low-pass filter.
+        notch_filter (NV200Device.NotchFilter): Interface for the notch filter.
     """
     DEVICE_ID = "NV200/D_NET"
-    CACHEABLE_COMMANDS = {"cl", "unitcl", "unitol", "avmin", "avmax", "posmin", "posmax", "modsrc", "spisrc"}
+    CACHEABLE_COMMANDS = {
+        "cl",
+        "unitcl",
+        "unitol",
+        "avmin",
+        "avmax",
+        "posmin",
+        "posmax",
+        "modsrc",
+        "spisrc",
+        "kp",
+        "ki",
+        "kd",
+        "setlpf",
+        "setlpon",
+        "poslpf",
+        "poslpon"
+    }
     help_dict: dict[str, str] = {
         # General Commands
         "s": "Print full command list",
@@ -129,6 +167,150 @@ class NV200Device(PiezoDeviceBase):
         "isave": "Save ILC learning profiles to actuator",
         "iload": "Load ILC learning profiles from actuator",
     }
+
+    class LowpassFilter:
+        """
+        Interface to a low-pass filter configuration on the NV200 device.
+
+        This class is parameterized by the command strings for enabling the filter and
+        setting/getting the cutoff frequency.
+        """
+
+        def __init__(self, device: "NV200Device", enable_cmd: str, cutoff_cmd: str, cutoff_range: ValueRange[float]) -> None:
+            """
+            Initialize the LowpassFilter.
+
+            Args:
+                device (NV200Device): The parent device instance.
+                enable_cmd (str): The device command to enable/disable the filter.
+                cutoff_cmd (str): The device command to set/get the cutoff frequency.
+            """
+            self._device = device
+            self._enable_cmd = enable_cmd
+            self._cutoff_cmd = cutoff_cmd
+            self.cutoff_range = cutoff_range
+
+        async def enable(self, enable: bool) -> None:
+            """
+            Enable or disable the low-pass filter.
+
+            Args:
+                enable (bool): True to enable, False to disable.
+            """
+            await self._device.write_value(self._enable_cmd, int(enable))
+
+        async def is_enabled(self) -> bool:
+            """
+            Check if the low-pass filter is enabled.
+
+            Returns:
+                bool: True if enabled, False otherwise.
+            """
+            return await self._device.read_int_value(self._enable_cmd) == 1
+
+        async def set_cutoff(self, frequency: float) -> None:
+            """
+            Set the cutoff frequency of the low-pass filter.
+
+            Args:
+                frequency (int): The cutoff frequency in Hz (valid range 1..10000).
+            """
+            await self._device.write_value(self._cutoff_cmd, frequency)
+
+        async def get_cutoff(self) -> float:
+            """
+            Get the cutoff frequency of the low-pass filter.
+
+            Returns:
+                int: The cutoff frequency in Hz.
+            """
+            return await self._device.read_float_value(self._cutoff_cmd)
+        
+
+    class NotchFilter:
+        """
+        Interface to a notch filter configuration on the NV200 device.
+
+        Allows enabling/disabling the notch filter and configuring its
+        center frequency and -3 dB bandwidth.
+        """
+
+        def __init__(self, device: "NV200Device") -> None:
+            """
+            Initialize the NotchFilter interface.
+
+            Args:
+                device (NV200Device): The parent device instance used for communication.
+            """
+            self._device = device
+            self.freq_range : ValueRange[int] = ValueRange(1, 10000)  # Valid range for notch frequency
+            self.bandwidth_range : ValueRange[int] = ValueRange(1, 10000)  # Valid range for notch bandwidth
+
+        async def enable(self, enable: bool) -> None:
+            """
+            Enable or disable the notch filter.
+
+            Args:
+                enable (bool): True to enable the filter, False to disable.
+            """
+            await self._device.write_value("notchon", int(enable))
+
+        async def is_enabled(self) -> bool:
+            """
+            Check if the notch filter is currently enabled.
+
+            Returns:
+                bool: True if the filter is enabled, False otherwise.
+            """
+            return await self._device.read_int_value("notchon") == 1
+
+        async def set_frequency(self, frequency: int) -> None:
+            """
+            Set the center frequency of the notch filter.
+
+            Args:
+                frequency (int): Center frequency in Hz. Valid range is 1 to 10,000 Hz.
+            """
+            await self._device.write_value("notchf", frequency)
+
+        async def get_frequency(self) -> int:
+            """
+            Get the center frequency of the notch filter.
+
+            Returns:
+                int: Current center frequency in Hz.
+            """
+            return await self._device.read_int_value("notchf")
+
+        async def set_bandwidth(self, bandwidth: int) -> None:
+            """
+            Set the -3 dB bandwidth of the notch filter.
+
+            Args:
+                bandwidth (int): Bandwidth in Hz. Valid range is 1 to 10,000 Hz,
+                                but must not exceed 2 × center frequency.
+            """
+            await self._device.write_value("notchb", bandwidth)
+
+        async def get_bandwidth(self) -> int:
+            """
+            Get the -3 dB bandwidth of the notch filter.
+
+            Returns:
+                int: Current bandwidth in Hz.
+            """
+            return await self._device.read_int_value("notchb")
+        
+
+    def __init__(self, transport: TransportProtocol):
+        """
+        Initialize NV200Device and its low-pass filter interfaces.
+        """
+        super().__init__(transport)  # call base class constructor
+        self.setpoint_lpf = self.LowpassFilter(self, "setlpon", "setlpf", ValueRange(1, 10000))
+        self.position_lpf = self.LowpassFilter(self, "poslpon", "poslpf", ValueRange(100, 10000))
+        self.notch_filter = self.NotchFilter(self)
+
 
     async def enrich_device_info(self, detected_device : DetectedDevice) -> None :
         """
@@ -345,31 +527,8 @@ class NV200Device(PiezoDeviceBase):
         """
         async with self.lock:
             await self.write_value("sr", slew_rate)
-
-    async def enable_setpoint_lowpass_filter(self, enable: bool):
-        """
-        Enables the low-pass filter for the setpoint.
-        """
-        await self.write_value("setlpon", int(enable))
-
-    async def is_setpoint_lowpass_filter_enabled(self) -> bool:
-        """
-        Checks if the low-pass filter for the setpoint is enabled.
-        """
-        return await self.read_int_value('setlpon') == 1
     
-    async def set_setpoint_lowpass_filter_cutoff_freq(self, frequency: int):
-        """
-        Sets the cutoff frequency of the low-pass filter for the setpoint from 1..10000 Hz.
-        """
-        await self.write_value("setlpf", frequency)
 
-    async def get_setpoint_lowpass_filter_cutoff_freq(self) -> int:
-        """
-        Retrieves the cutoff frequency of the low-pass filter for the setpoint.
-        """
-        return await self.read_int_value('setlpf')
-    
     async def export_actuator_config(self, path : str = "", filename: str = "") -> str:
         """
         Asynchronously exports the actuator configuration parameters to an INI file.
@@ -481,3 +640,74 @@ class NV200Device(PiezoDeviceBase):
         
         # Return a DeviceClient initialized with the correct transport protocol
         return NV200Device(transport)
+
+
+    async def set_pid_gains(self, kp: float | None = None, ki: float | None = None, kd: float | None = None) -> None:
+        """
+        Sets the PID gains for the device.
+        """
+        if kp is not None:
+            await self.write_value("kp", kp)
+        if ki is not None:
+            await self.write_value("ki", ki)
+        if kd is not None:
+            await self.write_value("kd", kd)
+
+
+    async def get_pid_gains(self) -> PIDGains:
+        """
+        Retrieves the PID gains (kp, ki, kd) for the device.
+
+        Returns:
+            PIDGains: A named tuple with fields kp, ki, and kd.
+        """
+        kp = await self.read_float_value('kp')
+        ki = await self.read_float_value('ki')
+        kd = await self.read_float_value('kd')
+        return PIDGains(kp, ki, kd)
+    
+
+    async def set_pcf_gains(
+        self,
+        position: float | None = None,
+        velocity: float | None = None,
+        acceleration: float | None = None,
+    ) -> None:
+        """
+        Sets the PID controllers feed forward control amplification factors.
+
+        Args:
+            position (float | None): Factor for position feed-forward. Leave unchanged if None.
+            velocity (float | None): Factor for velocity feed-forward. Leave unchanged if None.
+            acceleration (float | None): Factor for acceleration feed-forward (scaled by 1/1_000_000 internally). Leave unchanged if None.
+        """
+        # Read existing values if any factor is None to preserve them
+        if None in (position, velocity, acceleration):
+            current = await self.get_pcf_gains()
+
+        pcf_x = position if position is not None else current.position
+        pcf_v = velocity if velocity is not None else current.velocity
+        # Scale acceleration before sending command
+        pcf_a = int(acceleration * 1_000_000) if acceleration is not None else int(current.acceleration * 1_000_000)
+
+        # Compose the command string (assuming a single write command)
+        command_value = f"{pcf_x},{pcf_v},{pcf_a}"
+        await self.write_value("pcf", command_value)
+
+
+    async def get_pcf_gains(self) -> PCFGains:
+        """
+        Retrieves the feed forward control amplification factors.
+
+        Returns:
+            PCFGains: The feed forward factors for position, velocity, and acceleration.
+        """
+        # Assume read_value returns the string "<pcf_x>,<pcf_v>,<pcf_a>"
+        raw = await self.read_cached_response_parameters_tring('pcf')
+        pcf_x_str, pcf_v_str, pcf_a_str = raw.split(",")
+        pcf_x = float(pcf_x_str)
+        pcf_v = float(pcf_v_str)
+        pcf_a = float(pcf_a_str) / 1_000_000  # scale back
+
+        return PCFGains(position=pcf_x, velocity=pcf_v, acceleration=pcf_a)
+    

@@ -26,7 +26,17 @@ Functionality:
 
 from enum import Enum, IntFlag, Flag, auto
 from dataclasses import dataclass, field
-from typing import Generator, Optional, Dict, Awaitable, Protocol
+from typing import (
+    Generator,
+    Optional,
+    Dict,
+    Awaitable,
+    Protocol,
+    NamedTuple,
+    TypeVar,
+    Generic,
+    Any,
+)
 
 
 class ProgressCallback(Protocol):
@@ -441,3 +451,53 @@ class TimeSeries:
         """
         time_value_pairs = list(zip(self.sample_times_ms, self.values))
         return f"TimeSeries({time_value_pairs})"
+
+
+class PIDGains(NamedTuple):
+    """
+    A NamedTuple representing the proportional, integral, and derivative gains for a PID controller.
+    """
+    kp: float
+    ki: float
+    kd: float
+
+
+class PCFGains(NamedTuple):
+    """
+    Represents feed-forward control amplification factors for
+    position, velocity, and acceleration.
+    """
+    position: float
+    velocity: float
+    acceleration: float  # Note: scaled internally by 1/1_000_000
+
+
+
+ValueRangeType = TypeVar("ValueRangeType")
+
+@dataclass(frozen=True)
+class ValueRange(Generic[ValueRangeType]):
+    """
+    An immutable generic value range with a minimum and maximum value.
+
+    Attributes:
+        min (ValueRangeType): The minimum value of the range.
+        max (ValueRangeType): The maximum value of the range.
+    """
+    min: ValueRangeType
+    max: ValueRangeType
+
+    def contains(self, value: ValueRangeType) -> bool:
+        """
+        Check whether a value is within the range.
+
+        Args:
+            value (ValueRangeType): The value to check.
+
+        Returns:
+            bool: True if value is within the range (inclusive), False otherwise.
+        """
+        return self.min <= value <= self.max
+
+    def __repr__(self) -> str:
+        return f"ValueRange(min={self.min}, max={self.max})"

@@ -170,7 +170,23 @@ class SPIMonitorSource(Enum):
     OPEN_LOOP_POS = 6         #: Position in open-loop mode
     PIEZO_CURRENT_1 = 7       #: Piezo current channel 1
     PIEZO_CURRENT_2 = 8       #: Piezo current channel 2
-    TEST_VALUE = 9            #: Test value (0x5A5A)
+    TEST_VALUE_0x5A5A = 9     #: Test value (0x5A5A)
+
+
+class AnalogMonitorSource(Enum):
+    """
+    Enum representing sources for SPI monitor return values via MISO.
+
+    Each value corresponds to a specific source of data returned over SPI.
+    """
+    CLOSED_LOOP_POS = 0       #: Position in closed-loop mode
+    SETPOINT = 1              #: Setpoint value
+    PIEZO_VOLTAGE = 2         #: Piezo voltage (controller output)
+    POSITION_ERROR = 3        #: Position error
+    ABS_POSITION_ERROR = 4    #: Absolute position error
+    OPEN_LOOP_POS = 5         #: Position in open-loop mode
+    PIEZO_CURRENT_1 = 6       #: Piezo current channel 1
+    PIEZO_CURRENT_2 = 7       #: Piezo current channel 2
 
 
 class StatusRegister:

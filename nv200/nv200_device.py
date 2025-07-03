@@ -9,6 +9,7 @@ from nv200.shared_types import (
     StatusFlags,
     DetectedDevice,
     TransportType,
+    AnalogMonitorSource,
     SPIMonitorSource,
     PIDGains,
     PCFGains,
@@ -45,7 +46,9 @@ class NV200Device(PiezoDeviceBase):
         "posmin",
         "posmax",
         "modsrc",
+        "monsrc",
         "spisrc",
+        "sr",
         "kp",
         "ki",
         "kd",
@@ -53,6 +56,9 @@ class NV200Device(PiezoDeviceBase):
         "setlpon",
         "poslpf",
         "poslpon"
+        "notchf",
+        "notchon",
+        "notchb"
     }
     help_dict: dict[str, str] = {
         # General Commands
@@ -345,11 +351,19 @@ class NV200Device(PiezoDeviceBase):
     
     async def set_spi_monitor_source(self, source: SPIMonitorSource):
         """Sets the source for the SPI/Monitor value returned via SPI MISO."""
-        await self.write(f"spisrc,{source.value}")
+        await self.write_value("spisrc", source.value)
 
     async def get_spi_monitor_source(self) -> SPIMonitorSource:
         """Returns the source for the SPI/Monitor value returned via SPI MISO."""
         return SPIMonitorSource(await self.read_int_value('spisrc'))
+    
+    async def set_analog_monitor_source(self, source: AnalogMonitorSource):
+        """Sets the source of data for analog output (monsrc)."""
+        await self.write_value("monsrc", source.value)
+
+    async def get_analog_monitor_source(self) -> AnalogMonitorSource:
+        """Returns the source of data for analog output (monsrc)."""
+        return AnalogMonitorSource(await self.read_int_value('monsrc'))
     
     async def set_setpoint(self, setpoint: float):
         """Sets the setpoint value for the device."""

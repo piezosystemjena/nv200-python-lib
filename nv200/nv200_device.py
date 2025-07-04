@@ -13,6 +13,7 @@ from nv200.shared_types import (
     SPIMonitorSource,
     PIDGains,
     PCFGains,
+    CtrlMode,
     ValueRange
 )
 from nv200.telnet_protocol import TelnetProtocol
@@ -39,6 +40,7 @@ class NV200Device(PiezoDeviceBase):
     DEVICE_ID = "NV200/D_NET"
     CACHEABLE_COMMANDS = {
         "cl",
+        "ctrlmode",
         "unitcl",
         "unitol",
         "avmin",
@@ -725,3 +727,22 @@ class NV200Device(PiezoDeviceBase):
 
         return PCFGains(position=pcf_x, velocity=pcf_v, acceleration=pcf_a)
     
+
+    async def set_control_mode(self, mode: CtrlMode) -> None:
+        """
+        Sets the control mode of the device.
+
+        Args:
+            mode (CtrlMode): The control mode to set.
+        """
+        await self.write_value("ctrlmode", mode.value)
+
+
+    async def get_control_mode(self) -> CtrlMode:
+        """
+        Retrieves the current control mode of the device.
+
+        Returns:
+            CtrlMode: The current control mode.
+        """
+        return CtrlMode(await self.read_int_value('ctrlmode'))

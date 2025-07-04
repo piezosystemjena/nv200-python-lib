@@ -179,22 +179,31 @@ class PiezoDeviceBase:
                 return None  # Or handle it differently
         
 
-    async def write_value(self, cmd: str, value: Union[int, float, str]):
+    async def write_value(self, cmd: str, value: Union[int, float, str, bool]):
         """
         Asynchronously writes a value to the device using the specified command.
 
         Args:
             cmd (str): The command string to send to the device.
-            value (Union[int, float, str]): The value to write, which can be an integer, float, or string.
+            value (Union[int, float, str, bool]): The value to write, which can be an integer, float, string, or boolean.
 
         Example:
-            >>> await device_client.write('set', 80) 
+            >>> await device_client.write('set', 80)
         """
-        logger.debug("Writing value: %s,%f", cmd, value)
-        await self.write(f"{cmd},{value}")
+
+        # Convert boolean to int internally
+        if isinstance(value, bool):
+            value_to_write = int(value)
+        else:
+            value_to_write = value
+
+        # Always use %f for logging value
+        logger.debug("Writing value: %s,%f", cmd, float(value_to_write))
+        await self.write(f"{cmd},{value_to_write}")
+
         if self.CMD_CACHE_ENABLED and cmd in self.CACHEABLE_COMMANDS:
-            logger.debug("Caching write value: %s,%f", cmd, value)
-            self._cache[cmd] = str(value)
+            logger.debug("Caching write value: %s,%f", cmd, float(value_to_write))
+            self._cache[cmd] = str(value_to_write)
         
        
     async def write_string_value(self, cmd: str, value: str):

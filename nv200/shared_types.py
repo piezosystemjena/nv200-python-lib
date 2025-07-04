@@ -58,6 +58,26 @@ class PidLoopMode(Enum):
     OPEN_LOOP = 0
     CLOSED_LOOP = 1
 
+
+class CtrlMode(Enum):
+    """
+    Enumeration for Controller Operation Modes.
+    Defines how the controller operates in various configurations.
+    """
+    
+    PID = 0
+    """PID control mode: Standard Proportional-Integral-Derivative control."""
+
+    ILC_IDENTIFICATION = 1
+    """ILC Identification Mode: Used for system identification in Iterative Learning Control."""
+
+    ILC_FEEDFORWARD = 2
+    """ILC Feedforward Mode: Applies learned feedforward control based on previous iterations."""
+
+    ILC_FEEDBACK = 3
+    """ILC Feedback Mode: Combines feedback with learned feedforward for improved performance."""
+
+
 class ErrorCode(Enum):
     """
     ErrorCode(Enum):

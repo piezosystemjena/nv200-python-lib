@@ -14,7 +14,8 @@ from nv200.shared_types import (
     PIDGains,
     PCFGains,
     CtrlMode,
-    ValueRange
+    ValueRange,
+    PostionSensorType
 )
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
@@ -60,7 +61,8 @@ class NV200Device(PiezoDeviceBase):
         "poslpon"
         "notchf",
         "notchon",
-        "notchb"
+        "notchb",
+        "acmeasure"
     }
     help_dict: dict[str, str] = {
         # General Commands
@@ -84,6 +86,11 @@ class NV200Device(PiezoDeviceBase):
             "Analog output source (0=position closed loop, 1=setpoint, 2=piezo voltage, "
             "3=position error, 4=abs(position error), 5=position open loop, 6=piezo current 1, 7=piezo current 2)"
         ),
+
+        # actuator information
+        "desc": "Actuator description (type such as 'TRITOR100SG')",
+        "acserno": "Actuator serial number",
+        "acmeasure": "Actuator position sensor type (0=none, 1=straingauge, 2=capacitive, 3=LVDT)",
 
         # PID and Filters
         "cl": "Loop mode (0=open loop, 1=closed loop)",
@@ -528,6 +535,14 @@ class NV200Device(PiezoDeviceBase):
         name = await self.get_actuator_name()
         serial_number = await self.get_actuator_serial_number()   
         return f"{name} #{serial_number}"
+    
+    async def get_actuator_sensor_type(self) -> PostionSensorType:
+        """
+        Retrieves the type of position sensor used by the actuator.
+        Returns a PostionSensorType enum value.
+        """
+        sensor_type_value = await self.read_int_value('acmeasure')
+        return PostionSensorType(sensor_type_value)
     
     async def get_slew_rate(self) -> float:
         """

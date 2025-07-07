@@ -209,6 +209,22 @@ class AnalogMonitorSource(Enum):
     PIEZO_CURRENT_2 = 7       #: Piezo current channel 2
 
 
+class PostionSensorType(Enum):
+    """
+    Enum representing the type of position sensor used in the actuator.
+    
+    Attributes:
+        NONE: No position sensor is connected.
+        STRAIN_GAUGE: A strain gauge sensor is connected.
+        CAPACITIVE: A capacitive sensor is connected.
+        LVDT_INDUCTIVE: An inductive LVDT (Linear Variable Differential Transformer) sensor is connected.
+    """
+    NONE = 0
+    STRAIN_GAUGE = 1
+    CAPACITIVE = 2
+    LVDT_INDUCTIVE = 3
+
+
 class StatusRegister:
     """
     A class representing the 16-bit status register of an actuator or amplifier.

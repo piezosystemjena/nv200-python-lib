@@ -429,7 +429,7 @@ class WaveformGenerator:
         t_shifted = t + phase_shift_t
 
         # Generate normalized triangle wave in [-1, 1]
-        normalized_t = ((t_shifted / period_s) + 0.25) % 1.0
+        normalized_t = ((t_shifted / period_s) - 0.25) % 1.0
         triangle = 4 * np.abs(normalized_t - 0.5) - 1
 
         y = offset + amplitude * triangle

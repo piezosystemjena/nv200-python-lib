@@ -13,6 +13,7 @@ import math
 import logging
 import numpy as np
 from typing import List, Union, Sequence, Optional
+from enum import Enum
 
 from nv200.nv200_device import NV200Device, ModulationSource
 from nv200.shared_types import TimeSeries, ProgressCallback
@@ -38,7 +39,16 @@ def calculate_sampling_time_ms(time_samples: Union[Sequence[float], np.ndarray])
     if len(time_samples) < 2:
         raise ValueError("At least two time samples are required to calculate sampling time.")
     return (time_samples[-1] - time_samples[0]) / (len(time_samples) - 1)      #
- 
+
+
+class WaveformType(Enum):
+    """
+    Enumeration for different waveform types supported by the generator.
+    """
+    SINE = 0
+    TRIANGLE = 1
+    SQUARE = 2
+
 
 class WaveformGenerator:
     """
@@ -67,8 +77,6 @@ class WaveformGenerator:
             """
             return len(self.values) * self.sample_time_ms
         
-    _dev : NV200Device = None
-    _waveform : WaveformData = None
 
     def __init__(self, device: NV200Device):
         """
@@ -78,6 +86,7 @@ class WaveformGenerator:
             device (DeviceClient): The device client used for communication with the hardware.
         """
         self._dev = device
+        self._waveform : WaveformGenerator.WaveformData = None
 
 
     async def start(self, start : bool = True, cycles: int = -1, start_index: int = -1):
@@ -377,3 +386,137 @@ class WaveformGenerator:
             values=values,
             sample_time_ms=calculate_sampling_time_ms(times_ms)
         )
+
+
+    @classmethod
+    def generate_triangle_wave(
+        cls,
+        freq_hz: float,
+        low_level: float,
+        high_level: float,
+        phase_shift_rad: float = 0.0,
+    ) -> WaveformData:
+        """
+        Generates a triangle wave based on the specified frequency and amplitude levels.
+
+        Args:
+            freq_hz (float): The frequency of the triangle wave in Hertz (Hz).
+            low_level (float): The minimum value (low level) of the triangle wave.
+            high_level (float): The maximum value (high level) of the triangle wave.
+            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.
+
+        Returns:
+            WaveformData: An object containing the generated triangle wave data, including:
+                - values (List[float]): A list of amplitude values for the triangle wave at each time point.
+                - sample_time_ms (float): The time interval between samples in milliseconds (ms).
+
+        Notes:
+            - The method calculates an optimal sample time based on the desired frequency and the
+            hardware's base sample time.
+            - The waveform is normalized between -1 and 1, then scaled and offset to fit between
+            low_level and high_level.
+            - The waveform is generated over one full period.
+        """
+        times_ms = cls.generate_time_samples_array(freq_hz)  # NumPy array in ms
+        t = times_ms / 1000.0  # Convert to seconds
+
+        amplitude = (high_level - low_level) / 2.0
+        offset = (high_level + low_level) / 2.0
+        period_s = 1.0 / freq_hz
+
+        # Apply phase shift in time domain
+        phase_shift_t = phase_shift_rad / (2 * np.pi * freq_hz)
+        t_shifted = t + phase_shift_t
+
+        # Generate normalized triangle wave in [-1, 1]
+        normalized_t = ((t_shifted / period_s) + 0.25) % 1.0
+        triangle = 4 * np.abs(normalized_t - 0.5) - 1
+
+        y = offset + amplitude * triangle
+
+        return cls.WaveformData(
+            values=y.tolist(),
+            sample_time_ms=calculate_sampling_time_ms(times_ms)
+        )
+
+
+    @classmethod
+    def generate_square_wave(
+        cls,
+        freq_hz: float,
+        low_level: float,
+        high_level: float,
+        phase_shift_rad: float = 0.0,
+        duty_cycle: float = 0.5,
+    ) -> WaveformData:
+        """
+        Generates a square wave (or PWM waveform) using NumPy for efficient computation.
+
+        Args:
+            freq_hz (float): Frequency of the waveform in Hz.
+            low_level (float): Output level during the "low" part of the cycle.
+            high_level (float): Output level during the "high" part of the cycle.
+            duty_cycle (float, optional): Duty cycle as a fraction between 0.0 and 1.0.
+                                        Defaults to 0.5 (i.e., 50%).
+            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.
+
+        Returns:
+            WaveformData: An object containing:
+                - values (List[float]): Amplitude values of the waveform.
+                - sample_time_ms (float): Time between samples in milliseconds.
+        """
+        if not (0.0 < duty_cycle <= 1.0):
+            raise ValueError("Duty cycle must be between 0.0 (exclusive) and 1.0 (inclusive).")
+
+        times_ms = cls.generate_time_samples_array(freq_hz)  # NumPy array (ms)
+        t = times_ms / 1000.0  # Convert to seconds
+        period_s = 1.0 / freq_hz
+
+        # Apply phase shift in time domain
+        phase_shift_t = phase_shift_rad / (2 * np.pi * freq_hz)
+        t_shifted = t + phase_shift_t
+
+        # Time within the period (0 to 1)
+        normalized_t = (t_shifted / period_s) % 1.0
+
+        # Generate square wave with duty cycle
+        values = np.where(normalized_t < duty_cycle, high_level, low_level)
+
+        return cls.WaveformData(
+            values=values.tolist(),
+            sample_time_ms=calculate_sampling_time_ms(times_ms)
+        )
+    
+
+    @classmethod
+    def generate_waveform(
+        cls,
+        waveform_type: WaveformType,
+        freq_hz: float,
+        low_level: float,
+        high_level: float,
+        phase_shift_rad: float = 0.0,
+        duty_cycle: float = 0.5,
+    ) -> WaveformData:
+        """
+        Generates a waveform based on the specified type and parameters.
+
+        Args:
+            waveform_type (Waveform): The type of waveform to generate (SINE, TRIANGLE, SQUARE).
+            freq_hz (float): Frequency of the waveform in Hertz.
+            low_level (float): Minimum value of the waveform.
+            high_level (float): Maximum value of the waveform.
+            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.
+            duty_cycle (float, optional): Duty cycle for square wave. Defaults to 0.5.
+
+        Returns:
+            WaveformData: The generated waveform data.
+        """
+        if waveform_type == WaveformType.SINE:
+            return cls.generate_sine_wave(freq_hz, low_level, high_level, phase_shift_rad)
+        elif waveform_type == WaveformType.TRIANGLE:
+            return cls.generate_triangle_wave(freq_hz, low_level, high_level, phase_shift_rad)
+        elif waveform_type == WaveformType.SQUARE:
+            return cls.generate_square_wave(freq_hz, low_level, high_level, phase_shift_rad, duty_cycle)
+        else:
+            raise ValueError(f"Unsupported waveform type: {waveform_type}")

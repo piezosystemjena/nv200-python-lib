@@ -22,7 +22,9 @@ async def waveform_generator_test():
     # transfer it to the device
     print("Generating sine waveform...")
     waveform_generator = WaveformGenerator(dev)
-    sine = waveform_generator.generate_waveform(waveform_type=WaveformType.SINE, freq_hz=10, low_level=0, high_level=80)
+    pos_range = await dev.get_position_range()
+    print(f"Position range: {pos_range}")
+    sine = waveform_generator.generate_waveform(waveform_type=WaveformType.SINE, freq_hz=10, low_level=pos_range[0], high_level=pos_range[1])
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
     await waveform_generator.set_waveform(waveform=sine, unit=WaveformUnit.POSITION)

@@ -50,6 +50,15 @@ class WaveformType(Enum):
     SQUARE = 2
 
 
+class WaveformUnit(Enum):
+    """
+    Enumeration for different waveform units used in the generator.
+    """
+    PERCENT = 0 # Percentage of the range (0-100%)
+    POSITION = 1  # Length units (e.g., micrometers, millimeters)
+    VOLTAGE = 2  # Voltage units (e.g., volts)
+
+
 class WaveformGenerator:
     """
     WaveformGenerator is a class responsible for generating waveforms using a connected device.
@@ -182,22 +191,32 @@ class WaveformGenerator:
         await self._dev.write(f"gtarb,{factor}")
         return rounded_sampling_time
    
-    async def set_waveform_value(self, index : int, value : float):
+
+
+    async def set_waveform_value_percent(self, index : int, percent : float):
         """
-        Sets the value of the waveform at the specified index
-        in length units (μm or mrad).
+        Sets the value of the waveform at the specified index in percent from 0 - 100%
+        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).
         """
         if not 0 <= index < self.NV200_WAVEFORM_BUFFER_SIZE:
-            raise ValueError(f"Buffer index must be in the range from 0 to {self.NV200_WAVEFORM_BUFFER_SIZE} , got {value}")
-        await self._dev.write(f"gparb,{index},{value}")
+            raise ValueError(f"Buffer index must be in the range from 0 to {self.NV200_WAVEFORM_BUFFER_SIZE} , got {index}")
+        if not 0 <= percent <= 100:
+            raise ValueError(f"Waveform value must be in the range from 0 to 100%, got {percent}")
+        await self._dev.write(f"gbarb,{index},{percent}")
 
-    async def set_waveform_buffer(self, buffer: list[float], on_progress: Optional[ProgressCallback] = None):
+
+    async def set_waveform_buffer(self, buffer: list[float], unit: WaveformUnit = WaveformUnit.PERCENT, on_progress: Optional[ProgressCallback] = None):
         """
         Writes a full waveform buffer to the device by setting each value
         using set_waveform_value.
+        The buffer should contain waveform values in percent (0-100).
+        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).
 
         Parameters:
-            buffer (list of float): The waveform values in length units (μm or mrad).
+            buffer (list of float): The waveform values in percent (0-100).
+            unit (WaveformUnit): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.
             on_progress (Optional[ProgressCallback]): Optional callback for progress updates.
 
         Raises:
@@ -207,20 +226,40 @@ class WaveformGenerator:
             raise ValueError(
                 f"Buffer too large: max size is {self.NV200_WAVEFORM_BUFFER_SIZE}, got {len(buffer)}"
             )
+        
+        value_range = None
+        if unit == WaveformUnit.POSITION:
+            value_range = await self._dev.get_position_range()
+        elif unit == WaveformUnit.VOLTAGE:
+            value_range = await self._dev.get_voltage_range()
+
+        if value_range is not None:
+            # Scale values to to percent
+            print("Scaling buffer values to percent based on value range:")
+            buffer = [100 * (value - value_range[0]) / (value_range[1] - value_range[0]) for value in buffer]
+
 
         total = len(buffer)
-        for index, value in enumerate(buffer):
-            await self.set_waveform_value(index, value)
+        for index, percent in enumerate(buffer):
+            await self.set_waveform_value_percent(index, percent)
             if on_progress:
                 await on_progress(index + 1, total)
 
-    async def set_waveform(self, waveform: WaveformData, adjust_loop: bool = True, on_progress: Optional[ProgressCallback] = None):
+    async def set_waveform(
+        self,
+        waveform: WaveformData,
+        unit: WaveformUnit = WaveformUnit.PERCENT,
+        adjust_loop: bool = True,
+        on_progress: Optional[ProgressCallback] = None,
+    ):
         """
         Sets the waveform data in the device.
+        The WaveformData object should contain the waveform values and the sample time.
 
         Parameters:
             waveform (WaveformData): The waveform data to be set.
-            adjust_loop (bool): If True, adjusts the loop indices based on the 
+            unit (WaveformUnit): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.
+            adjust_loop (bool): If True, adjusts the loop indices based on the
                                 waveform data, if false, the loop indices are not adjusted.
                                 If the loop indices are adjusted, then they will be set to
                                 the following value:
@@ -232,7 +271,7 @@ class WaveformGenerator:
         Raises:
             ValueError: If the waveform data is invalid.
         """
-        await self.set_waveform_buffer(waveform.values, on_progress=on_progress)
+        await self.set_waveform_buffer(waveform.values, unit=unit, on_progress=on_progress)
         self._waveform = waveform
         await self.set_output_sampling_time(int(waveform.sample_time_ms * 1000))
         if not adjust_loop:
@@ -248,14 +287,20 @@ class WaveformGenerator:
         self,
         time_samples: Union[Sequence[float], np.ndarray],
         values: Union[Sequence[float], np.ndarray],
+        unit: WaveformUnit = WaveformUnit.PERCENT,
         adjust_loop: bool = True
     ):
         """
         Sets the waveform data in the device from separate time samples and values.
+        The waveform data should contain the time samples in milliseconds and the corresponding
+        amplitude values. in percent (0-100).
+        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).
 
         Args:
             time_samples (Sequence[float] or np.ndarray): Time samples in milliseconds.
-            values (Sequence[float] or np.ndarray): Corresponding waveform amplitude values.
+            values (Sequence[float] or np.ndarray): Corresponding waveform amplitude values in percent (0-100).
+            unit (WaveformUnit, optional): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.
             adjust_loop (bool): If True, adjusts loop indices based on data length.
 
         Raises:
@@ -273,7 +318,7 @@ class WaveformGenerator:
         waveform = self.WaveformData(values=list(values), sample_time_ms=sample_time_ms)
 
         # Use existing set_waveform method to actually send data
-        await self.set_waveform(waveform, adjust_loop=adjust_loop)
+        await self.set_waveform(waveform, unit=unit, adjust_loop=adjust_loop)
 
 
     async def is_running(self) -> bool:

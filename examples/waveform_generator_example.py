@@ -1,7 +1,7 @@
 import asyncio
 from nv200.nv200_device import NV200Device
-from nv200.waveform_generator import WaveformGenerator
-from nv200.shared_types import TransportType
+from nv200.waveform_generator import WaveformGenerator, WaveformUnit, WaveformType
+from nv200.shared_types import TransportType, PidLoopMode
 from nv200.connection_utils import connect_to_single_device
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
 import maptplotlib_helpers
@@ -11,23 +11,24 @@ import matplotlib.pyplot as plt
 
 async def waveform_generator_test():
     """
-    Asynchronous function to test the functionality of the WaveformGenerator class.
+    Asynchronous function to test the functionality of the WaveformGenerator class in closes loop mode.
     """
 
     # Connect to the one and only NV200 device connected via serial port
-    client = await connect_to_single_device(NV200Device, TransportType.SERIAL)   
+    dev = await connect_to_single_device(NV200Device, TransportType.SERIAL)
+    await dev.set_pid_mode(PidLoopMode.CLOSED_LOOP)   
 
     # Generate a sine waveform with specified frequency and amplitude and
     # transfer it to the device
     print("Generating sine waveform...")
-    waveform_generator = WaveformGenerator(client)
-    sine = waveform_generator.generate_sine_wave(freq_hz=10, low_level=0, high_level=80)
+    waveform_generator = WaveformGenerator(dev)
+    sine = waveform_generator.generate_waveform(waveform_type=WaveformType.SINE, freq_hz=10, low_level=0, high_level=80)
     print(f"Sample factor {sine.sample_factor}")
     print("Transferring waveform data to device...")
-    await waveform_generator.set_waveform(sine)
+    await waveform_generator.set_waveform(waveform=sine, unit=WaveformUnit.POSITION)
 
     # Create a DataRecorder instance and configure it to record the movement of the piezo actuator
-    recorder = DataRecorder(client)
+    recorder = DataRecorder(dev)
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN)
@@ -53,7 +54,7 @@ async def waveform_generator_test():
     plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source) 
     maptplotlib_helpers.show_plot()
 
-    await client.close()
+    await dev.close()
 
 
 if __name__ == "__main__":

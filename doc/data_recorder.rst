@@ -116,13 +116,13 @@ Choose what data each of the two channels should record. Example:
 
 Available options in `DataRecorderSource` include:
 
-- `PIEZO_POSITION`: Piezo position (μm or mrad)
-- `SETPOINT`: Setpoint (μm or mrad)
-- `PIEZO_VOLTAGE`: Piezo voltage (V)
-- `POSITION_ERROR`: Position error
-- `ABS_POSITION_ERROR`: Absolute position error
-- `PIEZO_CURRENT_1`: Piezo current 1 (A)
-- `PIEZO_CURRENT_2`: Piezo current 2 (A)
+- ``PIEZO_POSITION``: Piezo position (μm or mrad)
+- ``SETPOINT``: Setpoint (μm or mrad)
+- ``PIEZO_VOLTAGE``: Piezo voltage (V)
+- ``POSITION_ERROR``: Position error
+- ``ABS_POSITION_ERROR``: Absolute position error
+- ``PIEZO_CURRENT_1``: Piezo current 1 (A)
+- ``PIEZO_CURRENT_2``: Piezo current 2 (A)
 
 
 Step 5: Set Auto-Start Mode
@@ -135,7 +135,7 @@ In this example, the recording starts when the set command is issued.
 
         await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_SET_COMMAND)
 
-You can choose different start modes:
+You can choose different start modes from `RecorderAutoStartMode`:
 
 - `OFF`: No auto-start - recording starts immediately when `start_recording` is called
 - `START_ON_SET_COMMAND`: Starts when a set command is issued after the `start_recording` call

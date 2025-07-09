@@ -7,7 +7,7 @@ Quick Start
 Working with a single device
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you work with only one single device, then the quickest way to connect to the deivce is to
+If you work with only one single device, then the quickest way to connect to the device is to
 use the `connect_to_single_device()` function from the `nv200.connection_utils` module.
 With a single line of code you can discover the device and connect to it.
 
@@ -49,24 +49,57 @@ function. The following example shows how to connect to a device with a specific
         import asyncio
         asyncio.run(main())
 
+Here are some examples of how to use the function:
+
+Auto Discovery
+    .. code-block:: python
+
+        device = await nv200.connection_utils.connect_to_single_device()
+
+Serial Port Auto Discovery
+    .. code-block:: python
+
+        device = await nv200.connection_utils.connect_to_single_device(TransportType.SERIAL)
+
+Ethernet Auto Discovery
+    .. code-block:: python
+
+        device = await nv200.connection_utils.connect_to_single_device(TransportType.TELNET)
+
+Connect to specific MAC address
+    .. code-block:: python
+
+        device = await nv200.connection_utils.connect_to_single_device(TransportType.TELNET, "00:80:A3:79:C6:18")
+
+Connect to specific IP address
+    .. code-block:: python
+
+        device = await nv200.connection_utils.connect_to_single_device(TransportType.TELNET, "192.168.102.3")
+
+Connect to specific serial port
+    .. code-block:: python
+
+        device = await nv200.connection_utils.connect_to_single_device(TransportType.SERIAL, port="COM3")
+
+
 For a detailed description of the parameters, please refer to the
 :func:`API Reference <nv200.connection_utils.connect_to_single_device>` of this function.
 
 .. admonition:: Important
    :class: note
 
-    All device interactions are asynchronous. Make sure to use the `await` keyword
-    when calling any asynchronous function, such as `discover_devices()` or
-    `client.connect()`. These functions do not block the main thread and allow for
+    All device interactions are asynchronous. Make sure to use the ``await`` keyword
+    when calling any asynchronous function, such as `connect_to_single_device()`.
+    These functions do not block the main thread and allow for
     concurrent operations within an asynchronous application.
 
 
 Working with multiple devices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you work with multiple devices, you can use the `discover_devices()` function from the
-`nv200.device_discovery` module to discover all devices connected via USB or Ethernetm and then connect
-to sepecific or all devices.
+If you work with multiple devices, you can use the `discover_devices() <nv200.device_discovery.discover_devices>` 
+function from the `nv200.device_discovery` module to discover all devices connected via USB or Ethernet and then connect
+to specific or all devices.
 The following example shows, how to discover NV200 devices connected via USB or Ethernet
 and connect to the first detected device using the asynchronous API.
 
@@ -74,42 +107,55 @@ and connect to the first detected device using the asynchronous API.
 
     import asyncio
     from nv200.device_discovery import discover_devices
-    from nv200.nv200_device import NV200Device
+    from nv200.connection_utils import connect_to_detected_device
     from nv200.shared_types import DiscoverFlags
 
     async def main():
         print("Discovering devices...")
-        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES)
+        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
 
         if not devices:
             print("No devices found.")
             return
 
         print(f"Found {len(devices)} device(s). Connecting to the first device...")
-        client = NV200Device.from_detected_device(devices[0])
-        await client.connect()
-        print("Connected to device.")
+        device = await connect_to_detected_device(devices[0])
+        print(f"Connected to device {device.device_info}.")
 
         # Perform your device operations here
 
-        await client.close()
+        await device.close()
         print("Connection closed.")
 
     if __name__ == "__main__":
         asyncio.run(main())
 
+This is the possible output of the example:
 
-If you would like to get some more detailed information about device discovery and connection, please refer to the
-next sections.
+.. code-block:: text
+
+    Discovering devices...
+    Found 2 device(s). Connecting to the first device...
+    Connected to device Telnet @ 192.168.10.180 - NV200/D_NET.
+    Connection closed.
+
+.. admonition:: Important
+   :class: note
+
+    For the `connect_to_detected_device()` function to work properly, you must first discover the devices 
+    using the `DiscoverFlags.READ_DEVICE_INFO` flag. This flag is necessary to enrich the device information with
+    additional details such as the name and device type.
+
 
 Discovering Devices
 ----------------------------
 
 The `nv200.device_discovery` module provides a way to automatically discover all NV200 devices
-connected by USB or Ethernet. You just need to call the `discover_devices` function and it will return 
-a list of all detected devices.
+connected by USB or Ethernet. You just need to call the `discover_devices() <nv200.device_discovery.discover_devices>` 
+function and it will return a list of all detected devices.
 
-The `discover_devices` function accepts a `DiscoverFlags` parameter to specify the type of devices to discover.
+The `discover_devices() <nv200.device_discovery.discover_devices>` function accepts a `DiscoverFlags` parameter to 
+specify the type of devices to discover.
 
 - Telnet discovery - `DiscoverFlags.DETECT_ETHERNET`
 - Serial discovery - `DiscoverFlags.DETECT_SERIAL`
@@ -176,200 +222,49 @@ information. The output of the example may look like this:
 Connecting To a Device
 ----------------------------
 
-The recommended way to connect to a NV200 device is to use the :func:`create_device_client <nv200.device_interface.create_device_client>`
-function from the :mod:`nv200.device_interface` module. So you just need to:
+The recommended way to connect to a device is to use the `connect_to_detected_device` function from the `nv200.connection_utils` module.
+This function takes a `DeviceInfo` object as an argument, which can be obtained from the 
+`discover_devices() <nv200.device_discovery.discover_devices>` function.
 
-#. Discover devices using the :func:`discover_devices <nv200.device_discovery.discover_devices>` function.
-#. Pass the :class:`DetectedDevice <nv200.shared_types.DetectedDevice>` object to the :func:`NV200Device.from_detected_device <nv200.nv200_device.from_detected_device>` function.
+The following example shows how to connect to the first detected device:
+
+.. code-block:: python
+
+    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
+
+    if not devices:
+        print("No devices found.")
+        return
+
+    print(f"Found {len(devices)} device(s). Connecting to the first device...")
+    device = await connect_to_detected_device(devices[0])
+
+If you would like to separate device object creation from the connection, you can use the `create_device_from_detected_device`
+function from the `nv200.device_factory` module to create a device object from the `DeviceInfo` object.
+Later you can call the :func:`connect() <nv200.device_base.PiezoDeviceBase>` method on the device object 
+to establish the connection:
 
 .. code-block:: python
 
     import asyncio
     from nv200.device_discovery import discover_devices
-    from nv200.nv200_device import NV200Device
+    from nv200.device_factory import create_device_from_detected_device
+    from nv200.shared_types import DiscoverFlags
 
-    async def main_async():
-        print("Discovering devices...")
-        detected_devices = await discover_devices()
-        
-        if not detected_devices:
-            print("No devices found.")
-            return
+    async def main():
+        # Detect all device on all interfaces. The DiscoverFlags.READ_DEVICE_INFO flag is used to 
+        # enrich the device information -this is required for the create_device_from_detected_device function.
+        devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
 
-        # Create a device client for the first detected device
-        device = NV200Device.from_detected_device(detected_devices[0])
+        # Create a device object from the first detected device
+        device = create_device_from_detected_device(devices[0])
+
+        # Connect to the device
         await device.connect()
-        print(f"Connected to device: {device.device_info}")
 
-    # Running the async main function
-    if __name__ == "__main__":
-        asyncio.run(main_async())
+        # Perform your device operations here
 
-The output of the example may look like this:
-
-.. code-block:: text
-
-    Discovering devices...
-    Connected to device: Telnet @ 192.168.10.147 - NV200/D_NET
-
-
-.. admonition:: Important
-   :class: note
-
-    To ensure error-free Ethernet communication with the device, the communication parameters of 
-    the XPORT Ethernet interface must be correctly configured, i.e., the flow control mode must 
-    be set to `XON_XOFF_PASS_TO_HOST`. This setting is automatically configured when 
-    `DeviceClient.connect()` is called.
-
-    To disable the automatic configuration, just call the connect function as follows:
-
-    .. code-block:: python
-
-        await client.connect(auto_adjust_comm_params=False)
-
-
-Serial Connection to NV200
-----------------------------
-
-You can connect to a NV200 device using a serial connection (USB or RS232) by
-using :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` class. 
-Just create the :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` 
-object and pass it to the :class:`DeviceClient <nv200.device_interface.DeviceClient>` 
-constructor.
-
-Auto-detect serial port
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-The following example shows, how to connect to a NV200 device connected via USB.
-The example auto-detects the serial port and connects to the device.
-Please note how to use the :code:`await` keyword when calling the asynchronous functions.
-
-.. code-block:: python
-
-    import asyncio
-    from nv200.nv200_device import NV200Device
-    from nv200.serial_protocol import SerialProtocol
-
-    async def serial_port_auto_detect():
-        transport = SerialProtocol()
-        client = NV200Device(transport)
-        await client.connect()
-        print(f"Connected to device on serial port: {transport.port}")
-        await client.close()
+        await device.close()
 
     if __name__ == "__main__":
-        asyncio.run(serial_port_auto_detect())
-
-
-Connect to a specific serial port
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you want to connect to a device on a specific serial port, you can do 
-so by specifying the port in the constructor of the :class:`SerialProtocol <nv200.transport_protocols.SerialProtocol>` class.
-This is useful if you have multiple devices connected to your computer and 
-want to connect to a specific one.
-
-.. code-block:: python
-
-    import asyncio
-    from nv200.nv200_device import NV200Device
-    from nv200.serial_protocol import SerialProtocol
-
-    async def serial_port_auto_detect():
-        transport = SerialProtocol(port="COM3")
-        client = NV200Device(transport)
-        await client.connect()
-        print(f"Connected to device on serial port: {transport.port}")
-        await client.close()
-
-    if __name__ == "__main__":
-        asyncio.run(serial_port_auto_detect())
-
-
-Ethernet Connection to NV200
-----------------------------
-
-You can connect to a NV200 device is the same network as your computer using the
-:class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
-Just create the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>`
-object and pass it to the :class:`DeviceClient <nv200.device_interface.DeviceClient>` 
-constructor.
-
-Auto-detect Ethernet connection
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The following example shows, how to connect to a NV200 device connected via Ethernet.
-The example scans all active network interfaces for NV200 devices using a special
-UDP device discovery protocol. The function returns as soon as a device is found.
-
-.. code-block:: python
-
-    import asyncio
-    from nv200.nv200_device import NV200Device
-    from nv200.telnet_protocol import TelnetProtocol
-
-    async def ethernet_auto_detect():
-        transport = TelnetProtocol()
-        client = NV200Device(transport)
-        await client.connect()
-        print(f"Connected to device with IP: {transport.host}")
-        await client.close()
-
-
-    if __name__ == "__main__":
-        asyncio.run(ethernet_auto_detect())
-
-
-Ethernet connection to a specific MAC address
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you want to connect to a device with a specific MAC address, 
-you can do so by specifying the MAC address in the constructor of 
-the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
-This is useful if you have multiple devices connected to your network and
-want to connect to a specific one.
-
-The following example shows this:
-
-.. code-block:: python
-
-    import asyncio
-    from nv200.nv200_device import NV200Device
-    from nv200.telnet_protocol import TelnetProtocol
-
-    async def ethernet_auto_detect():
-        transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")
-        client = NV200Device(transport)
-        await client.connect()
-        print(f"Connected to device with IP: {transport.host} - MAC: {transport.MAC}")
-        await client.close()
-
-
-    if __name__ == "__main__":
-        asyncio.run(ethernet_auto_detect())
-
-    
-Ethernet connection to a specific IP address
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you want to connect to a device with a specific IP address,
-you can do so by specifying the IP address in the constructor of 
-the :class:`TelnetProtocol <nv200.transport_protocols.TelnetProtocol>` class.
-
-.. code-block:: python
-
-    import asyncio
-    from nv200.nv200_device import NV200Device
-    from nv200.telnet_protocol import TelnetProtocol
-
-    async def ethernet_auto_detect():
-        transport = TelnetProtocol(host="192.168.10.182")
-        client = NV200Device(transport)
-        await client.connect()
-        print(f"Connected to device with IP: {transport.host} - MAC: {transport.MAC}")
-        await client.close()
-
-
-    if __name__ == "__main__":
-        asyncio.run(ethernet_auto_detect())
-    
+        asyncio.run(main())

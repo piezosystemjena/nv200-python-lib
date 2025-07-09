@@ -1,18 +1,16 @@
 import asyncio
-from nv200.connection_utils import connect_to_single_device
-from nv200.nv200_device import NV200Device
-from nv200.device_base import PiezoDeviceBase
+from nv200.device_discovery import discover_devices
+from nv200.device_factory import create_device_from_detected_device
+from nv200.shared_types import DiscoverFlags
 
-async def main_async():
-    device = await connect_to_single_device(NV200Device)
-    PiezoDeviceBase.CMD_CACHE_ENABLED = False  # disable globally
-    pidmode = await device.get_pid_mode() # always reads from device
-    print(pidmode)
+async def main():
+    devices = await discover_devices(DiscoverFlags.ALL_INTERFACES | DiscoverFlags.READ_DEVICE_INFO)
+    device = create_device_from_detected_device(devices[0])
+    await device.connect()
 
-    PiezoDeviceBase.CMD_CACHE_ENABLED = True  # enable globally
-    pidmode = await device.get_pid_mode()  # uses cache if available
-    print(pidmode)
+    # Perform your device operations here
 
-# Running the async main function
+    await device.close()
+
 if __name__ == "__main__":
-    asyncio.run(main_async())
+    asyncio.run(main())

@@ -64,7 +64,7 @@ class NV200Device(PiezoDeviceBase):
         "notchb",
         "acmeasure"
     }
-    help_dict: dict[str, str] = {
+    _help_dict: dict[str, str] = {
         # General Commands
         "s": "Print full command list",
         "reset": "Hardware-reset of the controller",

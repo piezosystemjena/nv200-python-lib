@@ -56,7 +56,7 @@ class PiezoDeviceBase:
     CACHEABLE_COMMANDS: set[str] = set() # set of commands that can be cached
     DEFAULT_TIMEOUT_SECS = 0.6
     DEVICE_ID = None # Placeholder for device ID, to be set in subclasses
-    help_dict: dict[str, str] = {}  # Dictionary to store help information for commands
+    _help_dict: dict[str, str] = {}  # Dictionary to store help information for commands
     
     def __init__(self, transport: TransportProtocol):
         self._transport : TransportProtocol = transport
@@ -503,9 +503,16 @@ class PiezoDeviceBase:
             str: Help information for the specified command or all commands.
         """
         if cmd is None:
-            return "\n".join(f"{cmd}: {help}" for cmd, help in cls.help_dict.items())
+            return "\n".join(f"{cmd}: {help}" for cmd, help in cls._help_dict.items())
         else:
-            return cls.help_dict.get(cmd, f"No help available for command '{cmd}'.")
+            return cls._help_dict.get(cmd, f"No help available for command '{cmd}'.")
+        
+    @classmethod
+    def help_dict(cls):
+        """
+        Returns the class-level help dictionary with a list of all commands and their descriptions.
+        """
+        return cls._help_dict
     
 
 PiezoDeviceType = TypeVar("PiezoDeviceType", bound=PiezoDeviceBase)

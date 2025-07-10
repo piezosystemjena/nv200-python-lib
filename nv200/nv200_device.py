@@ -37,6 +37,7 @@ class NV200Device(PiezoDeviceBase):
         setpoint_lpf (NV200Device.LowpassFilter): Interface for the setpoint low-pass filter.
         position_lpf (NV200Device.LowpassFilter): Interface for the position low-pass filter.
         notch_filter (NV200Device.NotchFilter): Interface for the notch filter.
+        pid (NV200Device.PIDController): Interface for the PID controller to set the controller mode and PID gains.
     """
     DEVICE_ID = "NV200/D_NET"
     CACHEABLE_COMMANDS = {
@@ -317,6 +318,113 @@ class NV200Device(PiezoDeviceBase):
             return await self._device.read_int_value("notchb")
         
 
+    class PIDController:
+
+        def __init__(self, device: "NV200Device") -> None:
+            """
+            Initialize the NotchFilter interface.
+
+            Args:
+                device (NV200Device): The parent device instance used for communication.
+            """
+            self._device = device
+
+
+        async def set_closed_loop(self, enable: bool) -> None:
+            """
+            Enable or disable closed loop control mode.
+            """
+            await self.set_mode(PidLoopMode.CLOSED_LOOP if enable else PidLoopMode.OPEN_LOOP)
+
+        async def is_closed_loop(self) -> bool:
+            """
+            Check if the device is currently in closed loop control mode.
+            Returns:
+                bool: True if in closed loop mode, False otherwise.
+            """
+            return await self.get_mode() == PidLoopMode.CLOSED_LOOP
+
+        async def set_mode(self, mode: PidLoopMode):
+            """Sets the PID mode of the device to either open loop or closed loop."""
+            await self._device.write_value('cl', mode.value)
+
+        async def get_mode(self) -> PidLoopMode:
+            """Retrieves the current PID mode of the device."""
+            return PidLoopMode(await self._device.read_int_value('cl'))
+        
+
+        async def set_pid_gains(self, kp: float | None = None, ki: float | None = None, kd: float | None = None) -> None:
+            """
+            Sets the PID gains for the device.
+            """
+            dev = self._device
+            if kp is not None:
+                await dev.write_value("kp", kp)
+            if ki is not None:
+                await dev.write_value("ki", ki)
+            if kd is not None:
+                await dev.write_value("kd", kd)
+
+
+        async def get_pid_gains(self) -> PIDGains:
+            """
+            Retrieves the PID gains (kp, ki, kd) for the device.
+
+            Returns:
+                PIDGains: A named tuple with fields kp, ki, and kd.
+            """
+            dev = self._device
+            kp = await dev.read_float_value('kp')
+            ki = await dev.read_float_value('ki')
+            kd = await dev.read_float_value('kd')
+            return PIDGains(kp, ki, kd)
+        
+
+        async def set_pcf_gains(
+            self,
+            position: float | None = None,
+            velocity: float | None = None,
+            acceleration: float | None = None,
+        ) -> None:
+            """
+            Sets the PID controllers feed forward control amplification factors.
+
+            Args:
+                position (float | None): Factor for position feed-forward. Leave unchanged if None.
+                velocity (float | None): Factor for velocity feed-forward. Leave unchanged if None.
+                acceleration (float | None): Factor for acceleration feed-forward (scaled by 1/1_000_000 internally). Leave unchanged if None.
+            """
+            # Read existing values if any factor is None to preserve them
+            if None in (position, velocity, acceleration):
+                current = await self.get_pcf_gains()
+
+            pcf_x = position if position is not None else current.position
+            pcf_v = velocity if velocity is not None else current.velocity
+            # Scale acceleration before sending command
+            pcf_a = int(acceleration * 1_000_000) if acceleration is not None else int(current.acceleration * 1_000_000)
+
+            # Compose the command string (assuming a single write command)
+            command_value = f"{pcf_x},{pcf_v},{pcf_a}"
+            await self._device.write_value("pcf", command_value)
+
+
+        async def get_pcf_gains(self) -> PCFGains:
+            """
+            Retrieves the feed forward control amplification factors.
+
+            Returns:
+                PCFGains: The feed forward factors for position, velocity, and acceleration.
+            """
+            # Assume read_value returns the string "<pcf_x>,<pcf_v>,<pcf_a>"
+            raw = await self._device.read_cached_response_parameters_tring('pcf')
+            pcf_x_str, pcf_v_str, pcf_a_str = raw.split(",")
+            pcf_x = float(pcf_x_str)
+            pcf_v = float(pcf_v_str)
+            pcf_a = float(pcf_a_str) / 1_000_000  # scale back
+
+            return PCFGains(position=pcf_x, velocity=pcf_v, acceleration=pcf_a)
+        
+
     def __init__(self, transport: TransportProtocol):
         """
         Initialize NV200Device and its low-pass filter interfaces.
@@ -325,6 +433,7 @@ class NV200Device(PiezoDeviceBase):
         self.setpoint_lpf = self.LowpassFilter(self, "setlpon", "setlpf", ValueRange(1, 10000))
         self.position_lpf = self.LowpassFilter(self, "poslpon", "poslpf", ValueRange(100, 10000))
         self.notch_filter = self.NotchFilter(self)
+        self.pid = self.PIDController(self)
 
 
     async def enrich_device_info(self, detected_device : DetectedDevice) -> None :
@@ -341,14 +450,6 @@ class NV200Device(PiezoDeviceBase):
         detected_device.device_info['actuator_name'] = await self.get_actuator_name()
         detected_device.device_info['actuator_serial'] = await self.get_actuator_serial_number()
 
-
-    async def set_pid_mode(self, mode: PidLoopMode):
-        """Sets the PID mode of the device to either open loop or closed loop."""
-        await self.write_value('cl', mode.value)
-
-    async def get_pid_mode(self) -> PidLoopMode:
-        """Retrieves the current PID mode of the device."""
-        return PidLoopMode(await self.read_int_value('cl'))
     
     async def set_modulation_source(self, source: ModulationSource):
         """Sets the setpoint modulation source."""
@@ -384,13 +485,13 @@ class NV200Device(PiezoDeviceBase):
     
     async def move_to_position(self, position: float):
         """Moves the device to the specified position in closed loop"""
-        await self.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+        await self.pid.set_mode(PidLoopMode.CLOSED_LOOP)
         await self.set_modulation_source(ModulationSource.SET_CMD)
         await self.set_setpoint(position)
 
     async def move_to_voltage(self, voltage: float):
         """Moves the device to the specified voltage in open loop"""
-        await self.set_pid_mode(PidLoopMode.OPEN_LOOP)
+        await self.pid.set_mode(PidLoopMode.OPEN_LOOP)
         await self.set_modulation_source(ModulationSource.SET_CMD)
         await self.set_setpoint(voltage)
 
@@ -465,7 +566,7 @@ class NV200Device(PiezoDeviceBase):
         The setpoint range is determined by the position range for closed loop control
         and the voltage range for open loop control.
         """
-        if await self.get_pid_mode() == PidLoopMode.CLOSED_LOOP:
+        if await self.pid.get_mode() == PidLoopMode.CLOSED_LOOP:
             return await self.get_position_range()
         else:
             return await self.get_voltage_range()
@@ -490,7 +591,7 @@ class NV200Device(PiezoDeviceBase):
         Retrieves the current setpoint unit of the device.
         This is typically "V" for volts in open loop or the position unit in closed loop.
         """
-        if await self.get_pid_mode() == PidLoopMode.CLOSED_LOOP:
+        if await self.pid.get_mode() == PidLoopMode.CLOSED_LOOP:
             return await self.get_position_unit()
         else:
             return await self.get_voltage_unit()
@@ -672,75 +773,6 @@ class NV200Device(PiezoDeviceBase):
         # Return a DeviceClient initialized with the correct transport protocol
         return NV200Device(transport)
 
-
-    async def set_pid_gains(self, kp: float | None = None, ki: float | None = None, kd: float | None = None) -> None:
-        """
-        Sets the PID gains for the device.
-        """
-        if kp is not None:
-            await self.write_value("kp", kp)
-        if ki is not None:
-            await self.write_value("ki", ki)
-        if kd is not None:
-            await self.write_value("kd", kd)
-
-
-    async def get_pid_gains(self) -> PIDGains:
-        """
-        Retrieves the PID gains (kp, ki, kd) for the device.
-
-        Returns:
-            PIDGains: A named tuple with fields kp, ki, and kd.
-        """
-        kp = await self.read_float_value('kp')
-        ki = await self.read_float_value('ki')
-        kd = await self.read_float_value('kd')
-        return PIDGains(kp, ki, kd)
-    
-
-    async def set_pcf_gains(
-        self,
-        position: float | None = None,
-        velocity: float | None = None,
-        acceleration: float | None = None,
-    ) -> None:
-        """
-        Sets the PID controllers feed forward control amplification factors.
-
-        Args:
-            position (float | None): Factor for position feed-forward. Leave unchanged if None.
-            velocity (float | None): Factor for velocity feed-forward. Leave unchanged if None.
-            acceleration (float | None): Factor for acceleration feed-forward (scaled by 1/1_000_000 internally). Leave unchanged if None.
-        """
-        # Read existing values if any factor is None to preserve them
-        if None in (position, velocity, acceleration):
-            current = await self.get_pcf_gains()
-
-        pcf_x = position if position is not None else current.position
-        pcf_v = velocity if velocity is not None else current.velocity
-        # Scale acceleration before sending command
-        pcf_a = int(acceleration * 1_000_000) if acceleration is not None else int(current.acceleration * 1_000_000)
-
-        # Compose the command string (assuming a single write command)
-        command_value = f"{pcf_x},{pcf_v},{pcf_a}"
-        await self.write_value("pcf", command_value)
-
-
-    async def get_pcf_gains(self) -> PCFGains:
-        """
-        Retrieves the feed forward control amplification factors.
-
-        Returns:
-            PCFGains: The feed forward factors for position, velocity, and acceleration.
-        """
-        # Assume read_value returns the string "<pcf_x>,<pcf_v>,<pcf_a>"
-        raw = await self.read_cached_response_parameters_tring('pcf')
-        pcf_x_str, pcf_v_str, pcf_a_str = raw.split(",")
-        pcf_x = float(pcf_x_str)
-        pcf_v = float(pcf_v_str)
-        pcf_a = float(pcf_a_str) / 1_000_000  # scale back
-
-        return PCFGains(position=pcf_x, velocity=pcf_v, acceleration=pcf_a)
     
 
     async def set_control_mode(self, mode: CtrlMode) -> None:

@@ -16,7 +16,7 @@ async def waveform_generator_test():
 
     # Connect to the one and only NV200 device connected via serial port
     dev = await connect_to_single_device(NV200Device, TransportType.SERIAL)
-    await dev.set_pid_mode(PidLoopMode.CLOSED_LOOP)   
+    await dev.pid.set_mode(PidLoopMode.CLOSED_LOOP)   
 
     # Generate a sine waveform with specified frequency and amplitude and
     # transfer it to the device

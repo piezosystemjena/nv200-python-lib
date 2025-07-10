@@ -1,22 +1,17 @@
 import asyncio
 from nv200.nv200_device import NV200Device
-from nv200.serial_protocol import SerialProtocol
+from nv200.shared_types import TransportType
+from nv200.connection_utils import connect_to_single_device
 
 
-async def serial_port_auto_detect():
+async def ethernet_auto_detect():
     """
-    Automatically detects and connects to a device over a serial port.
-
-    This asynchronous function initializes a serial transport protocol, creates a device client,
-    and attempts to connect to the device. Upon successful connection, it prints the serial port
-    used for the connection and then closes the client.
+    Automatically detects and establishes an Ethernet connection to the first detected device using Telnet.
     """
-    transport = SerialProtocol()
-    client = NV200Device(transport)
-    await client.connect()
-    print(f"Connected to device on serial port: {transport.port}")
-    await client.close()
+    device = await connect_to_single_device(NV200Device, TransportType.SERIAL)
+    print(f"Connected to device: {device.device_info}")
+    await  device.close()
 
 
 if __name__ == "__main__":
-    asyncio.run(serial_port_auto_detect())
+    asyncio.run(ethernet_auto_detect())

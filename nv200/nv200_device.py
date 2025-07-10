@@ -319,7 +319,12 @@ class NV200Device(PiezoDeviceBase):
         
 
     class PIDController:
-
+        """
+        PIDController provides an interface for configuring and controlling the PID control loop of an NV200 device.
+        This class allows enabling/disabling closed loop control, setting and retrieving PID gains, and 
+        configuring feed-forward control amplification factors for position, velocity, and acceleration.
+        """
+        
         def __init__(self, device: "NV200Device") -> None:
             """
             Initialize the NotchFilter interface.

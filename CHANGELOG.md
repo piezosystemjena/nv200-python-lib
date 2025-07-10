@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] - 2025-07-10
+
+### Added
+
+- **Progress Callback** – Support for progress callback for NV200 waveform upload
+- **Help Dictionary** - NV200 help dictionary to get help for commands
+- **Waveform Stop** - Stop function to waveform generator
+- **Filter Support** - Support fot setting parameters of filters
+- **Analog Monitor Source** - Added support for reading and writing analog monitor source
+- **Actuator Type** - Support for reading the actuator position sensor type (`PostionSensorType`)
+- **Waveforms** - Added support for additional waveforms Triangle and Square
+- **Waveform PID Mode** - Support for open loop and closed loop for waveform generator
+- **Data Recorder** - Added class methods `get_sample_period_ms_for_duration` and `get_sample_rate_for_duration`
+
+### Improved
+
+- **Documentation** - Improved documentation and updated examples
+- **PID Interface** - Moved all PID related functions into `PIDController` class
+
+### Fixed
+
+- **Device Connection** - Fixed `connect_to_single_device` function to properly read device info from detected devices
+
 ## [1.2.0] - 2025-06-18
 
 ### Added

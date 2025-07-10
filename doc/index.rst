@@ -16,6 +16,7 @@ both Ethernet and USB interfaces.
    installation.rst
    connecting.rst
    getting_started.rst
+   pid_and_filters.rst
    data_recorder.rst
    waveform_generator.rst
    api.rst

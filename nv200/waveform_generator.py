@@ -235,7 +235,6 @@ class WaveformGenerator:
 
         if value_range is not None:
             # Scale values to to percent
-            print("Scaling buffer values to percent based on value range:")
             buffer = [100 * (value - value_range[0]) / (value_range[1] - value_range[0]) for value in buffer]
 
 

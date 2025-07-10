@@ -201,6 +201,28 @@ class DataRecorder:
             raise ValueError(f"buffer_size must be between 0 and {self.NV200_RECORDER_BUFFER_SIZE}, got {buffer_size}")
         await self._dev.write(f"reclen,{buffer_size}")
 
+    @classmethod
+    def get_sample_rate_for_duration(cls, milliseconds: float) -> float:
+        """
+        Calculates the sample rate that is possible with the specified duration in milliseconds.
+        """
+        duration_s = milliseconds / 1000.0
+        buffer_duration_s = 1 / cls.NV200_RECORDER_SAMPLE_RATE_HZ * cls.NV200_RECORDER_BUFFER_SIZE
+        stride = int(duration_s / buffer_duration_s) + 1
+        sample_rate = cls.NV200_RECORDER_SAMPLE_RATE_HZ / stride
+        return sample_rate
+    
+    @classmethod
+    def get_sample_period_ms_for_duration(cls, milliseconds: float) -> float:
+        """
+        Calculates the sample period in seconds that is possible with the specified duration in milliseconds.
+        """
+        sample_rate = cls.get_sample_rate_for_duration(milliseconds)
+        if sample_rate == 0:
+            return float('inf')
+        return 1 / sample_rate * 1000.0  # Convert to milliseconds
+
+
     async def set_recording_duration_ms(self, milliseconds: float) -> RecorderParam:
         """
         Sets the recording duration in milliseconds and adjusts the recorder parameters accordingly.

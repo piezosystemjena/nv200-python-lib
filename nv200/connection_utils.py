@@ -90,16 +90,14 @@ async def connect_to_single_device(device_class: Type[PiezoDeviceType], transpor
     detected_devices: List[DetectedDevice] = []
     discover_flags = DiscoverFlags.flags_for_transport(transport_type)
     if discover_flags & DiscoverFlags.DETECT_SERIAL:
-        detected_devices = await discover_devices(DiscoverFlags.flags_for_transport(TransportType.SERIAL))
+        detected_devices = await discover_devices(
+            DiscoverFlags.flags_for_transport(TransportType.SERIAL) | DiscoverFlags.READ_DEVICE_INFO,
+            device_class=device_class)
 
     if not detected_devices and discover_flags & DiscoverFlags.DETECT_ETHERNET:
-        network_endpoints = await xport.discover_lantronix_devices_async()
-        for network_endpoint in network_endpoints:
-            detected_devices.append(DetectedDevice(
-                    transport=TransportType.TELNET,
-                    identifier=network_endpoint.ip,
-                    mac=network_endpoint.mac
-                ))
+        detected_devices = await discover_devices(
+            DiscoverFlags.flags_for_transport(TransportType.TELNET) | DiscoverFlags.READ_DEVICE_INFO,
+            device_class=device_class)
     
     if not detected_devices:
         raise RuntimeError("No devices found during discovery.")

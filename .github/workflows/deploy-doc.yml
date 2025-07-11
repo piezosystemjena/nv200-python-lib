@@ -1,5 +1,4 @@
-name: Publish Python Package
-
+name: Publish Documentation
 
 on:
   push:

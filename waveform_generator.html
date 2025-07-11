@@ -1,0 +1,756 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Waveform Generator &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Data Recorder" href="data_recorder.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Waveform Generator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#step-by-step-guide-to-using-the-waveform-generator">Step by step guide to using the Waveform Generator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-import-necessary-modules">Step 1: Import Necessary Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-create-the-nv200device">Step 2: Create the NV200Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-initialize-the-waveform-generator">Step 3: Initialize the Waveform Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-generate-the-waveform">Step 4: Generate the Waveform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-transfer-the-waveform-to-the-device">Step 5: Transfer the Waveform to the Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-6-start-the-wavform-generator">Step 6: Start the Wavform Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-7-wait-for-the-waveform-to-finish">Step 7: Wait for the Waveform to Finish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-8-close-the-device-connection">Step 8: Close the Device Connection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nv200.waveform_generator">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator"><code class="docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData"><code class="docutils literal notranslate"><span class="pre">WaveformData</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.configure_waveform_loop"><code class="docutils literal notranslate"><span class="pre">configure_waveform_loop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_sine_wave"><code class="docutils literal notranslate"><span class="pre">generate_sine_wave()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_square_wave"><code class="docutils literal notranslate"><span class="pre">generate_square_wave()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_time_samples_array"><code class="docutils literal notranslate"><span class="pre">generate_time_samples_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_time_samples_list"><code class="docutils literal notranslate"><span class="pre">generate_time_samples_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_triangle_wave"><code class="docutils literal notranslate"><span class="pre">generate_triangle_wave()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_waveform"><code class="docutils literal notranslate"><span class="pre">generate_waveform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.is_running"><code class="docutils literal notranslate"><span class="pre">is_running()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_cycles"><code class="docutils literal notranslate"><span class="pre">set_cycles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_loop_end_index"><code class="docutils literal notranslate"><span class="pre">set_loop_end_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_loop_start_index"><code class="docutils literal notranslate"><span class="pre">set_loop_start_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_output_sampling_time"><code class="docutils literal notranslate"><span class="pre">set_output_sampling_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_start_index"><code class="docutils literal notranslate"><span class="pre">set_start_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_waveform"><code class="docutils literal notranslate"><span class="pre">set_waveform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_waveform_buffer"><code class="docutils literal notranslate"><span class="pre">set_waveform_buffer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_waveform_from_samples"><code class="docutils literal notranslate"><span class="pre">set_waveform_from_samples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_waveform_value_percent"><code class="docutils literal notranslate"><span class="pre">set_waveform_value_percent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.start"><code class="docutils literal notranslate"><span class="pre">start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.stop"><code class="docutils literal notranslate"><span class="pre">stop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.wait_until_finished"><code class="docutils literal notranslate"><span class="pre">wait_until_finished()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.waveform_generator.WaveformType"><code class="docutils literal notranslate"><span class="pre">WaveformType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.waveform_generator.WaveformUnit"><code class="docutils literal notranslate"><span class="pre">WaveformUnit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.waveform_generator.calculate_sampling_time_ms"><code class="docutils literal notranslate"><span class="pre">calculate_sampling_time_ms()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Waveform Generator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="waveform-generator">
+<h1>Waveform Generator<a class="headerlink" href="#waveform-generator" title="Link to this heading"></a></h1>
+<p>If a device provides waveform generator functionality, such as the NV200 amplifier, you can use the
+<a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a> class to access this functionality.
+For example the NV200 provides an arbitrary waveform generator that can be used to generate a variety of waveforms.
+The arbitrary waveform generator can generate a single or repetitive setpoint signal. The curve shape
+can be freely defined by up to 1024 samples.</p>
+<p>The following example demonstrates how to use the <a class="reference internal" href="#module-nv200.waveform_generator" title="nv200.waveform_generator"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nv200.waveform_generator</span></code></a> module with the
+<a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a> from the <a class="reference internal" href="api.html#module-nv200.nv200_device" title="nv200.nv200_device"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.nv200_device</span></code></a>. It covers setting up the <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a>,
+generating a sine wave, and starting the waveform generator.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.telnet_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TelnetProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.waveform_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaveformGenerator</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">waveform_generator_test</span><span class="p">():</span>
+   <span class="c1"># Create the device client using Telnet protocol</span>
+   <span class="n">transport</span> <span class="o">=</span> <span class="n">TelnetProtocol</span><span class="p">(</span><span class="n">MAC</span><span class="o">=</span><span class="s2">&quot;00:80:A3:79:C6:18&quot;</span><span class="p">)</span>
+   <span class="n">device</span> <span class="o">=</span> <span class="n">NV200Device</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+   <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+   <span class="c1"># Initialize the waveform generator with the NV200 device</span>
+   <span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">WaveformGenerator</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+   <span class="c1"># Generate a sine wave with a frequency of 1 Hz, low level of 0, and high level of 80 µm</span>
+   <span class="n">sine</span> <span class="o">=</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">generate_sine_wave</span><span class="p">(</span><span class="n">freq_hz</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">low_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high_level</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample factor </span><span class="si">{</span><span class="n">sine</span><span class="o">.</span><span class="n">sample_factor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+   <span class="c1"># Transfer the waveform data to the device</span>
+   <span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">set_waveform</span><span class="p">(</span><span class="n">sine</span><span class="p">)</span>
+
+   <span class="c1"># Start the waveform generator with 1 cycle and starting index of 0</span>
+   <span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">cycles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+   <span class="c1"># Wait until the waveform generator finishes the move</span>
+   <span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">wait_until_finished</span><span class="p">()</span>
+
+   <span class="c1"># Close the device client connection</span>
+   <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+   <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">waveform_generator_test</span><span class="p">())</span>
+</pre></div>
+</div>
+<section id="step-by-step-guide-to-using-the-waveform-generator">
+<h2>Step by step guide to using the Waveform Generator<a class="headerlink" href="#step-by-step-guide-to-using-the-waveform-generator" title="Link to this heading"></a></h2>
+<p>This guide will walk you through the steps to set up and use the waveform generator using the given
+example code.</p>
+<section id="step-1-import-necessary-modules">
+<h3>Step 1: Import Necessary Modules<a class="headerlink" href="#step-1-import-necessary-modules" title="Link to this heading"></a></h3>
+<p>To get started, you’ll need to import the relevant modules.
+The <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a> class is imported from the <a class="reference internal" href="#module-nv200.waveform_generator" title="nv200.waveform_generator"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.waveform_generator</span></code></a> module,
+along with other necessary components such as <a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a> and <a class="reference internal" href="api.html#nv200.telnet_protocol.TelnetProtocol" title="nv200.telnet_protocol.TelnetProtocol"><code class="xref any py py-class docutils literal notranslate"><span class="pre">TelnetProtocol</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.telnet_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TelnetProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.waveform_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaveformGenerator</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-create-the-nv200device">
+<h3>Step 2: Create the NV200Device<a class="headerlink" href="#step-2-create-the-nv200device" title="Link to this heading"></a></h3>
+<p>To interact with the NV200 device, you must create a <a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a>
+instance. This client communicates with the device using the <a class="reference internal" href="api.html#nv200.telnet_protocol.TelnetProtocol" title="nv200.telnet_protocol.TelnetProtocol"><code class="xref any py py-class docutils literal notranslate"><span class="pre">TelnetProtocol</span></code></a>,
+which requires the device’s MAC address for connection.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the device client using Telnet protocol</span>
+ <span class="n">transport</span> <span class="o">=</span> <span class="n">TelnetProtocol</span><span class="p">(</span><span class="n">MAC</span><span class="o">=</span><span class="s2">&quot;00:80:A3:79:C6:18&quot;</span><span class="p">)</span>
+ <span class="n">device</span> <span class="o">=</span> <span class="n">NV200Device</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+ <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-initialize-the-waveform-generator">
+<h3>Step 3: Initialize the Waveform Generator<a class="headerlink" href="#step-3-initialize-the-waveform-generator" title="Link to this heading"></a></h3>
+<p>After setting up the device client, initialize the <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a> with the
+device instance. This allows you to interact with the waveform generation
+functionality.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize the waveform generator with the NV200 device</span>
+ <span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">WaveformGenerator</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-generate-the-waveform">
+<h3>Step 4: Generate the Waveform<a class="headerlink" href="#step-4-generate-the-waveform" title="Link to this heading"></a></h3>
+<p>In this example, we will generate a sine wave using the <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.generate_sine_wave" title="nv200.waveform_generator.WaveformGenerator.generate_sine_wave"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">generate_sine_wave</span></code></a> method of
+the <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a> class. You can specify the frequency, low level (minimum value),
+and high level (maximum value) of the sine wave. Optionally, you can also apply a
+phase shift to the waveform.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate a sine wave with a frequency of 1 Hz, low level of 0, and high level of 80 µm</span>
+<span class="n">sine</span> <span class="o">=</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">generate_sine_wave</span><span class="p">(</span><span class="n">freq_hz</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">low_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high_level</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample factor </span><span class="si">{</span><span class="n">sine</span><span class="o">.</span><span class="n">sample_factor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-transfer-the-waveform-to-the-device">
+<h3>Step 5: Transfer the Waveform to the Device<a class="headerlink" href="#step-5-transfer-the-waveform-to-the-device" title="Link to this heading"></a></h3>
+<p>Once the sine wave has been generated, you need to transfer the waveform data to the device.
+The <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.set_waveform" title="nv200.waveform_generator.WaveformGenerator.set_waveform"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">set_waveform</span></code></a> method is used for this purpose, which takes in the generated waveform data
+and uploads it to the connected device.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Transfer the waveform data to the device</span>
+<span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">set_waveform</span><span class="p">(</span><span class="n">sine</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Important</p>
+<p>Transferring the waveform data to the device may take some seconds, depending on the size of the
+waveform. Ensure that you wait for the transfer to complete before proceeding with any further
+operations.</p>
+</div>
+</section>
+<section id="step-6-start-the-wavform-generator">
+<h3>Step 6: Start the Wavform Generator<a class="headerlink" href="#step-6-start-the-wavform-generator" title="Link to this heading"></a></h3>
+<p>With the waveform data uploaded to the device, you can now start the waveform generator.
+You can specify the number of cycles for the waveform to repeat and the starting index of
+the waveform data. In this example, we are starting the generator with one cycle, using an index of 0.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Start the waveform generator with 1 cycle and starting index of 0</span>
+<span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">cycles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-7-wait-for-the-waveform-to-finish">
+<h3>Step 7: Wait for the Waveform to Finish<a class="headerlink" href="#step-7-wait-for-the-waveform-to-finish" title="Link to this heading"></a></h3>
+<p>After starting the waveform generator, you can wait for the waveform to finish its cycle.
+The <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.wait_until_finished" title="nv200.waveform_generator.WaveformGenerator.wait_until_finished"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">WaveformGenerator.wait_until_finished</span></code></a> method can be used to wait until the waveform generator has
+completed its operation. It waits until the <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.is_running" title="nv200.waveform_generator.WaveformGenerator.is_running"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">is_running</span></code></a> function returns false.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Wait until the waveform generator finishes the move</span>
+<span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">wait_until_finished</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="step-8-close-the-device-connection">
+<h3>Step 8: Close the Device Connection<a class="headerlink" href="#step-8-close-the-device-connection" title="Link to this heading"></a></h3>
+<p>Once the waveform has finished executing, it is good practice to close the connection
+to the device to free up resources.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Close the device client connection</span>
+<span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="module-nv200.waveform_generator">
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-nv200.waveform_generator" title="Link to this heading"></a></h2>
+<p>WaveformGenerator module for controlling waveform generation on a connected NV200 device.</p>
+<p>This module defines the <a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref any py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a> class, which provides methods to configure and control waveform generation,
+including the ability to generate sine waves, set cycles, adjust sampling times, and manage waveform buffers. It supports
+asynchronous interaction with the device for real-time control of waveform generation.</p>
+<dl class="simple">
+<dt>Classes:</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator" title="nv200.waveform_generator.WaveformGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaveformGenerator</span></code></a>: Manages waveform generation and configuration on the NV200 device.</p></li>
+<li><p><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaveformData</span></code></a>: Represents waveform data with time, amplitude, and sample time.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WaveformGenerator</span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>WaveformGenerator is a class responsible for generating waveforms using a connected device.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.WaveformData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WaveformData</span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.WaveformData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="api.html#nv200.shared_types.TimeSeries" title="nv200.shared_types.TimeSeries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></p>
+<p>WaveformData is a NamedTuple that represents waveform data.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.WaveformData.cycle_time_ms">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cycle_time_ms</span></span><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.WaveformData.cycle_time_ms" title="Link to this definition"></a></dt>
+<dd><p>Returns the cycle of a single cycle in milliseconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.WaveformData.sample_factor">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample_factor</span></span><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.WaveformData.sample_factor" title="Link to this definition"></a></dt>
+<dd><p>Returns the sample factor used to calculate the sample time from the base sample time.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><span class="pre">NV200Device</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the WaveformGenerator instance with the specified device client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device</strong> (<em>DeviceClient</em>) – The device client used for communication with the hardware.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.configure_waveform_loop">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">configure_waveform_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_start_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop_end_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.configure_waveform_loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.configure_waveform_loop" title="Link to this definition"></a></dt>
+<dd><p>Sets the start and end indices for the waveform loop.
+The start index is the index where the waveform generator starts when it is started.
+The loop start index is the index where the waveform generator starts in the next cycle
+and the loop end index is the index where the waveform generator jumps to the next cycle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.generate_sine_wave">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_sine_wave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_shift_rad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><span class="pre">WaveformData</span></a></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.generate_sine_wave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.generate_sine_wave" title="Link to this definition"></a></dt>
+<dd><p>Generates a sine wave based on the specified frequency and amplitude levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq_hz</strong> (<em>float</em>) – The frequency of the sine wave in Hertz (Hz).</p></li>
+<li><p><strong>low_level</strong> (<em>float</em>) – The minimum value (low level) of the sine wave.</p></li>
+<li><p><strong>high_level</strong> (<em>float</em>) – The maximum value (high level) of the sine wave.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>An object containing the generated sine wave data, including:</dt><dd><ul class="simple">
+<li><p>x_time (List[float]): A list of time points in ms corresponding to the sine wave samples.</p></li>
+<li><p>y_values (List[float]): A list of amplitude values for the sine wave at each time point.</p></li>
+<li><p>sample_time_us (float): The time interval between samples in microseconds (µs).</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData">WaveformData</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The method calculates an optimal sample time based on the desired frequency and the
+hardware’s base sample time.</p></li>
+<li><p>The buffer size is adjusted to ensure the generated waveform fits within one period
+of the sine wave.</p></li>
+<li><p>The sine wave is scaled and offset to match the specified low and high levels.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.generate_square_wave">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_square_wave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_shift_rad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty_cycle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><span class="pre">WaveformData</span></a></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.generate_square_wave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.generate_square_wave" title="Link to this definition"></a></dt>
+<dd><p>Generates a square wave (or PWM waveform) using NumPy for efficient computation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq_hz</strong> (<em>float</em>) – Frequency of the waveform in Hz.</p></li>
+<li><p><strong>low_level</strong> (<em>float</em>) – Output level during the “low” part of the cycle.</p></li>
+<li><p><strong>high_level</strong> (<em>float</em>) – Output level during the “high” part of the cycle.</p></li>
+<li><p><strong>duty_cycle</strong> (<em>float</em><em>, </em><em>optional</em>) – Duty cycle as a fraction between 0.0 and 1.0.
+Defaults to 0.5 (i.e., 50%).</p></li>
+<li><p><strong>phase_shift_rad</strong> (<em>float</em><em>, </em><em>optional</em>) – Phase shift in radians. Defaults to 0.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>An object containing:</dt><dd><ul class="simple">
+<li><p>values (List[float]): Amplitude values of the waveform.</p></li>
+<li><p>sample_time_ms (float): Time between samples in milliseconds.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData">WaveformData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.generate_time_samples_array">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_time_samples_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.generate_time_samples_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.generate_time_samples_array" title="Link to this definition"></a></dt>
+<dd><p>Generates a NumPy array of time samples (in milliseconds) for one period of a waveform at the specified frequency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>freq_hz</strong> (<em>float</em>) – The frequency of the waveform in Hertz.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Time samples (in milliseconds).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.generate_time_samples_list">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_time_samples_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.generate_time_samples_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.generate_time_samples_list" title="Link to this definition"></a></dt>
+<dd><p>Generates a list of time samples (in milliseconds) for one period of a waveform at the specified frequency.
+Sampling is adjusted based on hardware base sample time and buffer constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>freq_hz</strong> (<em>float</em>) – The frequency of the waveform in Hertz.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Time samples (in milliseconds).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.generate_triangle_wave">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_triangle_wave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_shift_rad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><span class="pre">WaveformData</span></a></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.generate_triangle_wave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.generate_triangle_wave" title="Link to this definition"></a></dt>
+<dd><p>Generates a triangle wave based on the specified frequency and amplitude levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq_hz</strong> (<em>float</em>) – The frequency of the triangle wave in Hertz (Hz).</p></li>
+<li><p><strong>low_level</strong> (<em>float</em>) – The minimum value (low level) of the triangle wave.</p></li>
+<li><p><strong>high_level</strong> (<em>float</em>) – The maximum value (high level) of the triangle wave.</p></li>
+<li><p><strong>phase_shift_rad</strong> (<em>float</em><em>, </em><em>optional</em>) – Phase shift in radians. Defaults to 0.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>An object containing the generated triangle wave data, including:</dt><dd><ul class="simple">
+<li><p>values (List[float]): A list of amplitude values for the triangle wave at each time point.</p></li>
+<li><p>sample_time_ms (float): The time interval between samples in milliseconds (ms).</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData">WaveformData</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The method calculates an optimal sample time based on the desired frequency and the</p></li>
+</ul>
+<p>hardware’s base sample time.
+- The waveform is normalized between -1 and 1, then scaled and offset to fit between
+low_level and high_level.
+- The waveform is generated over one full period.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.generate_waveform">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.waveform_generator.WaveformType" title="nv200.waveform_generator.WaveformType"><span class="pre">WaveformType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_hz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_shift_rad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty_cycle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><span class="pre">WaveformData</span></a></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.generate_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.generate_waveform" title="Link to this definition"></a></dt>
+<dd><p>Generates a waveform based on the specified type and parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>waveform_type</strong> (<em>Waveform</em>) – The type of waveform to generate (SINE, TRIANGLE, SQUARE).</p></li>
+<li><p><strong>freq_hz</strong> (<em>float</em>) – Frequency of the waveform in Hertz.</p></li>
+<li><p><strong>low_level</strong> (<em>float</em>) – Minimum value of the waveform.</p></li>
+<li><p><strong>high_level</strong> (<em>float</em>) – Maximum value of the waveform.</p></li>
+<li><p><strong>phase_shift_rad</strong> (<em>float</em><em>, </em><em>optional</em>) – Phase shift in radians. Defaults to 0.0.</p></li>
+<li><p><strong>duty_cycle</strong> (<em>float</em><em>, </em><em>optional</em>) – Duty cycle for square wave. Defaults to 0.5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated waveform data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData">WaveformData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.is_running">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.is_running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.is_running" title="Link to this definition"></a></dt>
+<dd><p>Checks if the waveform generator is currently running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the waveform generator is running, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_cycles">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_cycles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cycles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_cycles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_cycles" title="Link to this definition"></a></dt>
+<dd><p>Sets the number of cycles to run.
+- WaveformGenerator.NV200_INFINITE_CYCLES - 0 = infinitely
+- 1…65535</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_loop_end_index">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_loop_end_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_loop_end_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_loop_end_index" title="Link to this definition"></a></dt>
+<dd><p>Sets the end index for arbitrary waveform generator output.
+The loop end index is the index where the waveform generator jumps to the next
+cycle or finishes if only one cycle is used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_loop_start_index">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_loop_start_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_loop_start_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_loop_start_index" title="Link to this definition"></a></dt>
+<dd><p>Sets the start index for the waveform generator loop.
+If you use multiple cycles, the loop start index is the index defines the index
+where the waveform generator starts in the next cycle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_output_sampling_time">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_output_sampling_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_output_sampling_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_output_sampling_time" title="Link to this definition"></a></dt>
+<dd><p>Sets the output sampling time for the waveform generator.
+The output sampling time can be given in multiples of 50 µs from
+1 * 50µs to 65535 * 50µs. If the sampling time is not a multiple
+of 50, it will be rounded to the nearest multiple of 50µs.
+The calculated sampling time is returned in microseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The set sampling time in microseconds.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p>Note: Normally you do not need to set the sampling time manually because it is set automatically
+calculated when the waveform is generated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_start_index">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_start_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_start_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_start_index" title="Link to this definition"></a></dt>
+<dd><p>Sets the offset index when arbitrary waveform generator
+gets started. That means after the start() function is called, the arbitrary
+waveform generator starts at the index defined by set_start_index() and runs
+until the index defined by set_loop_end_index(). In all successive cycles, the arbitrary
+waveform generator starts at set_loop_start_index(). This is repeated until the number
+of cycles reaches the value given by set_cycles().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_waveform">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><span class="pre">WaveformData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.waveform_generator.WaveformUnit" title="nv200.waveform_generator.WaveformUnit"><span class="pre">WaveformUnit</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">WaveformUnit.PERCENT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_loop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api.html#nv200.shared_types.ProgressCallback" title="nv200.shared_types.ProgressCallback"><span class="pre">ProgressCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_waveform" title="Link to this definition"></a></dt>
+<dd><p>Sets the waveform data in the device.
+The WaveformData object should contain the waveform values and the sample time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>waveform</strong> (<a class="reference internal" href="#nv200.waveform_generator.WaveformGenerator.WaveformData" title="nv200.waveform_generator.WaveformGenerator.WaveformData"><em>WaveformData</em></a>) – The waveform data to be set.</p></li>
+<li><p><strong>unit</strong> (<a class="reference internal" href="#nv200.waveform_generator.WaveformUnit" title="nv200.waveform_generator.WaveformUnit"><em>WaveformUnit</em></a>) – The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</p></li>
+<li><p><strong>adjust_loop</strong> (<em>bool</em>) – If True, adjusts the loop indices based on the
+waveform data, if false, the loop indices are not adjusted.
+If the loop indices are adjusted, then they will be set to
+the following value:
+- start_index = 0 (first waveform value)
+- loop_start_index = 0 (first waveform value)
+- loop_end_index = last waveform value</p></li>
+<li><p><strong>on_progress</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="api.html#nv200.shared_types.ProgressCallback" title="nv200.shared_types.ProgressCallback"><em>ProgressCallback</em></a><em>]</em>) – Optional callback for progress updates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the waveform data is invalid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_waveform_buffer">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_waveform_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.waveform_generator.WaveformUnit" title="nv200.waveform_generator.WaveformUnit"><span class="pre">WaveformUnit</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">WaveformUnit.PERCENT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api.html#nv200.shared_types.ProgressCallback" title="nv200.shared_types.ProgressCallback"><span class="pre">ProgressCallback</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_waveform_buffer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_waveform_buffer" title="Link to this definition"></a></dt>
+<dd><p>Writes a full waveform buffer to the device by setting each value
+using set_waveform_value.
+The buffer should contain waveform values in percent (0-100).
+In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> (<em>list</em><em> of </em><em>float</em>) – The waveform values in percent (0-100).</p></li>
+<li><p><strong>unit</strong> (<a class="reference internal" href="#nv200.waveform_generator.WaveformUnit" title="nv200.waveform_generator.WaveformUnit"><em>WaveformUnit</em></a>) – The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</p></li>
+<li><p><strong>on_progress</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="api.html#nv200.shared_types.ProgressCallback" title="nv200.shared_types.ProgressCallback"><em>ProgressCallback</em></a><em>]</em>) – Optional callback for progress updates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the buffer size exceeds the maximum buffer length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_waveform_from_samples">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_waveform_from_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.waveform_generator.WaveformUnit" title="nv200.waveform_generator.WaveformUnit"><span class="pre">WaveformUnit</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">WaveformUnit.PERCENT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_loop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_waveform_from_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_waveform_from_samples" title="Link to this definition"></a></dt>
+<dd><p>Sets the waveform data in the device from separate time samples and values.
+The waveform data should contain the time samples in milliseconds and the corresponding
+amplitude values. in percent (0-100).
+In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_samples</strong> (<em>Sequence</em><em>[</em><em>float</em><em>] or </em><em>np.ndarray</em>) – Time samples in milliseconds.</p></li>
+<li><p><strong>values</strong> (<em>Sequence</em><em>[</em><em>float</em><em>] or </em><em>np.ndarray</em>) – Corresponding waveform amplitude values in percent (0-100).</p></li>
+<li><p><strong>unit</strong> (<a class="reference internal" href="#nv200.waveform_generator.WaveformUnit" title="nv200.waveform_generator.WaveformUnit"><em>WaveformUnit</em></a><em>, </em><em>optional</em>) – The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</p></li>
+<li><p><strong>adjust_loop</strong> (<em>bool</em>) – If True, adjusts loop indices based on data length.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If inputs are invalid or lengths mismatch.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.set_waveform_value_percent">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_waveform_value_percent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.set_waveform_value_percent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.set_waveform_value_percent" title="Link to this definition"></a></dt>
+<dd><p>Sets the value of the waveform at the specified index in percent from 0 - 100%
+In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.start">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.start" title="Link to this definition"></a></dt>
+<dd><p>Starts / stops the waveform generator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, starts the waveform generator. If False, stops it. Defaults to True.</p></li>
+<li><p><strong>cycles</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of cycles to run the waveform generator.
+If set to -1, the value configured via set_cycles() will be used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.stop">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.stop" title="Link to this definition"></a></dt>
+<dd><p>Stops the waveform generator.
+This is equivalent to calling start(False).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformGenerator.wait_until_finished">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait_until_finished</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformGenerator.wait_until_finished"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformGenerator.wait_until_finished" title="Link to this definition"></a></dt>
+<dd><p>Waits until the waveform generator is finished running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout_s</strong> (<em>float</em>) – The maximum time to wait in seconds. Defaults to 10 seconds.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the waveform generator finished running, False if timed out.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WaveformType</span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformType" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enumeration for different waveform types supported by the generator.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.waveform_generator.WaveformUnit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WaveformUnit</span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#WaveformUnit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.WaveformUnit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enumeration for different waveform units used in the generator.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nv200.waveform_generator.calculate_sampling_time_ms">
+<span class="sig-name descname"><span class="pre">calculate_sampling_time_ms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/nv200/waveform_generator.html#calculate_sampling_time_ms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.waveform_generator.calculate_sampling_time_ms" title="Link to this definition"></a></dt>
+<dd><p>Calculates the sampling time in milliseconds from a sequence of time samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time_samples</strong> (<em>Union</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>, </em><em>np.ndarray</em><em>]</em>) – A list or NumPy array of time samples in milliseconds.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sampling time in milliseconds.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the sequence has fewer than 2 time samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="data_recorder.html" class="btn btn-neutral float-left" title="Data Recorder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jul 11, 2025 11:31.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -36,6 +36,14 @@ jobs:
       - name: Build documentation
         run: |
           poetry run sphinx-build -b html doc/ doc/_build/
+          touch doc/_build/.nojekyll
 
 
-          
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: doc/_build/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

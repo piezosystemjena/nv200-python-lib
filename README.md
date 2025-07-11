@@ -39,7 +39,7 @@ pip install nv200
 
 Comprehensive documentation—including API reference, installation options, and usage examples—is available here:
 
-[https://nv200-python-lib-e9158a.gitlab.io/](https://nv200-python-lib-e9158a.gitlab.io/)
+[https://piezosystemjena.github.io/nv200-python-lib/](https://piezosystemjena.github.io/nv200-python-lib/)
 
 
 ### 🧪 Quick Example

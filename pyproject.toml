@@ -19,16 +19,16 @@ include = ["examples/**/*"]
 classifiers = [
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers"
 ]
 
 
 [tool.poetry.urls]
-Homepage = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib"
-Source = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib"
-"Bug Tracker" = "https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib/-/issues"
-Documentation = "https://nv200-python-lib-e9158a.gitlab.io/"
+Homepage = "https://github.com/piezosystemjena/nv200-python-lib"
+Source = "https://github.com/piezosystemjena/nv200-python-lib"
+"Bug Tracker" = "https://github.com/piezosystemjena/nv200-python-lib/issues"
+Documentation = "https://piezosystemjena.github.io/nv200-python-lib/"
 
 
 # This section defines the dependencies for the project using Poetry.

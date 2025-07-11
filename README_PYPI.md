@@ -4,7 +4,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/nv200)](https://pypi.org/project/nv200/)
 [![Python Version](https://img.shields.io/pypi/pyversions/nv200)](https://www.python.org/downloads/)
-[![Docs](https://img.shields.io/badge/docs-online-success)](https://nv200-python-lib-e9158a.gitlab.io/)
+[![Docs](https://img.shields.io/badge/docs-online-success)](https://piezosystemjena.github.io/nv200-python-lib/)
 ![Monthly Downloads](https://img.shields.io/pypi/dm/nv200)
 
 ---
@@ -51,16 +51,17 @@ if __name__ == "__main__":
     asyncio.run(main_async())
 ```
 
-> For more advanced usage and async control, see the full [API documentation](https://nv200-python-lib-e9158a.gitlab.io/).
+> For more advanced usage and async control, see the full [API documentation](https://piezosystemjena.github.io/nv200-python-lib/).
 
 ---
 
 ## 📚 Documentation
 
 📖 Full documentation is available at  
-👉 **[https://nv200-python-lib-e9158a.gitlab.io/](https://nv200-python-lib-e9158a.gitlab.io/)**
+👉 **[https://piezosystemjena.github.io/nv200-python-lib/](https://piezosystemjena.github.io/nv200-python-lib/)**
 
 It includes:
+
 - Setup & Installation
 - Device Communication Protocols
 - Full API Reference
@@ -92,7 +93,7 @@ See the `examples/` folder in the repository for:
 
 ### Git Repository
 
-The Git repository is available at: https://gitlab.com/gitlabuser0xFFFF/nv200_python_lib
+The Git repository is available at: https://github.com/piezosystemjena/nv200-python-lib
 
 ### Install dependencies
 

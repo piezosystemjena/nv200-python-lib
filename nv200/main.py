@@ -10,13 +10,15 @@ from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.transport_protocol import TransportProtocol
 from nv200.data_recorder import DataRecorderSource, RecorderAutoStartMode, DataRecorder
-from nv200.waveform_generator import WaveformGenerator
+from nv200.waveform_generator import WaveformGenerator, WaveformType, WaveformUnit
 from nv200.shared_types import DiscoverFlags, PidLoopMode, StatusFlags, TransportType
 from nv200.device_discovery import discover_devices
 from nv200.nv200_device import NV200Device
 from nv200.spibox_device import SpiBoxDevice
 from rich.traceback import install as install_rich_traceback
 from rich.logging import RichHandler
+from scipy.fft import fft, fftfreq
+from scipy.signal import detrend, find_peaks
 
 import nv200.connection_utils
 import logging
@@ -185,14 +187,26 @@ async def client_serial_test():
     await client.close()
 
 
+async def print_progress(current_index: int, total: int):
+    """
+    Asynchronously prints the progress of a task as a percentage.
+
+    Args:
+        current_index (int): The current progress index or step.
+        total (int): The total number of steps or items.
+
+    Example:
+        await print_progress(5, 20)
+        # Output: [25.0%] Set value 5 of 20
+    """
+    percent = 100 * current_index / total
+    print(f"[{percent:.1f}%] Set value {current_index} of {total}") 
+
+
 async def waveform_generator_test():
     """
     Asynchronous function to test the functionality of the WaveformGenerator class.
     """
-    async def print_progress(current_index: int, total: int):
-        percent = 100 * current_index / total
-        print(f"[{percent:.1f}%] Set value {current_index} of {total}")
-
     prepare_plot_style()
     device = await nv200.connection_utils.connect_to_single_device(
         device_class=NV200Device, 
@@ -203,24 +217,23 @@ async def waveform_generator_test():
     #await client.write('poslpf,1000')
     #await client.write('poslpon,1')
 
-    await device.set_pid_mode(PidLoopMode.CLOSED_LOOP)
+    await device.pid.set_mode(PidLoopMode.CLOSED_LOOP)
     pos_range = await device.get_position_range()
     waveform_generator = WaveformGenerator(device)
-    waveform_generator.generate_time_samples_list(freq_hz=1)
-
-    sine = waveform_generator.generate_sine_wave(freq_hz=10, low_level=pos_range[0], high_level=pos_range[1])
-    print(sine.cycle_time_ms)
-    plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
-    print(f"Sample factor {sine.sample_factor}")
+    waveform = waveform_generator.generate_waveform(waveform_type=WaveformType.CONSTANT, freq_hz=10, low_level=pos_range[0], high_level=pos_range[1])
+    #waveform = waveform_generator.generate_waveform(waveform_type=WaveformType.CONSTANT, freq_hz=10, low_level=0, high_level=0)
+    print(waveform.cycle_time_ms)
+    plt.plot(waveform.sample_times_ms, waveform.values, linestyle='-', color='orange', label="Generated Sine Wave")
+    print(f"Sample factor {waveform.sample_factor}")
     print("Transferring waveform data to device...")
-    await waveform_generator.set_waveform(sine, on_progress=print_progress)
+    await waveform_generator.set_waveform(waveform, on_progress=print_progress)
 
 
     recorder = DataRecorder(device)
     await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
     await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
     await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN)
-    await recorder.set_recording_duration_ms(sine.cycle_time_ms * 1.2)
+    await recorder.set_recording_duration_ms(waveform.cycle_time_ms * 1.2)
     await recorder.start_recording()
 
     print("Starting waveform generator...")
@@ -533,13 +546,123 @@ async def export_actuator_config(filename: str = ""):
     await device.close()
 
 
+backup: Dict[str, str] = {}
+
+
+async def backup_current_settings(dev: NV200Device):
+    """
+    Backs up the current settings of the connected device to a file.
+    """
+    backup_list = [
+        "modsrc", "notchon", "sr", "poslpon", "setlpon", "cl", "reclen", "recstr"]
+    
+    for cmd in backup_list:
+        response = await dev.read_response_parameters_string(cmd)
+        print(f"Response for '{cmd}': {response}")
+        backup[cmd] = response
+
+
+async def restore_parameters(dev: NV200Device):
+    """
+    Restores all backed up parameters to the connected device.
+    """
+    for cmd, value in backup.items():
+        print(f"Restoring '{cmd}' with value: {backup[cmd]}")
+        await dev.write(f"{cmd},{value}")
+
+
+async def init_resonance_test(dev: NV200Device):
+    #dev.set_modulation_source(ModulationSource.SET_CMD)
+    await dev.notch_filter.enable(False)
+    await dev.set_slew_rate(2000)
+    await dev.position_lpf.enable(False)
+    await dev.setpoint_lpf.enable(False)
+    await dev.pid.set_mode(PidLoopMode.OPEN_LOOP)
+
+
+async def resonance_test():   
+    """
+    Performs a resonance test on a single NV200 device.
+    This asynchronous function connects to an NV200 device over a serial transport,
+    backs up the current device settings, initializes the resonance test, prepares
+    the plot style for visualization, restores the original parameters after the test,
+    and finally closes the device connection.
+    Steps:
+        1. Connects to a single NV200 device using serial transport.
+        2. Backs up the current device settings.
+        3. Initializes the resonance test on the device.
+        4. Prepares the plot style for result visualization.
+        5. Restores the original device parameters.
+        6. Closes the device connection.
+    Raises:
+        Any exceptions raised by the underlying connection, backup, initialization,
+        or restore functions will propagate.
+    """
+    dev = await nv200.connection_utils.connect_to_single_device(
+        device_class=NV200Device, 
+        transport_type=TransportType.SERIAL)  
+
+    await backup_current_settings(dev)
+    await init_resonance_test(dev)
+
+    prepare_plot_style()
+    max_voltage = (await dev.get_voltage_range())[1]
+    waveform_generator = WaveformGenerator(dev)
+    waveform = WaveformGenerator.generate_constant_wave(freq_hz=2000, constant_level=0)
+    waveform.set_value_at_index(1, max_voltage)  # Set a specific index to a different value to generate impule
+    print("Transferring waveform data to device...")
+    await waveform_generator.set_waveform(waveform, unit=WaveformUnit.VOLTAGE, on_progress=print_progress)
+    await waveform_generator.start(cycles=1, start_index=0)
+    await waveform_generator.wait_until_finished()
+
+    recorder = DataRecorder(dev)
+    await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
+    await recorder.set_data_source(1, DataRecorderSource.PIEZO_VOLTAGE)
+    await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN)
+    rec_param = await recorder.set_recording_duration_ms(100)
+    await recorder.start_recording()
+
+    print("Starting waveform generator...")
+    await waveform_generator.start(cycles=1, start_index=0)
+    await recorder.wait_until_finished()
+    print(f"Is running: {await waveform_generator.is_running()}")
+    rec_data = await recorder.read_recorded_data_of_channel(0)
+    #plt.plot(rec_data.sample_times_ms, rec_data.values, linestyle='-', color='green', label=rec_data.source)
+
+    # === Vorverarbeitung ===
+    signal = detrend(np.array(rec_data.values))  # DC-Offset entfernen
+
+    # === FFT ===
+    N = len(signal)
+    yf = fft(signal)
+    xf = fftfreq(N, 1 / rec_param.sample_freq)
+
+    # Nur positive Frequenzen betrachten
+    idx = xf > 0
+    xf = xf[idx]
+    yf = np.abs(yf[idx])  # Betrag der FFT
+
+    # === Resonanzfrequenz finden ===
+    peak_idx, _ = find_peaks(yf, height=np.max(yf)*0.5)  # Schwelle = 50%
+    res_freq = xf[peak_idx[np.argmax(yf[peak_idx])]]
+
+    print(f"Geschätzte Resonanzfrequenz: {res_freq:.2f} Hz")
+    plt.plot(xf, yf, color='r', label='FFT des Signals')
+    plt.xlim(0, 4000)  # Begrenze die x-Achse auf 0-100 Hz
+    plt.axvline(float(res_freq), color='orange', linestyle='--', label=f'Resonanz: {float(res_freq):.1f} Hz')
+
+    await restore_parameters(dev)
+    await dev.close()
+    show_plot()
+
+
 
 if __name__ == "__main__":
     setup_logging()
 
     #asyncio.run(client_telnet_test())
     #asyncio.run(client_serial_test())
-    asyncio.run(waveform_generator_test())
+    #asyncio.run(waveform_generator_test())
     #asyncio.run(test_serial_protocol())
     #test_numpy_waveform()
     #asyncio.run(configure_xport())
@@ -551,3 +674,4 @@ if __name__ == "__main__":
     #asyncio.run(test_serial_protocol_auto_detect())
     #asyncio.run(spi_box_test())
     #asyncio.run(export_actuator_config())
+    asyncio.run(resonance_test())

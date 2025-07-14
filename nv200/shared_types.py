@@ -481,6 +481,21 @@ class TimeSeries:
         """Set the amplitude values (values)."""
         self._values = values
 
+    def set_value_at_index(self, index: int, value: float) -> None:
+        """
+        Set the amplitude value at a specific index.
+
+        Args:
+            index (int): The index at which to set the value.
+            value (float): The new amplitude value.
+
+        Raises:
+            IndexError: If the index is out of range.
+        """
+        if not 0 <= index < len(self._values):
+            raise IndexError("Index out of range.")
+        self._values[index] = value
+
     def generate_sample_times_ms(self) -> Generator[float, None, None]:
         """
         Generator function to return time (sample_times_ms) values as they are requested.

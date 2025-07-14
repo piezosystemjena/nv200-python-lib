@@ -48,6 +48,7 @@ class WaveformType(Enum):
     SINE = 0
     TRIANGLE = 1
     SQUARE = 2
+    CONSTANT = 3
 
 
 class WaveformUnit(Enum):
@@ -533,6 +534,33 @@ class WaveformGenerator:
     
 
     @classmethod
+    def generate_constant_wave(
+        cls,
+        freq_hz: float,
+        constant_level: float
+    ) -> WaveformData:
+        """
+        Generates a constant waveform at a specified frequency and level.
+        This method creates a waveform where all sample values are set to a constant level,
+        sampled at intervals determined by the specified frequency.
+
+        Args:
+            freq_hz (float): The frequency in Hertz at which to generate the waveform samples.
+            constant_level (float): The constant value for all samples in the waveform.
+            
+        Returns:
+            WaveformData: An object containing the generated constant waveform values and the sample time in milliseconds.
+        """
+        times_ms = cls.generate_time_samples_array(freq_hz)  # NumPy array of time points in ms
+        values = np.full_like(times_ms, constant_level, dtype=float)
+
+        return cls.WaveformData(
+            values=values.tolist(),
+            sample_time_ms=calculate_sampling_time_ms(times_ms),
+        )
+        
+
+    @classmethod
     def generate_waveform(
         cls,
         waveform_type: WaveformType,
@@ -562,5 +590,7 @@ class WaveformGenerator:
             return cls.generate_triangle_wave(freq_hz, low_level, high_level, phase_shift_rad)
         elif waveform_type == WaveformType.SQUARE:
             return cls.generate_square_wave(freq_hz, low_level, high_level, phase_shift_rad, duty_cycle)
+        elif waveform_type == WaveformType.CONSTANT:
+            return cls.generate_constant_wave(freq_hz, high_level)
         else:
             raise ValueError(f"Unsupported waveform type: {waveform_type}")

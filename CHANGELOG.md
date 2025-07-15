@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
+
+## [1.4.0] - 2025-07-15
+
+### Added
+
+- **Resonance Measurement** - Added `analysis` module with `ResonanceAnalyzer` class for measurement of resonance frequency and spectrum
+
 ## [1.3.0] - 2025-07-10
 
 ### Added

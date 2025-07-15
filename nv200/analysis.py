@@ -15,10 +15,6 @@ class ResonanceAnalyzer:
 
     This class encapsulates both the hardware interaction needed to acquire an impulse response
     from the device and the signal processing needed to compute the resonance spectrum.
-
-    It requires instances of the device interface, data recorder, and waveform generator to
-    coordinate the measurement. The class is designed to separate hardware orchestration from
-    signal analysis logic.
     """
 
     def __init__(self, device : NV200Device):

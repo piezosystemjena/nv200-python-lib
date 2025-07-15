@@ -25,6 +25,7 @@ The NV200 library API consists of the following modules:
   
   * :ref:`data_recorder` — Module for recording experimental data.
   * :ref:`waveform_generator` — Interface to arbitrary waveform generator.
+  * :ref:`analysis` — Module for resonance analysis
 
 * **Utilities**
 
@@ -141,6 +142,14 @@ waveform_generator
 ^^^^^^^^^^^^^^^^^^
 
 .. automodule:: nv200.waveform_generator
+   :members:
+   :show-inheritance:
+
+
+analysis
+^^^^^^^^^^^^^^^^^^
+
+.. automodule:: nv200.analysis
    :members:
    :show-inheritance:
 

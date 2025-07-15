@@ -470,6 +470,23 @@ class TimeSeries:
     def sample_time_ms(self) -> float:
         """Returns the sample time in milliseconds."""
         return self._sample_time_ms
+    
+    @property
+    def sample_period_ms(self) -> float:
+        """
+        Returns the sample period in milliseconds, which is the same as sample_time_ms.
+        This property is provided for compatibility with other systems that may expect this terminology.
+        """
+        return self._sample_time_ms
+    
+    @property
+    def sample_freq_hz(self) -> float:
+        """
+        Returns the sample frequency in Hertz (Hz), calculated as the inverse of the sample time.
+        """
+        if self._sample_time_ms <= 0:
+            raise ValueError("Sample time must be greater than zero.")
+        return 1000.0 / self._sample_time_ms
 
     @property
     def values(self) -> list:

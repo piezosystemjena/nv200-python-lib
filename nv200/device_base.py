@@ -515,6 +515,41 @@ class PiezoDeviceBase:
         return cls._help_dict
     
 
+    async def backup_parameters(self, backup_list: list[str]) -> Dict[str, str]:    
+        """
+        Asynchronously backs up device settings by reading response parameters for each command in the provided list.
+
+        Use the restore_parameters method to restore the settings later from the backup.
+
+        Args:
+            backup_list (list[str]): A list of command strings for which to back up settings.
+
+        Returns:
+            Dict[str, str]: A dictionary mapping each command to its corresponding response string from the device.
+
+    
+        Example:
+            >>> backup_list = [
+            >>>     "modsrc", "notchon", "sr", "poslpon", "setlpon", "cl", "reclen", "recstr"]
+            >>> await self.backup_settings(backup_list)
+        """
+        backup : Dict[str, str] = {}
+        for cmd in backup_list:
+            response = await self.read_response_parameters_string(cmd)
+            backup[cmd] = response
+        return backup
+    
+
+    async def restore_parameters(self, backup: Dict[str, str]):
+        """
+        Asynchronously restores device parameters from a backup created with `backup_parameters`.
+
+        Iterates over the provided backup dictionary, writing each parameter value to the device.
+        """
+        for cmd, value in backup.items():
+            await self.write_value(cmd, value)
+    
+
 PiezoDeviceType = TypeVar("PiezoDeviceType", bound=PiezoDeviceBase)
 
    

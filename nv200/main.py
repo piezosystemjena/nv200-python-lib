@@ -546,8 +546,6 @@ async def export_actuator_config(filename: str = ""):
     await device.close()
 
 
-backup: Dict[str, str] = {}
-
 
 async def backup_current_settings(dev: NV200Device):
     """
@@ -656,6 +654,17 @@ async def resonance_test():
     show_plot()
 
 
+async def read_piezo_voltage_test():
+    """
+    Reads the piezo voltage from the connected NV200 device and prints it.
+    """
+    dev = await nv200.connection_utils.connect_to_single_device(NV200Device, TransportType.SERIAL)
+    rec = DataRecorder(dev)
+    voltage = await rec.read_single_value_from(DataRecorderSource.PIEZO_VOLTAGE)
+    print(f"Piezo voltage: {voltage:.3f} V")
+    await dev.close()
+
+    
 
 if __name__ == "__main__":
     setup_logging()
@@ -673,5 +682,5 @@ if __name__ == "__main__":
     #asyncio.run(test_quick_connect())
     #asyncio.run(test_serial_protocol_auto_detect())
     #asyncio.run(spi_box_test())
-    #asyncio.run(export_actuator_config())
-    asyncio.run(resonance_test())
+    #asyncio.run(export_actuator_config(
+    asyncio.run(read_piezo_voltage_test())

@@ -81,31 +81,63 @@ class ResonanceAnalyzer:
         return rec_param.sample_freq, rec_source
     
 
-    async def _prepare_waveform_generator(self, baseline_voltage : float):
+    async def _prepare_waveform_generator(self, baseline_voltage : float | None):
         """
         Prepares the waveform generator by creating and setting a waveform with a specified baseline voltage and an impulse.
 
         This asynchronous method performs the following steps:
         1. Retrieves the voltage range from the device and calculates 10% of the total voltage stroke.
         2. Generates a constant waveform at 2000 Hz with the given baseline voltage.
-        3. Sets the value at index 1 of the waveform to the calculated stroke, creating an impulse.
-        4. Sets the generated waveform to the waveform generator using voltage units.
+        3. If no baseline voltage is provided, it retrieves the current piezo voltage.
+        4. Sets the value at index 1 of the waveform to the calculated stroke, creating an impulse.
+        5. Sets the generated waveform to the waveform generator using voltage units.
 
         Args:
             baseline_voltage (float): The baseline voltage level for the constant waveform.
         """
-        dev = self.device
-        v_range = await dev.get_voltage_range()
-        stroke = v_range[1] - v_range[0]
-        stroke *= 0.1 # 10% stroke
-    
+        baseline_voltage, impulse_voltage = await self.get_impulse_voltages(baseline_voltage)
         gen = self.waveform_generator
         waveform = gen.generate_constant_wave(freq_hz=2000, constant_level=baseline_voltage)
-        waveform.set_value_at_index(1, stroke)  # create an impulse
+        waveform.set_value_at_index(1, impulse_voltage)  # create an impulse
+        print(f"Setting waveform with baseline voltage: {baseline_voltage:.3f} V and impulse voltage: {impulse_voltage:.3f} V")
         await gen.set_waveform(waveform, unit=WaveformUnit.VOLTAGE)
 
 
-    async def measure_impulse_response(self, baseline_voltage : float) -> Tuple[np.ndarray, float, DataRecorderSource]:
+    async def get_impulse_amplitude(self) -> float:
+        """
+        Retrieves the voltage amplitude of the impulse generated for impulse response.
+
+        Returns:
+            The amplitude of the impulse in volts.
+        """
+        v_range = await self.device.get_voltage_range()
+        amplitude = v_range[1] - v_range[0]
+        amplitude *= 0.1 # 10% stroke
+        return amplitude
+
+
+    async def get_impulse_voltages(self, baseline_voltage : float | None = None) -> Tuple[float, float]:
+        """
+        Retrieves the baseline and impulse voltages for generating the impulse voltage signal.
+
+        Returns:
+            Tuple containing:
+                - The baseline voltage.
+                - The impulse peak voltage
+        """
+        rec = self.recorder
+        if baseline_voltage is None:
+            baseline_voltage = await rec.read_single_value_from(DataRecorderSource.PIEZO_VOLTAGE)
+        v_max = await self.device.get_max_voltage()
+        amplitude = await self.get_impulse_amplitude()
+        impulse_voltage = baseline_voltage + amplitude
+        if impulse_voltage > v_max:
+            impulse_voltage = v_max
+            baseline_voltage = v_max - amplitude
+        return baseline_voltage, impulse_voltage
+
+
+    async def measure_impulse_response(self, baseline_voltage : float | None = None) -> Tuple[np.ndarray, float, DataRecorderSource]:
         """
         Measures the impulse response of the system by generating a waveform and
         recording the resulting piezo position signal.

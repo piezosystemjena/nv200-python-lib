@@ -127,7 +127,7 @@ class DataRecorder:
             sample_time_us (int): The sampling time in microseconds.
             sample_factor (int): A factor used to calculate the sample time from the base sample time.
         """
-        def __init__(self, values: list, sample_time_ms: int, source: DataRecorderSource):
+        def __init__(self, values: list, sample_time_ms: float, source: DataRecorderSource):
             """
             Initialize the ChannelData instance with amplitude values, sample time, and source.
             
@@ -167,7 +167,7 @@ class DataRecorder:
             _sample_rate (int | None): The sample rate for data recording, initially set to None.
         """
         self._dev : NV200Device = device
-        self._sample_rate : int | None = None
+        self._sample_rate : float | None = None
 
 
     async def set_data_source(self, channel: int, source: DataRecorderSource):
@@ -302,6 +302,9 @@ class DataRecorder:
         Raises:
             Any exceptions raised by the underlying device communication methods.
         """
+        if channel not in (0, 1):
+            raise ValueError(f"Invalid channel: {channel}. Must be 0 or 1.")
+
         async with self._dev.lock:
             recsrc = DataRecorderSource.from_value(await self._dev.read_int_value(cmd = f"recsrc,{channel}", param_index = 1))
             number_strings = await self._dev.read_values(f'recoutf,{channel}', self.BUFFER_READ_TIMEOUT_SECS)
@@ -329,4 +332,47 @@ class DataRecorder:
         chan_data0 = await self.read_recorded_data_of_channel(0)
         chan_data1 = await self.read_recorded_data_of_channel(1)
         return [chan_data0, chan_data1]
+    
+
+    async def read_recorded_value(self, channel: int, index: int) -> float:
+        """
+        Reads a single recorded value from the specified channel at the given index.
+
+        Args:
+            channel (int): The channel number from which to read the recorded value.
+            index (int): The index of the recorded value to read.
+
+        Returns:
+            float: The recorded value at the specified index in the specified channel.
+
+        Raises:
+            Any exceptions raised by the underlying device communication methods.
+        """
+        if channel not in (0, 1):
+            raise ValueError(f"Invalid channel: {channel}. Must be 0 or 1.")
+        
+        if index < 0 or index >= self.NV200_RECORDER_BUFFER_SIZE:
+            raise ValueError(f"Invalid index: {index}. Must be in the range from 0 to {self.NV200_RECORDER_BUFFER_SIZE - 1}.")
+        
+        return await self._dev.read_float_value(cmd=f'recout,{channel},{index},1', param_index=2)
+    
+
+    async def read_single_value_from(self, source : DataRecorderSource) -> float:
+        """
+        Reads a single float value from the specified data recorder source.
+
+        You can use this method i.e. to read the current piezo voltage because this
+        functionality is not provided by the NV200 device directly.
+
+        Args:
+            source (DataRecorderSource): The data source from which to read the value.
+
+        Returns:
+            float: The recorded value from the specified source.
+        """
+        await self.set_autostart_mode(RecorderAutoStartMode.OFF)
+        await self.set_data_source(0, source)
+        await self.set_recording_duration_ms(1)
+        await self.start_recording()
+        return await self.read_recorded_value(0, 0)
     

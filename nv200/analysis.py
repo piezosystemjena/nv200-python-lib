@@ -55,20 +55,30 @@ class ResonanceAnalyzer:
         await dev.setpoint_lpf.enable(False)
 
     
-    async def _prepare_recorder(self, duration_ms : float) -> float:
+    async def _prepare_recorder(self, duration_ms : float) -> Tuple[float, DataRecorderSource]:
         """
-        Prepares and starts the data recorder for a specified duration to record the
-        impulse response of the piezo position.
+        Prepares the data recorder for recording piezo data for a specified duration.
+
+        Determines the appropriate data source based on the presence of a position sensor,
+        configures the recorder with the selected source, sets the autostart mode, and
+        recording duration, then starts the recording process.
+
+        Args:
+            duration_ms (float): The duration of the recording in milliseconds.
 
         Returns:
-            The sample frequency in Hz of the recorded data.
+            Tuple[float, DataRecorderSource]: A tuple containing the sample frequency used for recording
+            and the data source selected for recording.
         """
+        dev = self.device
         recorder = self.recorder
-        await recorder.set_data_source(0, DataRecorderSource.PIEZO_POSITION)
+        rec_source = DataRecorderSource.PIEZO_POSITION if await dev.has_position_sensor() else DataRecorderSource.PIEZO_CURRENT_1
+        print(f"Recording piezo data from source: {rec_source.name}")
+        await recorder.set_data_source(0, rec_source)
         await recorder.set_autostart_mode(RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN)
         rec_param = await recorder.set_recording_duration_ms(duration_ms)
         await recorder.start_recording()
-        return rec_param.sample_freq
+        return rec_param.sample_freq, rec_source
     
 
     async def _prepare_waveform_generator(self, baseline_voltage : float):
@@ -87,7 +97,7 @@ class ResonanceAnalyzer:
         dev = self.device
         v_range = await dev.get_voltage_range()
         stroke = v_range[1] - v_range[0]
-        stroke *= 0.1 # 10 stroke
+        stroke *= 0.1 # 10% stroke
     
         gen = self.waveform_generator
         waveform = gen.generate_constant_wave(freq_hz=2000, constant_level=baseline_voltage)
@@ -95,7 +105,7 @@ class ResonanceAnalyzer:
         await gen.set_waveform(waveform, unit=WaveformUnit.VOLTAGE)
 
 
-    async def measure_impulse_response(self, baseline_voltage : float) -> Tuple[np.ndarray, float]:
+    async def measure_impulse_response(self, baseline_voltage : float) -> Tuple[np.ndarray, float, DataRecorderSource]:
         """
         Measures the impulse response of the system by generating a waveform and
         recording the resulting piezo position signal.
@@ -104,6 +114,7 @@ class ResonanceAnalyzer:
             Tuple containing:
                 - The recorded piezo signal as a NumPy array.
                 - The sample frequency in Hz.
+                - The data source used for recording (e.g., PIEZO_POSITION or PIEZO_CURRENT_1).
         """
         dev = self.device
 
@@ -114,7 +125,7 @@ class ResonanceAnalyzer:
         # prime the system with an initial run
         gen = self.waveform_generator
         await gen.start(cycles=1, start_index=0)
-        sample_freq = await self._prepare_recorder(duration_ms=100)
+        sample_freq, rec_src = await self._prepare_recorder(duration_ms=100)
         
         # start the waveform generator again for recording the impulse response
         await gen.wait_until_finished()
@@ -126,7 +137,7 @@ class ResonanceAnalyzer:
         await dev.restore_parameters(backup)
         
         signal = detrend(np.array(rec_data.values))
-        return signal, sample_freq
+        return signal, sample_freq, rec_src
 
 
     @staticmethod
@@ -148,16 +159,20 @@ class ResonanceAnalyzer:
         """
         # Compute the FFT of the signal
         N = len(signal)
-        yf = fft(signal)
+
+        # Before we do FFT we apply a window function (in this case Hanning window) to reduce spectral leakage
+        window = np.hanning(N)
+        signal_windowed = signal * window   
+        yf = fft(signal_windowed)
         xf = fftfreq(N, 1 / sample_freq)
 
         # Only keep positive frequencies
         idx = xf > 0
         xf = xf[idx]
-        yf = np.abs(np.asarray(yf)[idx])  # Normalize the FFT magnitude
-
+        yf = 2.0 * np.abs(np.asarray(yf)[idx]) / N # Normalize the FFT magnitude
+ 
         # Find the resonance frequency as the peak in the spectrum
         peak_idx, _ = find_peaks(yf, height=np.max(yf) * 0.5) # Find peaks above 50% of max
-        res_freq = xf[peak_idx[np.argmax(yf[peak_idx])]]
-
+        res_freq = xf[peak_idx[np.argmax(yf[peak_idx])]] if peak_idx.size else 0.0
+  
         return xf, yf, float(res_freq)

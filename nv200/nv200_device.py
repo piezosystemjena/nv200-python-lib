@@ -650,6 +650,13 @@ class NV200Device(PiezoDeviceBase):
         sensor_type_value = await self.read_int_value('acmeasure')
         return PostionSensorType(sensor_type_value)
     
+    async def has_position_sensor(self) -> bool:
+        """
+        Checks if the actuator has a position sensor.
+        Returns True if the sensor type is not None, False otherwise.
+        """
+        return await self.get_actuator_sensor_type() != PostionSensorType.NONE
+    
     async def get_slew_rate(self) -> float:
         """
         Retrieves the slew rate of the device.

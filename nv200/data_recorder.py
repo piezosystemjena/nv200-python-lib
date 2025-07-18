@@ -65,13 +65,13 @@ class DataRecorderSource(Enum):
         """
         # Dictionary mapping enum names to human-readable strings
         human_readable = {
-            DataRecorderSource.PIEZO_POSITION: "Piezo Position (μm or mrad)",
-            DataRecorderSource.SETPOINT: "Setpoint (μm or mrad)",
-            DataRecorderSource.PIEZO_VOLTAGE: "Piezo Voltage (V)",
+            DataRecorderSource.PIEZO_POSITION: "Piezo Position [μm or mrad]",
+            DataRecorderSource.SETPOINT: "Setpoint [μm or mrad]",
+            DataRecorderSource.PIEZO_VOLTAGE: "Piezo Voltage [V]",
             DataRecorderSource.POSITION_ERROR: "Position Error",
             DataRecorderSource.ABS_POSITION_ERROR: "Absolute Position Error",
-            DataRecorderSource.PIEZO_CURRENT_1: "Piezo Current 1 (A)",
-            DataRecorderSource.PIEZO_CURRENT_2: "Piezo Current 2 (A)"
+            DataRecorderSource.PIEZO_CURRENT_1: "Piezo Current 1 [A]",
+            DataRecorderSource.PIEZO_CURRENT_2: "Piezo Current 2 [A]"
         }
         return human_readable.get(self, self.name)  # Fallback to enum name if not found
     

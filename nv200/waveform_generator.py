@@ -236,11 +236,14 @@ class WaveformGenerator:
 
         if value_range is not None:
             # Scale values to to percent
-            buffer = [100 * (value - value_range[0]) / (value_range[1] - value_range[0]) for value in buffer]
+            scaled_buffer = [100 * (value - value_range[0]) / (value_range[1] - value_range[0]) for value in buffer]
+        else:
+            # Use percent values directly
+            scaled_buffer = buffer
 
 
-        total = len(buffer)
-        for index, percent in enumerate(buffer):
+        total = len(scaled_buffer)
+        for index, percent in enumerate(scaled_buffer):
             await self.set_waveform_value_percent(index, percent)
             if on_progress:
                 await on_progress(index + 1, total)

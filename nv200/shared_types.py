@@ -487,6 +487,14 @@ class TimeSeries:
         if self._sample_time_ms <= 0:
             raise ValueError("Sample time must be greater than zero.")
         return 1000.0 / self._sample_time_ms
+    
+    @property
+    def total_time_ms(self) -> float:
+        """
+        Returns the total time covered by the waveform data in milliseconds.
+        This is calculated as the number of samples multiplied by the sample time.
+        """
+        return len(self._values) * self._sample_time_ms
 
     @property
     def values(self) -> list:

@@ -198,7 +198,7 @@ class PiezoDeviceBase:
             value_to_write = value
 
         # Always use %f for logging value
-        logger.debug("Writing value: %s,%f", cmd, float(value_to_write))
+        logger.debug("Writing value: %s,%s", cmd, value_to_write)
         await self.write(f"{cmd},{value_to_write}")
 
         if self.CMD_CACHE_ENABLED and cmd in self.CACHEABLE_COMMANDS:

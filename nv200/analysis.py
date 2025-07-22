@@ -81,7 +81,7 @@ class ResonanceAnalyzer:
         return rec_param.sample_freq, rec_source
     
 
-    async def _prepare_waveform_generator(self, baseline_voltage : float | None):
+    async def _prepare_waveform_generator(self, baseline_voltage : float | None) -> list[float]:
         """
         Prepares the waveform generator by creating and setting a waveform with a specified baseline voltage and an impulse.
 
@@ -94,13 +94,19 @@ class ResonanceAnalyzer:
 
         Args:
             baseline_voltage (float): The baseline voltage level for the constant waveform.
+
+        Returns:
+            list[float]: A backup of the waveform buffer before setting the new waveform.
         """
         baseline_voltage, impulse_voltage = await self.get_impulse_voltages(baseline_voltage)
-        gen = self.waveform_generator
+        gen = self.waveform_generator        
         waveform = gen.generate_constant_wave(freq_hz=2000, constant_level=baseline_voltage)
         waveform.set_value_at_index(1, impulse_voltage)  # create an impulse
         print(f"Setting waveform with baseline voltage: {baseline_voltage:.3f} V and impulse voltage: {impulse_voltage:.3f} V")
+        backup = await gen.read_waveform_buffer(0, waveform.count)
+        print(f"Waveform backup: {backup}")
         await gen.set_waveform(waveform, unit=WaveformUnit.VOLTAGE)
+        return backup
 
 
     async def get_impulse_amplitude(self) -> float:
@@ -149,13 +155,14 @@ class ResonanceAnalyzer:
                 - The data source used for recording (e.g., PIEZO_POSITION or PIEZO_CURRENT_1).
         """
         dev = self.device
+        gen = self.waveform_generator
 
+        loop_backup = await gen.get_loop_settings()
         backup = await self._backup_resonance_test_parameters()
         await self._init_resonance_test()
-        await self._prepare_waveform_generator(baseline_voltage)
+        waveform_backup = await self._prepare_waveform_generator(baseline_voltage)
 
         # prime the system with an initial run
-        gen = self.waveform_generator
         await gen.start(cycles=1, start_index=0)
         sample_freq, rec_src = await self._prepare_recorder(duration_ms=100)
         
@@ -166,7 +173,10 @@ class ResonanceAnalyzer:
         await recorder.wait_until_finished()
         rec_data = await recorder.read_recorded_data_of_channel(0)
 
+        # restore device settings and waveform buffer settings
         await dev.restore_parameters(backup)
+        await gen.set_waveform_buffer(waveform_backup)
+        await gen.configure_waveform_loop(loop_backup["start_index"], loop_backup["loop_start_index"], loop_backup["loop_end_index"])
         
         signal = detrend(np.array(rec_data.values))
         return signal, sample_freq, rec_src

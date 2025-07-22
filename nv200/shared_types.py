@@ -506,6 +506,14 @@ class TimeSeries:
         """Set the amplitude values (values)."""
         self._values = values
 
+    @property
+    def count(self) -> int:
+        """
+        Returns the number of samples in the TimeSeries.
+        This is equivalent to the length of the values list.
+        """
+        return len(self._values)
+
     def set_value_at_index(self, index: int, value: float) -> None:
         """
         Set the amplitude value at a specific index.

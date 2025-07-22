@@ -132,6 +132,14 @@ class WaveformGenerator:
         await self._dev.write(f"gsarb,{start_index}")
 
 
+    async def get_loop_start_index(self) -> int:
+        """
+        Gets the start index for the waveform generator loop.
+        The loop start index is the index where the waveform generator starts in the next cycle.
+        """
+        return await self._dev.read_int_value('gsarb')
+
+
     async def set_loop_end_index(self, end_index: int):
         """
         Sets the end index for arbitrary waveform generator output.
@@ -139,6 +147,14 @@ class WaveformGenerator:
         cycle or finishes if only one cycle is used.
         """
         await self._dev.write(f"gearb,{end_index}")
+
+    async def get_loop_end_index(self) -> int:
+        """
+        Gets the end index for arbitrary waveform generator output.
+        The loop end index is the index where the waveform generator jumps to the next
+        cycle or finishes if only one cycle is used.
+        """
+        return await self._dev.read_int_value('gearb')
 
     async def set_start_index(self, index: int):
         """
@@ -150,6 +166,14 @@ class WaveformGenerator:
         of cycles reaches the value given by set_cycles().
         """
         await self._dev.write(f"goarb,{index}")
+
+
+    async def get_start_index(self) -> int:
+        """
+        Gets the start index for arbitrary waveform generator output.
+        The start index is the index where the waveform generator starts when it is started.
+        """
+        return await self._dev.read_int_value('goarb')
 
 
     async def set_cycles(self, cycles: int = 0):
@@ -172,6 +196,21 @@ class WaveformGenerator:
         await self.set_loop_start_index(loop_start_index)
         await self.set_loop_end_index(loop_end_index)
 
+
+    async def get_loop_settings(self) -> dict:
+        """
+        Gets the current waveform loop settings.
+        Returns a dictionary with the following keys:
+        - 'start_index': The start index for the waveform generator.
+        - 'loop_start_index': The loop start index for the waveform generator.
+        - 'loop_end_index': The loop end index for the waveform generator.
+        """
+        return {
+            'start_index': await self.get_start_index(),
+            'loop_start_index': await self.get_loop_start_index(),
+            'loop_end_index': await self.get_loop_end_index()
+        }
+
     async def set_output_sampling_time(self, sampling_time: int):
         """
         Sets the output sampling time for the waveform generator.
@@ -193,7 +232,6 @@ class WaveformGenerator:
         return rounded_sampling_time
    
 
-
     async def set_waveform_value_percent(self, index : int, percent : float):
         """
         Sets the value of the waveform at the specified index in percent from 0 - 100%
@@ -205,6 +243,17 @@ class WaveformGenerator:
         if not 0 <= percent <= 100:
             raise ValueError(f"Waveform value must be in the range from 0 to 100%, got {percent}")
         await self._dev.write(f"gbarb,{index},{percent}")
+
+
+    async def get_waveform_value_percent(self, index: int) -> float:
+        """
+        Gets the value of the waveform at the specified index in percent from 0 - 100%
+        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)
+        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).
+        """
+        if not 0 <= index < self.NV200_WAVEFORM_BUFFER_SIZE:
+            raise ValueError(f"Buffer index must be in the range from 0 to {self.NV200_WAVEFORM_BUFFER_SIZE} , got {index}")
+        return await self._dev.read_float_value(f'gbarb,{index}', param_index=1)
 
 
     async def set_waveform_buffer(self, buffer: list[float], unit: WaveformUnit = WaveformUnit.PERCENT, on_progress: Optional[ProgressCallback] = None):
@@ -248,6 +297,53 @@ class WaveformGenerator:
             if on_progress:
                 await on_progress(index + 1, total)
 
+
+    async def read_waveform_buffer(
+        self,
+        start_index: int,
+        count: int,
+        unit: WaveformUnit = WaveformUnit.PERCENT,
+        on_progress: Optional[ProgressCallback] = None,
+    ) -> list[float]:
+        """
+        Asynchronously reads a sequence of waveform values from the device waveform buffer.
+
+        Args:
+            start_index (int): The starting index in the waveform buffer.
+            count (int): The number of values to read from the buffer.
+            unit (WaveformUnit): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.
+            on_progress (Optional[ProgressCallback]): Optional callback for progress updates.
+
+        Returns:
+            list[float]: A list of waveform values as percentages.
+
+        Raises:
+            ValueError: If count exceeds the buffer size or if the specified range is invalid.
+        """
+        if count > self.NV200_WAVEFORM_BUFFER_SIZE:
+            raise ValueError(f"Count exceeds buffer size: max {self.NV200_WAVEFORM_BUFFER_SIZE}, got {count}")
+        if start_index < 0 or start_index + count > self.NV200_WAVEFORM_BUFFER_SIZE:
+            raise ValueError(f"Invalid buffer range: start {start_index}, count {count}")
+        values : list[float] = []
+        for i in range(start_index, start_index + count):
+            values.append(await self.get_waveform_value_percent(i))
+            if on_progress:
+                await on_progress(i + 1, count)
+
+        value_range = None
+        if unit == WaveformUnit.POSITION:
+            value_range = await self._dev.get_position_range()
+        elif unit == WaveformUnit.VOLTAGE:
+            value_range = await self._dev.get_voltage_range()
+
+        if value_range is not None:
+            # Scale values from percent to the actual range
+            return [value_range[0] + (value / 100) * (value_range[1] - value_range[0]) for value in values]   
+        else:
+            # Use percent values directly
+            return values
+             
+             
     async def set_waveform(
         self,
         waveform: WaveformData,

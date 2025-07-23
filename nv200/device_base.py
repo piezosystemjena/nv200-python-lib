@@ -368,6 +368,7 @@ class PiezoDeviceBase:
 
         logger.debug("Reading string value for command: %s, param_index: %d", cmd, param_index)
         value = (await self.read_values(cmd))[param_index]
+        value = value.rstrip() # strip trailing whitespace - some strings like units my contain trailing spaces
         if self.CMD_CACHE_ENABLED and cmd in self.CACHEABLE_COMMANDS:
             self._cache[cmd] = value
             logger.debug("Cached value after read: %s -> %s", cmd, value)

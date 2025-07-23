@@ -1,6 +1,8 @@
 from typing import Dict, Tuple, TYPE_CHECKING
+from pathlib import Path
 import os
 import configparser
+from datetime import datetime
 from nv200.device_base import PiezoDeviceBase
 from nv200.shared_types import (
     PidLoopMode,
@@ -671,20 +673,33 @@ class NV200Device(PiezoDeviceBase):
         """
         async with self.lock:
             await self.write_value("sr", slew_rate)
-    
 
-    async def export_actuator_config(self, path : str = "", filename: str = "") -> str:
+
+    async def default_actuator_export_filename(self) -> str:
+        """
+        Return the default filename for exporting actuator configuration.
+        The filename is based on the actuator's description and serial number.
+        """
+        desc = await self.get_actuator_name()
+        acserno = await self.get_actuator_serial_number()
+        return f"actuator_conf_{desc}_{acserno}.ini"
+
+
+    async def export_actuator_config(self, path : str = "", filename: str = "", filepath : str = "") -> str:
         """
         Asynchronously exports the actuator configuration parameters to an INI file.
         This method reads a predefined set of actuator configuration parameters from the device,
         and writes them to an INI file. The file can be saved to a specified path and filename,
         or defaults will be used based on the actuator's description and serial number.
+        The complete path including all parent directories will be created if it does not exist.
 
         Args:
             path (str, optional): Directory path where the configuration file will be saved.
                 If not provided, the file will be saved in the current working directory.
             filename (str, optional): Name of the configuration file. If not provided,
                 a default name in the format 'actuator_conf_{desc}_{acserno}.ini' will be used.
+            filepath (str, optional): Full path to the configuration file. If provided,
+                this will be used instead of the path and filename arguments.
 
         Returns:
             The full path to the saved configuration file.
@@ -710,22 +725,27 @@ class NV200Device(PiezoDeviceBase):
             "cl",
             "pcf",
         ]
-        config_values: Dict[str, str] = {}
-        for key in export_keys:
-            value = await self.read_response_parameters_string(key)
-            config_values[key] = value
-
+        config_values: Dict[str, str] = await self.backup_parameters(export_keys)
         config_data: Dict[str, Dict[str, str]] = {}
         config_data['Actuator Configuration'] = config_values
+        
+        # Add export timestamp to MetaData section
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        config_data['Meta Data'] = {"export_timestamp": timestamp}
+        
         config = configparser.ConfigParser()
         config.read_dict(config_data)
-        if not filename:
-            filename = f"actuator_conf_{config_values["desc"]}_{config_values["acserno"]}.ini"
+        if filepath:
+            full_path = Path(filepath)
+        else:
+            if not filename:
+                filename = await self.default_actuator_export_filename()
+            full_path = Path(path) / filename
 
-        full_path = os.path.join(path, filename) if path else filename
-        with open(full_path, 'w') as configfile:
+        full_path.parent.mkdir(parents=True, exist_ok=True)
+        with full_path.open('w') as configfile:
             config.write(configfile)
-        return full_path
+        return str(full_path)
 
 
     async def import_actuator_config(self, filepath: str):
@@ -761,8 +781,7 @@ class NV200Device(PiezoDeviceBase):
         for key, value in config["Actuator Configuration"].items():
             if key not in import_keys:
                 continue
-            command = f"{key},{value}"
-            await self.write(command)
+            await self.write_value(key, value)
 
 
     @staticmethod

@@ -683,6 +683,32 @@ class NV200Device(PiezoDeviceBase):
         desc = await self.get_actuator_name()
         acserno = await self.get_actuator_serial_number()
         return f"actuator_conf_{desc}_{acserno}.ini"
+    
+
+    async def backup_actuator_config(self) -> Dict[str, str]:
+        """
+        Asynchronously retrieves the actuator configuration parameters from the device.
+        This method reads a predefined set of actuator configuration parameters and returns them
+        as a dictionary. The keys are the parameter names, and the values are their corresponding values.
+
+        Returns:
+            A dictionary containing the actuator configuration parameters.
+        """
+        export_keys = [
+            "sr",
+            "setlpon",
+            "setlpf",
+            "kp",
+            "kd",
+            "ki",
+            "notchf",
+            "notchb",
+            "notchon",
+            "poslpon",
+            "poslpf",
+            "pcf"
+        ]
+        return await self.backup_parameters(export_keys)
 
 
     async def export_actuator_config(self, path : str = "", filename: str = "", filepath : str = "") -> str:
@@ -707,27 +733,11 @@ class NV200Device(PiezoDeviceBase):
         Raises:
             Any exceptions raised during file writing or parameter reading will propagate.
         """
-        export_keys = [
-            "desc",
-            "acserno",
-            "sr",
-            "setlpon",
-            "setlpf",
-            "kp",
-            "kd",
-            "ki",
-            "notchf",
-            "notchb",
-            "notchon",
-            "poslpon",
-            "poslpf",
-            "modsrc",
-            "cl",
-            "pcf",
-        ]
-        config_values: Dict[str, str] = await self.backup_parameters(export_keys)
+        config_values: Dict[str, str] = await self.backup_actuator_config()
         config_data: Dict[str, Dict[str, str]] = {}
         config_data['Actuator Configuration'] = config_values
+        config_data['Actuator Configuration']['acserno'] = await self.get_actuator_serial_number()
+        config_data['Actuator Configuration']['desc'] = await self.get_actuator_name()
         
         # Add export timestamp to MetaData section
         timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -735,7 +745,7 @@ class NV200Device(PiezoDeviceBase):
         
         config = configparser.ConfigParser()
         config.read_dict(config_data)
-        if filepath:
+        if filepath:    
             full_path = Path(filepath)
         else:
             if not filename:
@@ -767,8 +777,6 @@ class NV200Device(PiezoDeviceBase):
             "notchon",
             "poslpon",
             "poslpf",
-            "modsrc",
-            "cl",
             "pcf",
         }
 

@@ -22,6 +22,7 @@ from nv200.shared_types import (
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
 from nv200.transport_protocol import TransportProtocol
+from nv200.utils import DeviceParamFile
 
 if TYPE_CHECKING:
     # For forward reference of NV200Device within inner classes
@@ -734,27 +735,17 @@ class NV200Device(PiezoDeviceBase):
             Any exceptions raised during file writing or parameter reading will propagate.
         """
         config_values: Dict[str, str] = await self.backup_actuator_config()
-        config_data: Dict[str, Dict[str, str]] = {}
-        config_data['Actuator Configuration'] = config_values
-        config_data['Actuator Configuration']['acserno'] = await self.get_actuator_serial_number()
-        config_data['Actuator Configuration']['desc'] = await self.get_actuator_name()
-        
-        # Add export timestamp to MetaData section
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-        config_data['Meta Data'] = {"export_timestamp": timestamp}
-        
-        config = configparser.ConfigParser()
-        config.read_dict(config_data)
+        config_values['acserno'] = await self.get_actuator_serial_number()
+        config_values['desc'] = await self.get_actuator_name()
+
         if filepath:    
             full_path = Path(filepath)
         else:
             if not filename:
                 filename = await self.default_actuator_export_filename()
             full_path = Path(path) / filename
-
-        full_path.parent.mkdir(parents=True, exist_ok=True)
-        with full_path.open('w') as configfile:
-            config.write(configfile)
+        file = DeviceParamFile(config_values)
+        file.write(full_path)
         return str(full_path)
 
 
@@ -780,16 +771,8 @@ class NV200Device(PiezoDeviceBase):
             "pcf",
         }
 
-        config = configparser.ConfigParser()
-        config.read(filepath)
-
-        if "Actuator Configuration" not in config:
-            raise ValueError(f"'Actuator Configuration' section not found in {filepath}")
-
-        for key, value in config["Actuator Configuration"].items():
-            if key not in import_keys:
-                continue
-            await self.write_value(key, value)
+        file = DeviceParamFile.read(Path(filepath), allowed_keys=import_keys)
+        await self.restore_parameters(file.get_parameters())
 
 
     @staticmethod

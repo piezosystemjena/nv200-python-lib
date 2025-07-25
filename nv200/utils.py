@@ -62,7 +62,7 @@ class DeviceParamFile:
             timestamp (Optional[str]): Optional export timestamp. If not provided, current time is used.
         """
         self.parameters: dict[str, str] = parameters
-        self.timestamp: str = timestamp or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.timestamp: str = timestamp or datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
     def write(self, filepath: Path) -> None:
         """
@@ -108,22 +108,3 @@ class DeviceParamFile:
         timestamp: str = config.get(cls.META_SECTION, "export_timestamp", fallback="")
 
         return cls(parameters=parameters, timestamp=timestamp)
-
-
-    def get_parameters(self) -> dict[str, str]:
-        """
-        Get the dictionary of device parameters.
-
-        Returns:
-            Dict[str, str]: The stored key-value parameters.
-        """
-        return self.parameters
-
-    def get_timestamp(self) -> str:
-        """
-        Get the export timestamp.
-
-        Returns:
-            str: The timestamp string (format: YYYY-MM-DD HH:MM:SS).
-        """
-        return self.timestamp

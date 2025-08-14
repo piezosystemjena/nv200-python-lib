@@ -471,6 +471,18 @@ class TimeSeries:
         """Returns the sample time in milliseconds."""
         return self._sample_time_ms
     
+
+    @sample_time_ms.setter
+    def sample_time_ms(self, value: float) -> None:
+        """
+        Set the sample time.
+
+        Args:
+            value (float): The new sample time in milliseconds.
+        """
+        self._sample_time_ms = value
+    
+    
     @property
     def sample_period_ms(self) -> float:
         """

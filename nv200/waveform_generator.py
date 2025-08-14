@@ -73,6 +73,13 @@ class WaveformGenerator:
         WaveformData is a NamedTuple that represents waveform data.
         """
 
+        def __init__(self, values: list = [], sample_time_ms: float = 0.05): # 50 microseconds
+            """
+            Initialize the TimeSeries instance with amplitude values and sample time.
+            """
+            super().__init__(values=values, sample_time_ms=sample_time_ms)
+
+
         @property
         def sample_factor(self):
             """

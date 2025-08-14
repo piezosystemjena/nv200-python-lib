@@ -15,24 +15,22 @@ generating a sine wave, and starting the waveform generator.
 
    import asyncio
    from nv200.nv200_device import NV200Device
-   from nv200.telnet_protocol import TelnetProtocol
-   from nv200.waveform_generator import WaveformGenerator
+   from nv200.waveform_generator import WaveformGenerator, WaveformType, WaveformUnit
+   from nv200.connection_utils import connect_to_single_device
 
    async def waveform_generator_test():
-      # Create the device client using Telnet protocol
-      transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-      device = NV200Device(transport)
-      await device.connect()
+      # Connect to first device
+      device = await connect_to_single_device(NV200Device)
 
       # Initialize the waveform generator with the NV200 device
       waveform_generator = WaveformGenerator(device)
 
       # Generate a sine wave with a frequency of 1 Hz, low level of 0, and high level of 80 µm
-      sine = waveform_generator.generate_sine_wave(freq_hz=1, low_level=0, high_level=80)
+      sine = waveform_generator.generate_waveform(WaveformType.SINE, freq_hz=1, low_level=0, high_level=80)
       print(f"Sample factor {sine.sample_factor}")
 
-      # Transfer the waveform data to the device
-      await waveform_generator.set_waveform(sine)
+      # Transfer the waveform data to the device - the waveform is given in position units
+      await waveform_generator.set_waveform(sine, WaveformUnit.POSITION)
 
       # Start the waveform generator with 1 cycle and starting index of 0
       await waveform_generator.start(cycles=1, start_index=0)
@@ -63,8 +61,8 @@ along with other necessary components such as `NV200Device` and `TelnetProtocol`
 
    import asyncio
    from nv200.nv200_device import NV200Device
-   from nv200.telnet_protocol import TelnetProtocol
-   from nv200.waveform_generator import WaveformGenerator
+   from nv200.waveform_generator import WaveformGenerator, WaveformType, WaveformUnit
+   from nv200.connection_utils import connect_to_single_device
 
 
 Step 2: Create the NV200Device
@@ -76,10 +74,8 @@ which requires the device's MAC address for connection.
 
 .. code-block:: python
 
-   # Create the device client using Telnet protocol
-    transport = TelnetProtocol(MAC="00:80:A3:79:C6:18")  
-    device = NV200Device(transport)
-    await device.connect()
+   # Connect to first device
+   device = await connect_to_single_device(NV200Device)
 
 
 Step 3: Initialize the Waveform Generator
@@ -98,16 +94,17 @@ functionality.
 Step 4: Generate the Waveform
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this example, we will generate a sine wave using the `generate_sine_wave` method of 
-the `WaveformGenerator` class. You can specify the frequency, low level (minimum value), 
-and high level (maximum value) of the sine wave. Optionally, you can also apply a 
-phase shift to the waveform.
+In this example, we will generate a sine wave using the `generate_waveform` method of 
+the `WaveformGenerator` class with the waveform type specified as `WaveformType.SINE`. 
+You can specify the frequency, low level (minimum value), and high level (maximum value) 
+of the sine wave. Optionally, you can also apply a phase shift to the waveform.
 
 .. code-block:: python
 
    # Generate a sine wave with a frequency of 1 Hz, low level of 0, and high level of 80 µm
-   sine = waveform_generator.generate_sine_wave(freq_hz=1, low_level=0, high_level=80)
+   sine = waveform_generator.generate_waveform(WaveformType.SINE, freq_hz=1, low_level=0, high_level=80)
    print(f"Sample factor {sine.sample_factor}")
+
 
 Step 5: Transfer the Waveform to the Device
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -168,6 +165,5 @@ to the device to free up resources.
 
 API Reference
 --------------
-.. automodule:: nv200.waveform_generator
-   :members:
-   :show-inheritance:
+
+You will find a detailed description of the API methods and their usage in the :ref:`API Reference <waveform_generator>`.

@@ -1,16 +1,18 @@
 PID Controller and Filters
 ===========================
 
-Overview & Block Diagram
+Overview
 ----------------------------
 
 The NV200 device supports PID control and various filters to manage the movement of the device.
-The following image shows the block diagram of the device with the PID and filter parts highlighted:
-
-.. image:: images/nv200_block_diagram.png
+The following sections describe how to configure the PID controller and the filters.
 
 PID Controller Parameters
 ---------------------------
+
+The following image shows the block diagram of the device with the PID parts highlighted:
+
+.. image:: images/nv200_block_diagram_pid.png
 
 PID Control Mode
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -111,6 +113,8 @@ voltage slew rate is limited by the amplifiers maximum output current and the ac
 
 Filters
 ---------------------------
+
+.. image:: images/nv200_block_diagram_filters.png
 
 As shown in the control block diagram, the NV200 device includes several configurable filters to improve system stability and performance:
 

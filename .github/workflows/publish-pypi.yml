@@ -1,28 +1,76 @@
+# =============================================================================
+# Workflow Name: Publish Python Package
+# =============================================================================
+# Purpose:
+# This GitHub Actions workflow automates publishing your Python package.
+# It supports publishing to both TestPyPI (for testing) and PyPI (for production).
+# The workflow ensures consistent builds using Poetry and dynamic versioning.
+# 
+# This workflow is designed to run automatically on:
+# - Pushes to the 'main' branch (TestPyPI)
+# - Pushes of tags starting with 'v' (PyPI)
+# - Manual trigger from GitHub Actions UI
+# =============================================================================
+
 name: Publish Python Package
 
+# -----------------------------------------------------------------------------
+# Workflow Triggers
+# -----------------------------------------------------------------------------
+# 'on' defines the events that start this workflow.
 on:
   push:
     branches:
-      - main
+      - main               # Trigger when code is pushed to the 'main' branch
     tags:
-      - 'v*'
-  workflow_dispatch:
+      - 'v*'               # Trigger when a tag starting with 'v' is pushed (e.g., v1.0.0)
+  workflow_dispatch:       # Allow manual triggering from GitHub Actions UI
 
+# -----------------------------------------------------------------------------
+# Jobs
+# -----------------------------------------------------------------------------
+# Jobs are sets of steps that run on virtual machines (runners).
 jobs:
+
+  # ===========================================================================
+  # Job 1: Publish to TestPyPI
+  # ===========================================================================
+  # This job uploads the package to TestPyPI (sandbox environment).
   publish-testpypi:
     name: Publish to TestPyPI
+
+    # 'if' determines when this job runs:
+    # - On push to 'main' branch
+    # - On manual workflow dispatch
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    # Define the type of virtual machine to run on
     runs-on: ubuntu-latest
+
+    # -----------------------------------------------------------------------
+    # Steps
+    # -----------------------------------------------------------------------
     steps:
+
+      # Step 1: Checkout repository
+      # ---------------------------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
+        # This action clones your GitHub repository into the runner.
+        # All subsequent steps will run in this working directory.
 
+      # Step 2: Set up Python
+      # ---------------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: '3.12'  # Install Python 3.12 for the runner
+          cache: 'pip'            # Cache pip dependencies for faster runs
 
+        # Why caching pip? It avoids reinstalling packages every workflow run, saving time.
+
+      # Step 3: Install Poetry and project dependencies
+      # ---------------------------------------------------------------------
       - name: Install Poetry and dependencies
         run: |
           pip install --upgrade pip
@@ -32,28 +80,65 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --no-root
 
+        # Explanation of commands:
+        # 1. Upgrade pip to ensure latest features.
+        # 2. Install Poetry (Python dependency and packaging manager).
+        # 3. Install the dynamic versioning plugin for automated version management.
+        # 4. Add the plugin to Poetry itself.
+        # 5. Configure Poetry to install dependencies in the system environment instead of virtualenvs.
+        # 6. Install project dependencies without installing the project itself (--no-root).
+
+      # Step 4: Publish to TestPyPI
+      # ---------------------------------------------------------------------
       - name: Publish to TestPyPI
         env:
-          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}  # Token stored securely in GitHub
+
         run: |
+          # Configure Poetry to use TestPyPI as a repository
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          
+          # Set the authentication token for TestPyPI
           poetry config pypi-token.test-pypi $TEST_PYPI_TOKEN
+          
+          # Build the package and publish to TestPyPI
           poetry publish -r test-pypi --build
 
+        # Notes:
+        # - TestPyPI is a sandbox to test package uploads without affecting the official PyPI.
+        # - The token must be stored in GitHub Secrets (TEST_PYPI_TOKEN) for security.
+
+  # ===========================================================================
+  # Job 2: Publish to PyPI
+  # ===========================================================================
+  # This job uploads the package to the official PyPI (production).
   publish-pypi:
     name: Publish to PyPI
+
+    # 'if' condition ensures the job runs only on:
+    # - Tag push (production release)
+    # - Manual workflow dispatch
     if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+
     runs-on: ubuntu-latest
+
     steps:
+
+      # Step 1: Checkout repository
+      # ---------------------------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Step 2: Set up Python
+      # ---------------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
 
+      # Step 3: Install Poetry and dependencies
+      # ---------------------------------------------------------------------
       - name: Install Poetry and dependencies
         run: |
           pip install --upgrade pip
@@ -63,11 +148,22 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --no-root
 
+      # Step 4: Publish to PyPI
+      # ---------------------------------------------------------------------
       - name: Publish to PyPI
         env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}  # Token stored in GitHub Secrets
         run: |
+          # Configure Poetry to use PyPI as a repository
           poetry config repositories.pypi https://upload.pypi.org/legacy/
+          
+          # Set the authentication token for PyPI
           poetry config pypi-token.pypi $PYPI_TOKEN
+          
+          # Build the package and publish to PyPI
           poetry publish -r pypi --build
+
+        # Notes:
+        # - PyPI is the official Python package repository (production environment).
+        # - The token must be stored securely in GitHub Secrets (PYPI_TOKEN).
 

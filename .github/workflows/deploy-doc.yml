@@ -1,51 +1,102 @@
+# =============================================================================
+# Workflow Name: Publish Documentation
+# =============================================================================
+# Purpose:
+# This workflow automatically builds your project documentation using Sphinx
+# and publishes it to GitHub Pages whenever you push to the `main` branch,
+# push a tag starting with `v` (semantic versioning), or manually trigger the workflow.
+# =============================================================================
+
 name: Publish Documentation
 
+# -----------------------------------------------------------------------------
+# Trigger Conditions
+# -----------------------------------------------------------------------------
 on:
   push:
     branches:
-      - main
+      - main               # Trigger workflow on push to 'main' branch
     tags:
-      - 'v*'
-  workflow_dispatch:
+      - 'v*'               # Trigger workflow on tags starting with 'v' (e.g., v1.0.0)
+  workflow_dispatch:       # Allow manual trigger from GitHub Actions UI
 
+# -----------------------------------------------------------------------------
+# Permissions
+# -----------------------------------------------------------------------------
 permissions:
-  contents: write
+  contents: write          # Required to publish content to the 'gh-pages' branch
 
+# -----------------------------------------------------------------------------
+# Jobs
+# -----------------------------------------------------------------------------
 jobs:
   publish:
     name: Publish documentation
+    # Run this job only if the branch is 'main' or the workflow is manually triggered
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use latest Ubuntu environment
+
+    # -------------------------------------------------------------------------
+    # Steps
+    # -------------------------------------------------------------------------
     steps:
+
+      # -----------------------------------------------------------------------
+      # Step 1: Checkout repository
+      # -----------------------------------------------------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
+        # Clones the repository into the GitHub runner
 
+      # -----------------------------------------------------------------------
+      # Step 2: Set up Python
+      # -----------------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: '3.12'  # Install Python 3.12
+          cache: 'pip'            # Cache pip packages for faster workflow runs
 
+      # -----------------------------------------------------------------------
+      # Step 3: Install Poetry and dependencies
+      # -----------------------------------------------------------------------
       - name: Install Poetry and dependencies
         run: |
+          # Upgrade pip
           pip install --upgrade pip
+          
+          # Install Poetry dependency manager
           pip install poetry
+          
+          # Install plugin for automatic versioning
           pip install "poetry-dynamic-versioning[plugin]"
           poetry self add "poetry-dynamic-versioning[plugin]"
+          
+          # Disable creating virtual environments in Poetry
           poetry config virtualenvs.create false
+          
+          # Install project dependencies (but not the package itself)
           poetry install --no-root
 
+      # -----------------------------------------------------------------------
+      # Step 4: Build Documentation
+      # -----------------------------------------------------------------------
       - name: Build documentation
         run: |
+          # Build HTML documentation with Sphinx
           poetry run sphinx-build -b html doc/ doc/_build/
+          
+          # Create .nojekyll file to prevent GitHub Pages from ignoring files starting with "_"
           touch doc/_build/.nojekyll
 
-
+      # -----------------------------------------------------------------------
+      # Step 5: Deploy to GitHub Pages
+      # -----------------------------------------------------------------------
       - name: Deploy to GitHub Pages
-        if: success()
+        if: success()  # Run this step only if previous steps succeeded
         uses: crazy-max/ghaction-github-pages@v4
         with:
-          target_branch: gh-pages
-          build_dir: doc/_build/
+          target_branch: gh-pages     # Branch to deploy documentation to
+          build_dir: doc/_build/      # Directory containing built documentation
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Token used for authentication

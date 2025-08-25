@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.5.1] - 2025-08-25
+
+### Improved
+
+- added sample time setter to `TimeSeries` class
+- added constructor to `WaveformDate` class to allow initialisation of values and sample time
+
+## [1.5.0] - 2025-07-25
+
+### Added
+
+- **Device Param File** - added `DeviceParamFile` for to encapsulate parameter export functionality
+
+### Improved
+
+- **Resonance Measurement** - analysis function now also returns unit of impulse response
+- **Impulse Response** - now backs up waveform generator settings when doing impulse measurement
+- **Time Series** - added `total_time_ms` function to `TimeSeries` class
+- **Actuator Backup** - improved backup function to also export timestamp
+
+### Fixed
+
+- **Logging** - fixed wrong formatting in logger output file
 
 ## [1.4.0] - 2025-07-15
 

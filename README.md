@@ -83,16 +83,23 @@ If you're contributing to the project or running it locally for development, the
 ### 📥 Installing poetry
 
 If necessary, install [poetry] according to the official [installation instructions](https://python-poetry.org/docs/#installation) 
-(it's recommended to use [pipx](https://github.com/pypa/pipx) to install poetry in its own isolated environment but still have it available as a system wide command).
+(it's recommended to use [pipx](https://github.com/pypa/pipx) to install poetry in its own isolated environment but still have it available as a system wide command). If you already have installed and configured poetry,
+you can skip this step.
 
 ```shell
 pip install pipx
 pipx ensurepath
-# reload your shell or start a new instance
-pipx install poetry
 ```
 
-### ⚙️ Configuring Poetry to Use an In-Project Virtual Environment (Optional)
+Now reload your shell or create a new instance and execute the following steps:
+
+```shell
+pipx install poetry
+poetry self add "poetry-dynamic-versioning[plugin]"
+poetry config virtualenvs.in-project true
+```
+
+#### Some background information about poetry config
 
 By default, Poetry creates virtual environments in `{cache-dir}/virtualenvs`
 (Windows: `%USERPROFILE%/AppData/Local/pypoetry/Cache/virtualenvs`).
@@ -124,7 +131,7 @@ Now, when we run `poetry install` in a project directory, it will create and ins
 
 #### Required dependencies
 
-To install all required dependencies and set up the project in editable mode:
+To install all required dependencies and set up the project in editable mode use:
 
 ```shell
 poetry install

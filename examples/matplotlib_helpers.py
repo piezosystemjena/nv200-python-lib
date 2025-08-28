@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 
 def prepare_plot_style():
     """
@@ -27,6 +28,19 @@ def prepare_plot_style():
     # Set tick parameters for dark grey color
     ax.tick_params(axis='x', colors='darkgray')
     ax.tick_params(axis='y', colors='darkgray')
+
+
+def prepare_axes_style(ax : Axes):
+    ax.spines['top'].set_color('darkgray')
+    ax.spines['right'].set_color('darkgray')
+    ax.spines['bottom'].set_color('darkgray')
+    ax.spines['left'].set_color('darkgray')
+
+    # Show grid and legend
+    ax.grid(True, color='darkgray', linestyle='--', linewidth=0.5)
+    ax.minorticks_on()
+    ax.grid(which='minor', color='darkgray', linestyle=':', linewidth=0.5)
+    ax.legend(facecolor='darkgray', edgecolor='darkgray', frameon=True, loc='best', fontsize=10)
 
 def show_plot():
     """

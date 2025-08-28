@@ -1,11 +1,14 @@
 import asyncio
+import matplotlib.pyplot as plt
+
 from nv200.nv200_device import NV200Device
 from nv200.waveform_generator import WaveformGenerator, WaveformUnit, WaveformType
 from nv200.shared_types import TransportType, PidLoopMode
 from nv200.connection_utils import connect_to_single_device
 from nv200.data_recorder import DataRecorder, DataRecorderSource, RecorderAutoStartMode
-import maptplotlib_helpers
-import matplotlib.pyplot as plt
+
+import matplotlib_helpers
+
 
 
 
@@ -50,11 +53,11 @@ async def waveform_generator_test():
     rec_data = await recorder.read_recorded_data()
 
     # Use matplotlib to plot the generated sine wave and the recorded data
-    maptplotlib_helpers.prepare_plot_style()
+    matplotlib_helpers.prepare_plot_style()
     plt.plot(sine.sample_times_ms, sine.values, linestyle='-', color='orange', label="Generated Sine Wave")
     plt.plot(rec_data[0].sample_times_ms, rec_data[0].values, linestyle='-', color='purple', label=rec_data[0].source)
     plt.plot(rec_data[1].sample_times_ms, rec_data[1].values, linestyle='-', color='green', label=rec_data[1].source) 
-    maptplotlib_helpers.show_plot()
+    matplotlib_helpers.show_plot()
 
     await dev.close()
 

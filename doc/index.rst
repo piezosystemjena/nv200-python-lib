@@ -19,6 +19,7 @@ both Ethernet and USB interfaces.
    pid_and_filters.rst
    data_recorder.rst
    waveform_generator.rst
+   analysis.rst
    api.rst
    examples.rst
 

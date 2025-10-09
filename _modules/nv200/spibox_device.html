@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.spibox_device &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.spibox_device</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.spibox_device</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PiezoDeviceBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.serial_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">SerialProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.transport_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocol</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="parse_hex_to_floats_percent">
+<a class="viewcode-back" href="../../api.html#nv200.spibox_device.parse_hex_to_floats_percent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_hex_to_floats_percent</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a comma-separated string of 4-character hexadecimal values into a list of floats.</span>
+<span class="sd">    </span>
+<span class="sd">    The hex values are interpreted as unsigned 16-bit integers and converted to floats.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (str): A string of comma-separated 4-character hex values (e.g., &quot;0000,FFFD,FFFD&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[float]: A list of float representations of the parsed unsigned integers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MAX_VALID_HEX</span> <span class="o">=</span> <span class="mh">0xFFFE</span>
+    <span class="n">hex_values</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">percents</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">hex_val</span> <span class="ow">in</span> <span class="n">hex_values</span><span class="p">:</span>
+        <span class="n">int_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hex_val</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">int_val</span> <span class="o">&gt;</span> <span class="n">MAX_VALID_HEX</span><span class="p">:</span>
+            <span class="n">int_val</span> <span class="o">=</span> <span class="n">MAX_VALID_HEX</span>  <span class="c1"># Clip to max valid value</span>
+        <span class="n">percent</span> <span class="o">=</span> <span class="p">(</span><span class="n">int_val</span> <span class="o">/</span> <span class="n">MAX_VALID_HEX</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+        <span class="n">percents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">percents</span></div>
+
+
+
+<div class="viewcode-block" id="percent_to_hex">
+<a class="viewcode-back" href="../../api.html#nv200.spibox_device.percent_to_hex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">percent_to_hex</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a percentage value (0.0 to 100.0) to a 4-digit hexadecimal string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Clip value to range [0.0, 100.0]</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">))</span>
+    <span class="c1"># Scale to [0x0000, 0xFFFE]</span>
+    <span class="n">int_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">*</span> <span class="mh">0xFFFE</span><span class="p">))</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">int_val</span><span class="si">:</span><span class="s2">04x</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+
+<div class="viewcode-block" id="SpiBoxDevice">
+<a class="viewcode-back" href="../../api.html#nv200.spibox_device.SpiBoxDevice">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpiBoxDevice</span><span class="p">(</span><span class="n">PiezoDeviceBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A high-level asynchronous client for communicating with NV200 piezo controllers.</span>
+<span class="sd">    This class extends the `PiezoDeviceBase` base class and provides high-level methods</span>
+<span class="sd">    for setting and getting various device parameters, such as PID mode, setpoint,</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEVICE_ID</span> <span class="o">=</span> <span class="s2">&quot;SPI Controller Box&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__is_connected_via_usb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the device is connected via USB.</span>
+<span class="sd">        This method is a placeholder and should be implemented based on actual connection checks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="p">,</span> <span class="n">SerialProtocol</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_data_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the command to get data based on the connection type.</span>
+<span class="sd">        This method is a placeholder and should be implemented based on actual connection checks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;usbdata&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__is_connected_via_usb</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;ethdata&quot;</span>
+    
+<div class="viewcode-block" id="SpiBoxDevice.connect">
+<a class="viewcode-back" href="../../api.html#nv200.spibox_device.SpiBoxDevice.connect">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Establishes a connection using the transport layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport_protocol</span><span class="o">.</span><span class="n">rx_delimiter</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">LF</span>
+        <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">auto_adjust_comm_params</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SpiBoxDevice.set_setpoints_percent">
+<a class="viewcode-back" href="../../api.html#nv200.spibox_device.SpiBoxDevice.set_setpoints_percent">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_setpoints_percent</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ch1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">ch2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">ch3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set device setpoints as percentages (0.0 to 100.0) for 3 channels.</span>
+
+<span class="sd">        Converts percent values to 16-bit hex strings and sends them as a formatted command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_data_cmd</span><span class="p">()</span>
+        <span class="n">hex1</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch1</span><span class="p">)</span>
+        <span class="n">hex2</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch2</span><span class="p">)</span>
+        <span class="n">hex3</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch3</span><span class="p">)</span>
+
+        <span class="n">full_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex1</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex2</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex3</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sending command: </span><span class="si">{</span><span class="n">full_cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="p">:</span> <span class="nb">str</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_response_string</span><span class="p">(</span><span class="n">full_cmd</span><span class="p">)</span>
+
+        <span class="c1"># This is a workaround to ensure the command is processed correctly and we get the</span>
+        <span class="c1"># expected response - normally sending 4 times ensures, that wie get the correct SPI</span>
+        <span class="c1"># response</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Allow some time for the device to process the command</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">read_stripped_response_string</span><span class="p">(</span><span class="n">full_cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parse_hex_to_floats_percent</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.set_waveforms">
+<a class="viewcode-back" href="../../api.html#nv200.spibox_device.SpiBoxDevice.set_waveforms">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveforms</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ch1</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">ch2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">ch3</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set waveforms for the device channels.</span>
+<span class="sd">        </span>
+<span class="sd">        Each channel can be set to a waveform represented as a numpy array of floats.</span>
+<span class="sd">        The values are expected to be in the range [0.0, 100.0].</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            ch1 (Optional[np.ndarray]): Waveform for channel 1.</span>
+<span class="sd">            ch2 (Optional[np.ndarray]): Waveform for channel 2.</span>
+<span class="sd">            ch3 (Optional[np.ndarray]): Waveform for channel 3.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Response from the device after setting the waveforms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Determine number of samples from available channel or default to 0</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ch1</span><span class="p">,</span> <span class="n">ch2</span><span class="p">,</span> <span class="n">ch3</span><span class="p">)</span> <span class="k">if</span> <span class="n">ch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lengths</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one channel must be provided.&quot;</span><span class="p">)</span>
+        <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+
+        <span class="c1"># Helper to get hex or fill with 0000</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">channel_value</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch</span><span class="p">):</span>
+                <span class="k">return</span> <span class="s2">&quot;0000&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            
+        <span class="n">triplets</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">channel_value</span><span class="p">(</span><span class="n">ch1</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">channel_value</span><span class="p">(</span><span class="n">ch2</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">channel_value</span><span class="p">(</span><span class="n">ch3</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">tp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport_protocol</span>
+        <span class="c1">#await tp.flush_input()</span>
+        <span class="k">await</span> <span class="n">tp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;totalsamplex,</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ch1</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">ch1</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">}</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">tp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;totalsampley,</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ch2</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">ch2</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">}</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">tp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;totalsamplez,</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ch3</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">ch3</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">}</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+     
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_data_cmd</span><span class="p">()</span>
+        <span class="n">full_cmd</span> <span class="o">=</span> <span class="n">cmd</span>  <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">triplets</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">read_stripped_response_string</span><span class="p">(</span><span class="n">full_cmd</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        
+        <span class="c1"># Split by commas</span>
+        <span class="n">hex_values</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_values</span><span class="p">)</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Response length is not a multiple of 3.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Number of samples</span>
+        <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_values</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span>
+
+        <span class="c1"># Convert hex strings to floats</span>
+        <span class="n">floats</span> <span class="o">=</span> <span class="p">[</span><span class="n">parse_hex_to_floats_percent</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hex_values</span><span class="p">]</span>
+
+        <span class="c1"># Split floats into channels</span>
+        <span class="n">ch1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">floats</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">ch2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">floats</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">ch3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">floats</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">ch1</span><span class="p">,</span> <span class="n">ch2</span><span class="p">,</span> <span class="n">ch3</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, piezosystem Jena.
+      <span class="lastupdated">Last updated on Oct 09, 2025 12:09.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

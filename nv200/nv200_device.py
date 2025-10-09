@@ -409,7 +409,9 @@ class NV200Device(PiezoDeviceBase):
             pcf_x = position if position is not None else current.position
             pcf_v = velocity if velocity is not None else current.velocity
             # Scale acceleration before sending command
-            pcf_a = int(acceleration * 1_000_000) if acceleration is not None else int(current.acceleration * 1_000_000)
+            # Do not scale acceleration in UI!!! This is to be done on firmware level
+            # pcf_a = int(acceleration * 1_000_000) if acceleration is not None else int(current.acceleration * 1_000_000)
+            pcf_a = acceleration if acceleration is not None else current.acceleration
 
             # Compose the command string (assuming a single write command)
             command_value = f"{pcf_x},{pcf_v},{pcf_a}"
@@ -428,7 +430,8 @@ class NV200Device(PiezoDeviceBase):
             pcf_x_str, pcf_v_str, pcf_a_str = raw.split(",")
             pcf_x = float(pcf_x_str)
             pcf_v = float(pcf_v_str)
-            pcf_a = float(pcf_a_str) / 1_000_000  # scale back
+            # pcf_a = float(pcf_a_str) / 1_000_000  # scale back
+            pcf_a = float(pcf_a_str) # Do not scale acceleration in UI!!! This is to be done on firmware level
 
             return PCFGains(position=pcf_x, velocity=pcf_v, acceleration=pcf_a)
         

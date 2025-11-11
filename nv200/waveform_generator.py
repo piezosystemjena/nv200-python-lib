@@ -85,7 +85,7 @@ class WaveformGenerator:
             """
             Returns the sample factor used to calculate the sample time from the base sample time.
             """
-            return (self.sample_time_ms * 1000) // WaveformGenerator.NV200_BASE_SAMPLE_TIME_US
+            return math.ceil((self.sample_time_ms * 1000) / WaveformGenerator.NV200_BASE_SAMPLE_TIME_US)
         
         @property
         def cycle_time_ms(self):
@@ -510,12 +510,12 @@ class WaveformGenerator:
             freq_hz (float): The frequency of the sine wave in Hertz (Hz).
             low_level (float): The minimum value (low level) of the sine wave.
             high_level (float): The maximum value (high level) of the sine wave.
+            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.
 
         Returns:
             WaveformData: An object containing the generated sine wave data, including:
                 - x_time (List[float]): A list of time points in ms corresponding to the sine wave samples.
                 - y_values (List[float]): A list of amplitude values for the sine wave at each time point.
-                - sample_time_us (float): The time interval between samples in microseconds (µs).
 
         Notes:
             - The method calculates an optimal sample time based on the desired frequency and the
@@ -523,8 +523,8 @@ class WaveformGenerator:
             - The buffer size is adjusted to ensure the generated waveform fits within one period
               of the sine wave.
             - The sine wave is scaled and offset to match the specified low and high levels.
-        """                                                                                 
-        times_ms = cls.generate_time_samples_list(freq_hz)
+        """
+        times_ms = cls.generate_time_samples_array(freq_hz)
 
         amplitude = (high_level - low_level) / 2.0
         offset = (high_level + low_level) / 2.0
@@ -598,7 +598,7 @@ class WaveformGenerator:
         low_level: float,
         high_level: float,
         phase_shift_rad: float = 0.0,
-        duty_cycle: float = 0.5,
+        duty_cycle: float = 0.5
     ) -> WaveformData:
         """
         Generates a square wave (or PWM waveform) using NumPy for efficient computation.

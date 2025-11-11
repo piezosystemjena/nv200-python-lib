@@ -113,7 +113,12 @@ class SpiBoxDevice(PiezoDeviceBase):
             List[float]: A list containing the setpoints for each channel as percentages.
         """
         cmd = self.__get_data_cmd()
-        command, parameters = await self.write(cmd)
+        parameters = []
+
+        # Read the setpoints 3 times to ensure we get the correct SPI response
+        for i in range(3):
+            command, parameters = await self.write(cmd)
+
         return self.__parse_hex_set(parameters)
 
     async def set_setpoints_percent(
@@ -140,16 +145,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         full_cmd = f"{cmd},{hex1},{hex2},{hex3}"
         await self.write(full_cmd)
 
-        positions = []
-
-        # This is a workaround to ensure the command is processed correctly and we get the
-        # expected response - normally sending 3 times ensures, that we get the correct SPI
-        # response
-        for i in range(2):
-            positions = await self.get_setpoints_percent()
-            await asyncio.sleep(0.1)
-
-        return positions
+        return await self.get_setpoints_percent()
     
     async def set_waveform_cycles(
         self,
@@ -200,7 +196,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         lengths = [len(ch) if ch is not None else 0 for ch in (ch1, ch2, ch3)]
 
         await self.write(f'wfscount,{lengths[0]},{lengths[1]},{lengths[2]}')
-        await self.set_waveform_samples(
+        await self.__set_waveform_samples(
             ch1 if ch1 is not None else np.array([]),
             ch2 if ch2 is not None else np.array([]),
             ch3 if ch3 is not None else np.array([]),
@@ -219,7 +215,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         """
         await self.write('wfrun,0')
     
-    async def set_waveform_samples(
+    async def __set_waveform_samples(
         self,
         ch1: np.ndarray,
         ch2: np.ndarray,
@@ -326,12 +322,18 @@ class SpiBoxDevice(PiezoDeviceBase):
             if sample_count >= max_samples:
                 break
 
-        return [
-            WaveformGenerator.WaveformData(
-                values = response[0],
-                sample_time_ms = step_size * WaveformGenerator.NV200_BASE_SAMPLE_TIME_US / 1000
+        waveforms = []
+
+        for i in range(3):
+            waveforms.append(
+                WaveformGenerator.WaveformData(
+                    values = response[i],
+                    sample_time_ms = step_size * WaveformGenerator.NV200_BASE_SAMPLE_TIME_US / 1000
+                )
             )
-        ]
+
+        return waveforms
+
     
     async def get_response_samples_count(self) -> int:
         """

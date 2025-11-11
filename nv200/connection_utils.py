@@ -33,6 +33,7 @@ async def connect_to_single_device(device_class: Type[PiezoDeviceType], transpor
     If both transport type and interface_or_address are specified, it will attempt to connect directly to the specified device.
 
     Args:
+        device_class (Type[PiezoDeviceType]): The class of the device to connect to (e.g., NV200Device).
         transport_type (TransportType, optional): The type of transport to use (e.g., Serial, Telnet).
             If not specified, it will attempt to connect using serial transport first, then Telnet.
 

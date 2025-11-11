@@ -1,4 +1,6 @@
 import asyncio
+import math
+
 from typing import Optional, List
 from nv200.device_base import PiezoDeviceBase
 from nv200.serial_protocol import SerialProtocol
@@ -303,7 +305,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         
         sample_count = 0
 
-        max_samples = min(max_samples, available_sample_count) if max_samples is not None else available_sample_count
+        max_samples = min(max_samples, math.ceil(available_sample_count / step_size)) if max_samples is not None else available_sample_count
 
         # Start from 2 because of delayed spi data
         for i in range(2, available_sample_count, step_size):
@@ -313,10 +315,10 @@ class SpiBoxDevice(PiezoDeviceBase):
             response[1].append(values[1])
             response[2].append(values[2])
 
+            sample_count += 1
+
             if on_progress:
                 on_progress(sample_count, max_samples)
-
-            sample_count += 1
 
             # Respect max samples limit if provided
             if sample_count >= max_samples:

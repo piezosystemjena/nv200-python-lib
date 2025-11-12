@@ -100,7 +100,8 @@ class WaveformGenerator:
         Initializes the WaveformGenerator instance with the specified device client.
 
         Args:
-            device (DeviceClient): The device client used for communication with the hardware.
+            device (DeviceClient): The device client used for communication with the hardware. 
+                                   Pass None to disable communication (e.g. for SPI Box devices).
         """
         self._dev = device
         self._waveform : WaveformGenerator.WaveformData = None

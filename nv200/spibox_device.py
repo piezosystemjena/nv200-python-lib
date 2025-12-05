@@ -1,6 +1,4 @@
 import asyncio
-import math
-
 from typing import Optional, List
 from nv200.device_base import PiezoDeviceBase
 from nv200.serial_protocol import SerialProtocol
@@ -198,7 +196,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         lengths = [len(ch) if ch is not None else 0 for ch in (ch1, ch2, ch3)]
 
         await self.write(f'wfscount,{lengths[0]},{lengths[1]},{lengths[2]}')
-        await self.__set_waveform_samples(
+        await self.set_waveform_samples(
             ch1 if ch1 is not None else np.array([]),
             ch2 if ch2 is not None else np.array([]),
             ch3 if ch3 is not None else np.array([]),
@@ -217,7 +215,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         """
         await self.write('wfrun,0')
     
-    async def __set_waveform_samples(
+    async def set_waveform_samples(
         self,
         ch1: np.ndarray,
         ch2: np.ndarray,
@@ -305,7 +303,7 @@ class SpiBoxDevice(PiezoDeviceBase):
         
         sample_count = 0
 
-        max_samples = min(max_samples, math.ceil(available_sample_count / step_size)) if max_samples is not None else available_sample_count
+        max_samples = min(max_samples, available_sample_count) if max_samples is not None else available_sample_count
 
         # Start from 2 because of delayed spi data
         for i in range(2, available_sample_count, step_size):
@@ -315,27 +313,29 @@ class SpiBoxDevice(PiezoDeviceBase):
             response[1].append(values[1])
             response[2].append(values[2])
 
-            sample_count += 1
-
             if on_progress:
                 on_progress(sample_count, max_samples)
+
+            sample_count += 1
 
             # Respect max samples limit if provided
             if sample_count >= max_samples:
                 break
 
-        waveforms = []
-
-        for i in range(3):
-            waveforms.append(
-                WaveformGenerator.WaveformData(
-                    values = response[i],
-                    sample_time_ms = step_size * WaveformGenerator.NV200_BASE_SAMPLE_TIME_US / 1000
-                )
+        return [
+            WaveformGenerator.WaveformData(
+                values = response[0],
+                sample_time_ms = step_size * WaveformGenerator.NV200_BASE_SAMPLE_TIME_US / 1000
+            ),
+            WaveformGenerator.WaveformData(
+                values = response[1],
+                sample_time_ms = step_size * WaveformGenerator.NV200_BASE_SAMPLE_TIME_US / 1000
+            ),
+            WaveformGenerator.WaveformData(
+                values = response[2],
+                sample_time_ms = step_size * WaveformGenerator.NV200_BASE_SAMPLE_TIME_US / 1000
             )
-
-        return waveforms
-
+        ]
     
     async def get_response_samples_count(self) -> int:
         """

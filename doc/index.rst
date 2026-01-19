@@ -18,6 +18,7 @@ both Ethernet and USB interfaces.
    getting_started.rst
    pid_and_filters.rst
    data_recorder.rst
+   trigger_io.rst
    waveform_generator.rst
    analysis.rst
    spi_box.rst

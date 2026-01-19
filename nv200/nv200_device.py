@@ -17,7 +17,10 @@ from nv200.shared_types import (
     PCFGains,
     CtrlMode,
     ValueRange,
-    PostionSensorType
+    PostionSensorType,
+    TriggerInFunction,
+    TriggerOutEdge,
+    TriggerOutSource
 )
 from nv200.telnet_protocol import TelnetProtocol
 from nv200.serial_protocol import SerialProtocol
@@ -493,6 +496,84 @@ class NV200Device(PiezoDeviceBase):
     async def get_setpoint(self) -> float:
         """Retrieves the current setpoint of the device."""
         return await self.read_float_value('set')
+    
+    async def set_trigger_function(self, function: TriggerInFunction):
+        """Sets the trigger input function."""
+        await self.write_value("trgfkt", function.value)
+
+    async def get_trigger_function(self) -> TriggerInFunction:
+        """Retrieves the current trigger input function."""
+        return TriggerInFunction(await self.read_int_value('trgfkt'))
+    
+    async def set_trigger_output_edge(self, edge: TriggerOutEdge):
+        """Sets the trigger output edge mode."""
+        await self.write_value("trgedg", edge.value)
+
+    async def get_trigger_output_edge(self) -> TriggerOutEdge:
+        """Retrieves the current trigger output edge mode."""
+        return TriggerOutEdge(await self.read_int_value('trgedg'))
+    
+    async def set_trigger_output_source(self, source: TriggerOutSource):
+        """Sets the trigger output source."""
+        await self.write_value("trgsrc", source.value)
+
+    async def get_trigger_output_source(self) -> TriggerOutSource:
+        """Retrieves the current trigger output source."""
+        return TriggerOutSource(await self.read_int_value('trgsrc'))
+    
+    async def set_trigger_start_position(self, position: float):
+        """Sets the trigger start position."""
+        movement_range = await self.get_position_range()
+
+        if not (movement_range[0] + 0.001 <= position <= movement_range[1] - 0.001):
+            raise ValueError(
+                f"Trigger start position must be within the movement range "
+                f"({movement_range[0] + 0.001} to {movement_range[1] - 0.001})."
+            )
+
+        await self.write_value("trgss", position)
+
+    async def get_trigger_start_position(self) -> float:
+        """Retrieves the current trigger start position."""
+        return await self.read_float_value('trgss')
+    
+    async def set_trigger_stop_position(self, position: float):
+        """Sets the trigger stop position."""
+        movement_range = await self.get_position_range()
+
+        if not (movement_range[0] + 0.001 <= position <= movement_range[1] - 0.001):
+            raise ValueError(
+                f"Trigger stop position must be within the movement range "
+                f"({movement_range[0] + 0.001} to {movement_range[1] - 0.001})."
+            )
+
+        await self.write_value("trgse", position)
+
+    async def get_trigger_stop_position(self) -> float:
+        """Retrieves the current trigger stop position."""
+        return await self.read_float_value('trgse')
+    
+    async def set_trigger_step_size(self, step_size: float):
+        """Sets the trigger step size."""
+        if step_size <= 0:
+            raise ValueError("Trigger step size must be a positive value.")
+
+        await self.write_value("trgsi", step_size)
+
+    async def get_trigger_step_size(self) -> float:
+        """Retrieves the current trigger step size."""
+        return await self.read_float_value('trgsi')
+    
+    async def set_trigger_pulse_length(self, length: int):
+        """Sets the trigger pulse length in samples."""
+        if not (0 <= length <= 255):
+            raise ValueError("Trigger pulse length must be between 0 and 255 samples.")
+
+        await self.write_value("trglen", length)
+
+    async def get_trigger_pulse_length(self) -> int:
+        """Retrieves the current trigger pulse length in samples."""
+        return await self.read_int_value('trglen')
     
     async def move_to_position(self, position: float):
         """Moves the device to the specified position in closed loop"""

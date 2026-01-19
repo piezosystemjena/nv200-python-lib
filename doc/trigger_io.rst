@@ -22,7 +22,7 @@ according to your device's movement range.
    async def trigger_io_example():
       device = await connect_to_single_device(NV200Device, TransportType.SERIAL)
 
-      # Trigger In: start the data recorder when an external trigger arrives
+      # Trigger In: start the waveform generator when an external trigger arrives
       await device.set_trigger_function(TriggerInFunction.WAVEFORM_START)
 
       # Trigger Out: pulse when setpoint crosses the configured steps

@@ -27,7 +27,7 @@ async def trigger_io_example():
         step_size = max(0.001, (stop_pos - start_pos) / 2.0)
 
     # Configure Trigger In (e.g., external trigger starts data recorder)
-    await dev.set_trigger_function(TriggerInFunction.DATARECORDER_START)
+    await dev.set_trigger_function(TriggerInFunction.WAVEFORM_START)
 
     # Configure Trigger Out (pulse when setpoint crosses configured steps)
     await dev.set_trigger_output_source(TriggerOutSource.SETPOINT)

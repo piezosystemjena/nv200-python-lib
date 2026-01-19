@@ -8,7 +8,7 @@ based on a selected signal source (position or setpoint) and user-defined thresh
 
 The following example demonstrates how to configure Trigger In and Trigger Out on an
 :class:`NV200Device <nv200.nv200_device.NV200Device>`. It sets up an external trigger to
-start the data recorder and configures Trigger Out pulses based on the setpoint.
+start the waveform generator and configures Trigger Out pulses based on the setpoint.
 When using this example, ensure that you set the start/stop positions and step size
 according to your device's movement range.
 
@@ -23,7 +23,7 @@ according to your device's movement range.
       device = await connect_to_single_device(NV200Device, TransportType.SERIAL)
 
       # Trigger In: start the data recorder when an external trigger arrives
-      await device.set_trigger_function(TriggerInFunction.DATARECORDER_START)
+      await device.set_trigger_function(TriggerInFunction.WAVEFORM_START)
 
       # Trigger Out: pulse when setpoint crosses the configured steps
       await device.set_trigger_output_source(TriggerOutSource.SETPOINT)
@@ -75,7 +75,7 @@ The available functions are defined in :class:`TriggerInFunction <nv200.shared_t
 
 .. code-block:: python
 
-   await device.set_trigger_function(TriggerInFunction.DATARECORDER_START)
+   await device.set_trigger_function(TriggerInFunction.WAVEFORM_START)
 
 
 Step 4: Configure Trigger Out

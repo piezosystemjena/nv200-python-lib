@@ -44,7 +44,7 @@ async def trigger_io_example():
     print(f"  Start position: {await dev.get_trigger_start_position():.4f}")
     print(f"  Stop position: {await dev.get_trigger_stop_position():.4f}")
     print(f"  Step size: {await dev.get_trigger_step_size():.4f}")
-    print(f"  Pulse length: {await dev.get_trigger_pulse_length()} ms")
+    print(f"  Pulse length: {await dev.get_trigger_pulse_length()}")
 
     # Move the actuator to generate trigger events on the output
     await dev.move_to_position(start_pos)

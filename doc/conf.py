@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 project = 'NV200 Python Library'
-copyright = '2025, piezosystem Jena'
+copyright = '2026, piezosystem Jena'
 author = 'piezosystem Jena'
 release = '1.0.0'
 html_show_copyright = True

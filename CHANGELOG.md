@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.  
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] - 2026-01-19
+### Added
+- **Trigger IO** - added API methods for the NV200 trigger input and output feature
+
+## [1.5.3] - 2025-12-05
+
+### Added
+- **SPI Controller Box** - added an API integrating full SPI Box functionality
+
+## [1.5.2] - 2025-10-09
+### Improved
+- Remove scaling of pcf_a for user transparency
+
 ## [1.5.1] - 2025-08-25
 
 ### Improved

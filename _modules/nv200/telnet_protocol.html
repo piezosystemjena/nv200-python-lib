@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.telnet_protocol &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.telnet_protocol</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.telnet_protocol</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">telnetlib3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.transport_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocol</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nv200.lantronix_xport</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetworkEndpoint</span><span class="p">,</span> <span class="n">DetectedDevice</span><span class="p">,</span> <span class="n">TransportType</span><span class="p">,</span> <span class="n">DiscoverFlags</span><span class="p">,</span> <span class="n">TransportProtocolInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PiezoDeviceBase</span>
+
+<span class="c1"># Global module locker</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TelnetProtocol">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TelnetProtocol</span><span class="p">(</span><span class="n">TransportProtocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TelnetTransport is a class that implements a transport protocol for communicating</span>
+<span class="sd">    with piezosystem devices over Telnet. It provides methods to establish a connection,</span>
+<span class="sd">    send commands, read responses, and close the connection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TelnetProtocol.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">MAC</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the transport protocol.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            host (str, optional): The hostname or IP address of the NV200 device. Defaults to None.</span>
+<span class="sd">            port (int, optional): The port number to connect to. Defaults to 23.</span>
+<span class="sd">            MAC (str, optional): The MAC address of the NV200 device. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__host</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MAC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__reader</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">__connect_telnetlib</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect to telnetlib3 library</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+            <span class="n">telnetlib3</span><span class="o">.</span><span class="n">open_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__port</span><span class="p">),</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">)</span>        
+
+
+<div class="viewcode-block" id="TelnetProtocol.is_xon_xoff_forwared_to_host">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.is_xon_xoff_forwared_to_host">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_xon_xoff_forwared_to_host</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if XON/XOFF flow control is forwarded to the host.</span>
+
+<span class="sd">        This method sends a command to the device and checks the response to determine</span>
+<span class="sd">        if XON/XOFF flow control is enabled. The detection is based on whether the</span>
+<span class="sd">        response starts with the byte sequence &quot;XON/XOFF&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if XON/XOFF flow control is forwarded to the host, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">__reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x13</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TelnetProtocol.configure_flow_control_mode">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.configure_flow_control_mode">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">configure_flow_control_mode</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configures the flow control mode for the device to pass XON/XOFF characters to host</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">xport</span><span class="o">.</span><span class="n">configure_flow_control</span><span class="p">(</span><span class="n">host</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TelnetProtocol.connect">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.connect">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">device</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;PiezoDeviceBase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Establishes a connection to a Lantronix device.</span>
+
+<span class="sd">        This asynchronous method attempts to connect to a Lantronix device using</span>
+<span class="sd">        either the provided MAC address or by discovering devices on the network.</span>
+
+<span class="sd">        - If self.host is None and self.MAC is provided, it discovers the</span>
+<span class="sd">          device&#39;s IP address using the MAC address.</span>
+<span class="sd">        - If both self.host and self.MAC are None, it discovers all available</span>
+<span class="sd">          Lantronix devices on the network and selects the first one.</span>
+
+<span class="sd">        Once the device&#39;s IP address is determined, it establishes a Telnet</span>
+<span class="sd">        connection to the device using the specified host and port.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If no devices are found during discovery.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__host</span> <span class="o">=</span> <span class="k">await</span> <span class="n">xport</span><span class="o">.</span><span class="n">discover_lantronix_device_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device with MAC address </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span><span class="p">:</span>
+            <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">xport</span><span class="o">.</span><span class="n">discover_lantronix_devices_async</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No devices found&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__host</span> <span class="o">=</span> <span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ip</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span> <span class="o">=</span> <span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mac</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># ensure that flow control XON and XOFF chars are forwarded to host</span>
+            <span class="k">if</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Adjusting communication parameters for device </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">)</span>
+                <span class="k">await</span> <span class="n">TelnetProtocol</span><span class="o">.</span><span class="n">configure_flow_control_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Communication parameters adjusted for device </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connecting to device </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">__connect_telnetlib</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connected to device </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device with host address </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
+
+
+<div class="viewcode-block" id="TelnetProtocol.flush_input">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.flush_input">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">flush_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Discard all available input within a short timeout window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">break</span>
+        <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># expected when no more data arrives within timeout       </span></div>
+
+
+
+<div class="viewcode-block" id="TelnetProtocol.write">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.write">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">flush_input</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TelnetProtocol.read_until">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.read_until">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">XON</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__reader</span><span class="o">.</span><span class="n">readuntil</span><span class="p">(</span><span class="n">expected</span><span class="p">),</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;latin1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x11\x13</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># strip XON and XOFF characters</span></div>
+
+        
+
+<div class="viewcode-block" id="TelnetProtocol.close">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.close">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__writer</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__reader</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">host</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the host address.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__host</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MAC</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the MAC address.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span>
+    
+<div class="viewcode-block" id="TelnetProtocol.discover_devices">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.discover_devices">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">discover_devices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="n">DiscoverFlags</span><span class="p">)</span>  <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedDevice</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously discovers all devices connected via ethernet interface</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of dictionaries containing device information (IP and MAC addresses).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">network_endpoints</span> <span class="o">=</span> <span class="k">await</span> <span class="n">xport</span><span class="o">.</span><span class="n">discover_lantronix_devices_async</span><span class="p">()</span>
+    
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">detect_on_endpoint</span><span class="p">(</span><span class="n">network_endpoint</span><span class="p">:</span> <span class="n">NetworkEndpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectedDevice</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connecting to network endpoint: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">network_endpoint</span><span class="p">)</span>
+            <span class="n">protocol</span> <span class="o">=</span> <span class="n">TelnetProtocol</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">network_endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">detected_device</span> <span class="o">=</span> <span class="n">DetectedDevice</span><span class="p">(</span>
+                    <span class="n">transport</span><span class="o">=</span><span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">,</span>
+                    <span class="n">identifier</span><span class="o">=</span><span class="n">network_endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span>
+                    <span class="n">mac</span><span class="o">=</span><span class="n">network_endpoint</span><span class="o">.</span><span class="n">mac</span>
+                <span class="p">)</span>
+                    
+                <span class="k">return</span> <span class="n">detected_device</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># We do ignore the exception - if it is not possible to connect to the device, we just return None</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error for network endpoint </span><span class="si">{</span><span class="n">network_endpoint</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">protocol</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Run all detections concurrently</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">detect_on_endpoint</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span> <span class="k">for</span> <span class="n">endpoint</span> <span class="ow">in</span> <span class="n">network_endpoints</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
+
+        <span class="c1"># Filter out Nones</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dev</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">dev</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="TelnetProtocol.get_info">
+<a class="viewcode-back" href="../../api.html#nv200.telnet_protocol.TelnetProtocol.get_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransportProtocolInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns metadata about the transport protocol, such as type and identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TransportProtocolInfo</span><span class="p">(</span>
+            <span class="n">transport</span><span class="o">=</span><span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__host</span><span class="p">,</span>
+            <span class="n">mac</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__MAC</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

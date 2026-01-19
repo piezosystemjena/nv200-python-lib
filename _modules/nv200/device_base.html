@@ -1,0 +1,756 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.device_base &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.device_base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.device_base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides classes and enumerations for communicating with and interpreting responses from NV200 devices.</span>
+
+<span class="sd">This module includes an asynchronous client for issuing commands and parsing responses</span>
+<span class="sd">from NV200 devices over supported transport protocols (e.g., serial, Telnet).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.transport_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200._internal._reentrant_lock</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReentrantAsyncLock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ErrorCode</span><span class="p">,</span>
+    <span class="n">DeviceError</span><span class="p">,</span>
+    <span class="n">DetectedDevice</span><span class="p">,</span>
+    <span class="n">DeviceInfo</span>
+<span class="p">)</span>
+
+<span class="c1"># Global module locker</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PiezoDeviceBase">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PiezoDeviceBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic piezosystem device base class.</span>
+
+<span class="sd">    PiezoDeviceBase provides an asynchronous interface for communicating with a piezoelectric device</span>
+<span class="sd">    over various transport protocols (such as serial or telnet). It encapsulates low-level device commands,</span>
+<span class="sd">    response parsing, synchronization mechanisms, and optional command result caching.</span>
+
+<span class="sd">    This class is intended to be subclassed by concrete device implementations (e.g., `NV200Device`),</span>
+<span class="sd">    which define specific device behaviors and cacheable commands.</span>
+
+<span class="sd">    Concrete device classes support caching of command parameters/values. This mechanism is designed </span>
+<span class="sd">    to reduce frequent read access over the physical communication interface by serving previously </span>
+<span class="sd">    retrieved values from a local cache. Since each read operation over the interface introduces latency, </span>
+<span class="sd">    caching can significantly improve the performance of parameter access — particularly in scenarios </span>
+<span class="sd">    like graphical user interfaces where many values are queried repeatedly.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Caching should only be used if it is guaranteed that no other external application modifies the </span>
+<span class="sd">        device state in parallel. For example, if access is made via the Python library over a Telnet </span>
+<span class="sd">        connection, no other software (e.g., via a serial interface) should modify the same parameters </span>
+<span class="sd">        concurrently. In such multi-access scenarios, caching can lead to inconsistent or outdated data. </span>
+<span class="sd">        To ensure correctness, disable caching globally by setting the class variable </span>
+<span class="sd">        `CMD_CACHE_ENABLED` to ``False``.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        CMD_CACHE_ENABLED (bool): </span>
+<span class="sd">            Class-level flag that controls whether command-level caching is enabled. When set to True </span>
+<span class="sd">            (default), values read from or written to the device for cacheable commands will be stored </span>
+<span class="sd">            and retrieved from an internal cache. Setting this to ``False`` disables the caching </span>
+<span class="sd">            behavior globally for all instances unless explicitly overridden at the instance level.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CMD_CACHE_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Enable command caching by default - set to False to disable caching</span>
+    <span class="n">CACHEABLE_COMMANDS</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># set of commands that can be cached</span>
+    <span class="n">DEFAULT_TIMEOUT_SECS</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="n">DEVICE_ID</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Placeholder for device ID, to be set in subclasses</span>
+    <span class="n">_help_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Dictionary to store help information for commands</span>
+    
+<div class="viewcode-block" id="PiezoDeviceBase.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">:</span> <span class="n">TransportProtocol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="p">:</span> <span class="n">TransportProtocol</span> <span class="o">=</span> <span class="n">transport</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">_ReentrantAsyncLock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_delimiter_write</span> <span class="p">:</span> <span class="nb">str</span><span class="o">=</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span>  <span class="c1"># Default frame delimiter for writing commands</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DEVICE_ID</span><span class="p">:</span>
+            <span class="n">DEVICE_MODEL_REGISTRY</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DEVICE_ID</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ReentrantAsyncLock</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Lock that can be used by external code to synchronize access to the device.</span>
+
+<span class="sd">        Use with ``async with client.lock:`` to group operations atomically.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">transport_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransportProtocol</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the transport protocol used by the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_read_raw_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_param</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads a response from the transport layer with a specified timeout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">read_message</span><span class="p">(</span><span class="n">timeout_param</span><span class="p">)</span>
+        
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses the response from the device and extracts the command and parameters.</span>
+<span class="sd">        If the response indicates an error (starts with &quot;error&quot;), it raises a DeviceError</span>
+<span class="sd">        with the corresponding error code. If the error code is invalid or unspecified,</span>
+<span class="sd">        a default error code of 1 is used.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            response (bytes): The response received from the device as a byte string.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing the command (str) and a list of parameters (list of str).</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            DeviceError: If the response indicates an error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if the response indicates an error</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">):</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">error_code</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x01\n\r\x00</span><span class="s2">&quot;</span><span class="p">))</span>
+                    <span class="c1"># Raise a DeviceError with the error code</span>
+                    <span class="k">raise</span> <span class="n">DeviceError</span><span class="p">(</span><span class="n">ErrorCode</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">error_code</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="c1"># In case the error code isn&#39;t valid</span>
+                    <span class="k">raise</span> <span class="n">DeviceError</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Default error: Error not specified</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DeviceError</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Default error: Error not specified</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Normal response, split the command and parameters</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x01\n\r\x00</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span>
+        
+
+<div class="viewcode-block" id="PiezoDeviceBase.connect">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.connect">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Establishes a connection using the transport layer.</span>
+
+<span class="sd">        This asynchronous method initiates the connection process by calling</span>
+<span class="sd">        the `connect` method of the transport instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            auto_adjust_comm_params (bool): If True, the Telnet transport will</span>
+<span class="sd">                automatically adjust the internal communication parameters of</span>
+<span class="sd">                the XPORT ethernet module. It will set the flow control mode to#</span>
+<span class="sd">                ``XON_XOFF_PASS_TO_HOST``. This is required for the library to work+</span>
+<span class="sd">                properly.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the connection fails, an exception may be raised</span>
+<span class="sd">                       depending on the implementation of the transport layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">auto_adjust_comm_params</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">is_match</span><span class="p">,</span> <span class="n">detected_id</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_device_type</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_match</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Device type mismatch: expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DEVICE_ID</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">detected_id</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Please check the device connection and ensure the correct device is connected.&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.write">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.write">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a command to the transport layer.</span>
+
+<span class="sd">        This asynchronous method writes a command string followed by a carriage return</span>
+<span class="sd">        to the transport layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent. No carriage return is needed. </span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; await device_client.write(&#39;set,80&#39;) </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing cmd.: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+
+        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_delimiter_write</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">read_message</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Or handle it differently</span></div>
+
+        
+
+<div class="viewcode-block" id="PiezoDeviceBase.write_value">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.write_value">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously writes a value to the device using the specified command.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to send to the device.</span>
+<span class="sd">            value (Union[int, float, str, bool]): The value to write, which can be an integer, float, string, or boolean.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; await device_client.write(&#39;set&#39;, 80)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Convert boolean to int internally</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">value_to_write</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value_to_write</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c1"># Always use %f for logging value</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing value: </span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">value_to_write</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">value_to_write</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">CMD_CACHE_ENABLED</span> <span class="ow">and</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">CACHEABLE_COMMANDS</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Caching write value: </span><span class="si">%s</span><span class="s2">,</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_to_write</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_to_write</span><span class="p">)</span></div>
+
+        
+       
+<div class="viewcode-block" id="PiezoDeviceBase.write_string_value">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.write_string_value">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write_string_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a command with a string value to the transport layer.</span>
+
+<span class="sd">        This asynchronous method writes a command string followed by a carriage return</span>
+<span class="sd">        to the transport layer. It is used for commands that require a string value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+<span class="sd">            value (str): The string value to be included in the command.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; await device_client.write_string_value(&#39;set&#39;, &#39;80.000&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing string value: </span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_response_string">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_response_string">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_response_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a command to the transport layer and reads the response asynchronously.</span>
+<span class="sd">        For example, if you write ``cl`` to the device, it will return ``cl,0`` or ``cl,1``</span>
+<span class="sd">        depending on the current PID mode. That means, this function returns the</span>
+<span class="sd">        complete string ``cl,0\\r\\n`` or ``cl,1\\r\\n`` including the carriage return and line feed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+<span class="sd">            timeout: The timeout for reading the response in seconds.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The response received from the transport layer.</span>
+
+<span class="sd">        Example: </span>
+<span class="sd">            &gt;&gt;&gt; response = await device_client.read(&#39;cl&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(response)</span>
+<span class="sd">            b&#39;cl,1\\r\\n&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_delimiter_write</span><span class="p">)</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_raw_message</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span></div>
+
+          
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_stripped_response_string">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_stripped_response_string">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_stripped_response_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a response string from the device, stripping any leading/trailing whitespace.</span>
+<span class="sd">        This method is a placeholder and should be implemented based on actual response handling.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_response_string</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x01\n\r\x00</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_response_parameters_string">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_response_parameters_string">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_response_parameters_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously sends a command and retrieves the parameters portion of the response string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to send.</span>
+<span class="sd">            timeout (float, optional): The maximum time to wait for a response, in seconds. Defaults to DEFAULT_TIMEOUT_SECS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The parameters part of the response string (after the first comma), or an empty string if no parameters are present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_stripped_response_string</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+        
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_cached_response_parameters_tring">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_cached_response_parameters_tring">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_cached_response_parameters_tring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads the response parameters string for a given command, utilizing a cache if enabled.</span>
+<span class="sd">        If caching is enabled and the command&#39;s response is present in the cache, returns the cached response.</span>
+<span class="sd">        Otherwise, reads the response using `read_response_parameters_string`, caches it if applicable, and returns it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to send.</span>
+<span class="sd">            timeout (float, optional): Timeout in seconds for the response. Defaults to DEFAULT_TIMEOUT_SECS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The parameters part of the response string (after the first comma), or an empty string if no parameters are present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">CMD_CACHE_ENABLED</span> <span class="ow">and</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Read cache hit for command: </span><span class="si">%s</span><span class="s2"> -&gt; </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">])</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_response_parameters_string</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">CMD_CACHE_ENABLED</span> <span class="ow">and</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">CACHEABLE_COMMANDS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cached value after read: </span><span class="si">%s</span><span class="s2"> -&gt; </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+   
+   
+<div class="viewcode-block" id="PiezoDeviceBase.read_response">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_response">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously sends a command to read values and returnes the response as a tuple.</span>
+<span class="sd">        For example, if you write the command ``set``, it will return ``set,80.000`` if</span>
+<span class="sd">        the setpoint is 80.000. The response is parsed into a tuple containing the command ``set``</span>
+<span class="sd">        and a list of parameter strings, in this case ``[80.000]``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing the command (str) and a list of parameters (list of str).</span>
+<span class="sd">        </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; response = await device_client.read_response(&#39;set&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(response)</span>
+<span class="sd">            (&#39;set&#39;, [&#39;80.000&#39;])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_response_string</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_values">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_values">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously sends a command and returns the values as a list of strings.</span>
+<span class="sd">        For example, if you write the command ``recout,0,0,1``, to read the first data recorder</span>
+<span class="sd">        value, it will return ``[&#39;0&#39;, &#39;0&#39;, &#39;0.029&#39;]`` if the first data recorder value is ``0.029``.</span>
+<span class="sd">        So it returns a list of 3 strings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of values (list of str)..</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; values = await device_client.read_values(&#39;recout,0,0,1&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(values)</span>
+<span class="sd">            [&#39;0&#39;, &#39;0&#39;, &#39;0.029&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_response</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">timeout</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span></div>
+
+    
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_string_value">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_string_value">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_string_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param_index</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads a single string value from device.</span>
+<span class="sd">        For example, if you write the command ``desc``, the device will return</span>
+<span class="sd">        the name of the actuator i.e. TRITOR100SG . The response is parsed </span>
+<span class="sd">        into a string value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+<span class="sd">            param_index (int): Parameter index (default 0) to read from the response.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The value as a string.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; await self.read_string_value(&#39;desc&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(value)</span>
+<span class="sd">            TRITOR100SG</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">CMD_CACHE_ENABLED</span> <span class="ow">and</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Read cache hit for command: </span><span class="si">%s</span><span class="s2"> -&gt; </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">])</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span>
+        
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading string value for command: </span><span class="si">%s</span><span class="s2">, param_index: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">param_index</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_values</span><span class="p">(</span><span class="n">cmd</span><span class="p">))[</span><span class="n">param_index</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="c1"># strip trailing whitespace - some strings like units my contain trailing spaces</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">CMD_CACHE_ENABLED</span> <span class="ow">and</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">CACHEABLE_COMMANDS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cached value after read: </span><span class="si">%s</span><span class="s2"> -&gt; </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_float_value">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_float_value">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_float_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param_index</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads a single float value from device.</span>
+<span class="sd">        For example, if you write the command ``set``, to read the current setpoint,</span>
+<span class="sd">        it will return ``80.000`` if the setpoint is 80.000. The response is parsed into a</span>
+<span class="sd">        float value. Use this function for command that returns a single floating point value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+<span class="sd">            param_index (int): Parameter index (default 0) to read from the response.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The value as a floating-point number.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; value = await device_client.read_float_value(&#39;set&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(value)</span>
+<span class="sd">            80.000</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_string_value</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">param_index</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.read_int_value">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.read_int_value">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_int_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param_index</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads a single float value from device.</span>
+<span class="sd">        For example, if you write ``cl`` to the device, the response will be ``0`` or ``1``</span>
+<span class="sd">        depending on the current PID mode. The response is parsed into an integer value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent.</span>
+<span class="sd">            param_index (int): Parameter index (default 0) to read from the response</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The value as a floating-point number.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; value = await device_client.read_int_value(&#39;cl&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(value)</span>
+<span class="sd">            1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_string_value</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">param_index</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.close">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.close">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously closes the transport connection.</span>
+
+<span class="sd">        This method ensures that the transport layer is properly closed,</span>
+<span class="sd">        releasing any resources associated with it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.get_device_type">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.get_device_type">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the type of the device.</span>
+<span class="sd">        The device type is the string that is returned if you just press enter after connecting to the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">flush_input</span><span class="p">()</span>  <span class="c1"># Ensure no pending input</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x01\n\r\x00</span><span class="s2">&lt;&gt;&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Device type response: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+    
+<div class="viewcode-block" id="PiezoDeviceBase.check_device_type">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.check_device_type">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the device type matches the given device ID.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the device type matches, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">detected_device_type</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device_type</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">detected_device_type</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEVICE_ID</span><span class="p">,</span> <span class="n">detected_device_type</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="PiezoDeviceBase.enrich_device_info">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.enrich_device_info">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">enrich_device_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detected_device</span> <span class="p">:</span> <span class="n">DetectedDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get additional information about the device.</span>
+
+<span class="sd">        A derived class should implement this method to enrich the device information in the given</span>
+<span class="sd">        detected_device object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            detected_device (DetectedDevice): The detected device object to enrich with additional information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns detailed information about the connected device.</span>
+
+<span class="sd">        This property provides a DeviceInfo object that includes</span>
+<span class="sd">        the device&#39;s identifier and transport metadata. It requires</span>
+<span class="sd">        that the transport layer is initialized and connected.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If the transport is not initialized or the device</span>
+<span class="sd">                        is not connected.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DeviceInfo: An object containing the device ID and transport info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot access device_info: transport is not initialized.&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">DeviceInfo</span><span class="p">(</span>
+            <span class="n">device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DEVICE_ID</span><span class="p">,</span>
+            <span class="n">transport_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">get_info</span><span class="p">()</span>
+        <span class="p">)</span>
+    
+<div class="viewcode-block" id="PiezoDeviceBase.clear_cmd_cache">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.clear_cmd_cache">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_cmd_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears the cache of previously issued commands.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Command cache cleared.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PiezoDeviceBase.help">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.help">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">help</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns help information for a specific command or all commands if no command is specified.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str, optional): The command to get help for. If None, returns help for all commands.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Help information for the specified command or all commands.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">help</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">help</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_help_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_help_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;No help available for command &#39;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="PiezoDeviceBase.help_dict">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.help_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">help_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the class-level help dictionary with a list of all commands and their descriptions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_help_dict</span></div>
+
+    
+
+<div class="viewcode-block" id="PiezoDeviceBase.backup_parameters">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.backup_parameters">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">backup_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backup_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>    
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously backs up device settings by reading response parameters for each command in the provided list.</span>
+
+<span class="sd">        Use the restore_parameters method to restore the settings later from the backup.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            backup_list (list[str]): A list of command strings for which to back up settings.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, str]: A dictionary mapping each command to its corresponding response string from the device.</span>
+
+<span class="sd">    </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; backup_list = [</span>
+<span class="sd">            &gt;&gt;&gt;     &quot;modsrc&quot;, &quot;notchon&quot;, &quot;sr&quot;, &quot;poslpon&quot;, &quot;setlpon&quot;, &quot;cl&quot;, &quot;reclen&quot;, &quot;recstr&quot;]</span>
+<span class="sd">            &gt;&gt;&gt; await self.backup_settings(backup_list)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">backup</span> <span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">backup_list</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_response_parameters_string</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">backup</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span>
+        <span class="k">return</span> <span class="n">backup</span></div>
+
+    
+
+<div class="viewcode-block" id="PiezoDeviceBase.restore_parameters">
+<a class="viewcode-back" href="../../api.html#nv200.device_base.PiezoDeviceBase.restore_parameters">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">restore_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously restores device parameters from a backup created with `backup_parameters`.</span>
+
+<span class="sd">        Iterates over the provided backup dictionary, writing each parameter value to the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">backup</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+</div>
+
+    
+
+<span class="n">PiezoDeviceType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;PiezoDeviceType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">PiezoDeviceBase</span><span class="p">)</span>
+
+   
+<span class="n">DEVICE_MODEL_REGISTRY</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">PiezoDeviceBase</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

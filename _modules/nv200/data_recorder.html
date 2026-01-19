@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.data_recorder &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.data_recorder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.data_recorder</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides access to the NV200 data recorder functionality.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">wait_until</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200._internal._reentrant_lock</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReentrantAsyncLock</span>
+
+
+<span class="c1"># Global module locker</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DataRecorderSource">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorderSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataRecorderSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum representing the source of data to be stored in the data recorder channel,</span>
+<span class="sd">    ignoring the buffer (A or B) distinction.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIEZO_POSITION</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="s2">&quot;Piezo position (μm or mrad)&quot;</span>
+
+    <span class="n">SETPOINT</span> <span class="o">=</span> <span class="mi">1</span>        
+    <span class="s2">&quot;Setpoint (μm or mrad)&quot;</span>
+
+    <span class="n">PIEZO_VOLTAGE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="s2">&quot;Piezo voltage (V)&quot;</span>
+
+    <span class="n">POSITION_ERROR</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="s2">&quot;Position error&quot;</span>
+
+    <span class="n">ABS_POSITION_ERROR</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="s2">&quot;Absolute position error&quot;</span>
+
+    <span class="n">PIEZO_CURRENT_1</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="s2">&quot;Piezo current 1 (A)&quot;</span>
+
+    <span class="n">PIEZO_CURRENT_2</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="s2">&quot;Piezo current 2 (A)&quot;</span>
+
+<div class="viewcode-block" id="DataRecorderSource.from_value">
+<a class="viewcode-back" href="../../api.html#nv200.data_recorder.DataRecorderSource.from_value">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span> <span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_value2member_map_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid recsrc value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string representation of the DataRecorderSource enum member for debugging.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;DataRecorderSource(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a human-readable string for the DataRecorderSource enum member.</span>
+
+<span class="sd">        This method is used to provide a more user-friendly string representation for display,</span>
+<span class="sd">        such as in a user interface or logs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Dictionary mapping enum names to human-readable strings</span>
+        <span class="n">human_readable</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_POSITION</span><span class="p">:</span> <span class="s2">&quot;Piezo Position [μm or mrad]&quot;</span><span class="p">,</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">SETPOINT</span><span class="p">:</span> <span class="s2">&quot;Setpoint [μm or mrad]&quot;</span><span class="p">,</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_VOLTAGE</span><span class="p">:</span> <span class="s2">&quot;Piezo Voltage [V]&quot;</span><span class="p">,</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">POSITION_ERROR</span><span class="p">:</span> <span class="s2">&quot;Position Error&quot;</span><span class="p">,</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">ABS_POSITION_ERROR</span><span class="p">:</span> <span class="s2">&quot;Absolute Position Error&quot;</span><span class="p">,</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_CURRENT_1</span><span class="p">:</span> <span class="s2">&quot;Piezo Current 1 [A]&quot;</span><span class="p">,</span>
+            <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_CURRENT_2</span><span class="p">:</span> <span class="s2">&quot;Piezo Current 2 [A]&quot;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">human_readable</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># Fallback to enum name if not found</span></div>
+
+    
+
+<div class="viewcode-block" id="RecorderAutoStartMode">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.RecorderAutoStartMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RecorderAutoStartMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum representing the autostart mode of the data recorder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">OFF</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="s2">&quot;Autostart off - start recording manually with recorder start command&quot;</span>
+
+    <span class="n">START_ON_SET_COMMAND</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="s2">&quot;Start on set-command&quot;</span>
+    
+    <span class="n">START_ON_WAVEFORM_GEN_RUN</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="s2">&quot;Start on waveform generator run&quot;</span>
+
+<div class="viewcode-block" id="RecorderAutoStartMode.get_mode">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.RecorderAutoStartMode.get_mode">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mode</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;RecorderAutoStartMode&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a mode value, return the corresponding RecorderAutoStartMode enum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">item</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid RecorderAutoStartMode value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+
+
+<div class="viewcode-block" id="DataRecorder">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataRecorder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data recorder class provides an interface for NV200 data recorder.</span>
+<span class="sd">    The data recorder consists of two memory banks that are written to in parallel. </span>
+<span class="sd">    In this way, two individual signals can be stored synchronously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">=</span> <span class="mi">20000</span>  <span class="c1"># Sample frequency of the NV200 data recorder in Hz</span>
+    <span class="n">NV200_RECORDER_BUFFER_SIZE</span> <span class="o">=</span> <span class="mi">6144</span>  <span class="c1"># Size of a single NV200 data recorder buffer</span>
+    <span class="n">INFINITE_RECORDING_DURATION</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Infinite recording duration</span>
+    <span class="n">BUFFER_READ_TIMEOUT_SECS</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Timeout for reading data from the recorder buffer - it needs to be higher because it may take some time</span>
+    <span class="n">ALL_CHANNELS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Number of data recorder channels</span>
+    <span class="n">RecorderParam</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;RecorderParam&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;bufsize&#39;</span><span class="p">,</span> <span class="s1">&#39;stride&#39;</span><span class="p">,</span> <span class="s1">&#39;sample_freq&#39;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="DataRecorder.ChannelRecordingData">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.ChannelRecordingData">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ChannelRecordingData</span><span class="p">(</span><span class="n">TimeSeries</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        WaveformData is a NamedTuple that represents waveform data.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            x_time (List[float]): A list of time values (in seconds) corresponding to the waveform.</span>
+<span class="sd">            y_values (List[float]): A list of amplitude values corresponding to the waveform.</span>
+<span class="sd">            sample_time_us (int): The sampling time in microseconds.</span>
+<span class="sd">            sample_factor (int): A factor used to calculate the sample time from the base sample time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DataRecorder.ChannelRecordingData.__init__">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.ChannelRecordingData.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">sample_time_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">DataRecorderSource</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initialize the ChannelData instance with amplitude values, sample time, and source.</span>
+<span class="sd">            </span>
+<span class="sd">            Args:</span>
+<span class="sd">                values (list): The amplitude values corresponding to the waveform.</span>
+<span class="sd">                sample_time_ms (int): The sample time in milliseconds (sampling interval).</span>
+<span class="sd">                source (str): The data recorder source</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Call the parent constructor (TimeSeries) to initialize the values and sample time</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">sample_time_ms</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="p">:</span> <span class="n">DataRecorderSource</span> <span class="o">=</span> <span class="n">source</span>  <span class="c1"># Private member for source</span></div>
+
+        
+        <span class="nd">@property</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataRecorderSource</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Read-only property to get the maximum sample buffer size for the data recorder.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span></div>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_sample_buffer_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read-only property to get the maximum sample buffer size for the data recorder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span>
+
+<div class="viewcode-block" id="DataRecorder.__init__">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">NV200Device</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the data recorder with the specified NV200 device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device (NV200Device): The NV200 device instance to be used by the data recorder.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            _dev (NV200Device): Stores the provided NV200 device instance.</span>
+<span class="sd">            _sample_rate (int | None): The sample rate for data recording, initially set to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span> <span class="p">:</span> <span class="n">NV200Device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_rate</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="DataRecorder.set_data_source">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.set_data_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">DataRecorderSource</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the channel and the source of data to be stored in the data recorder channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;recsrc,</span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DataRecorder.set_autostart_mode">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.set_autostart_mode">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_autostart_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RecorderAutoStartMode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the autostart mode of the data recorder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;recast,</span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.set_recorder_stride">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.set_recorder_stride">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_recorder_stride</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the recorder stride.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;recstr,</span><span class="si">{</span><span class="n">stride</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">/</span> <span class="n">stride</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.set_sample_buffer_size">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.set_sample_buffer_size">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_sample_buffer_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the sample buffer size for each of the two data recorder channels (0..6144)</span>
+<span class="sd">        A value of 0 means infinite loop over maximum length until recorder is stopped manually.</span>
+<span class="sd">        If you would like to have an infinite loop, use the constant `DataRecorder.INFINITE_RECORDING_DURATION`.</span>
+<span class="sd">        You can get the maximum buffer size using the `max_sample_buffer_size` property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">buffer_size</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;buffer_size must be between 0 and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">buffer_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;reclen,</span><span class="si">{</span><span class="n">buffer_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.get_sample_rate_for_duration">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.get_sample_rate_for_duration">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_rate_for_duration</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">milliseconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the sample rate that is possible with the specified duration in milliseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">duration_s</span> <span class="o">=</span> <span class="n">milliseconds</span> <span class="o">/</span> <span class="mf">1000.0</span>
+        <span class="n">buffer_duration_s</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">*</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span>
+        <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration_s</span> <span class="o">/</span> <span class="n">buffer_duration_s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">/</span> <span class="n">stride</span>
+        <span class="k">return</span> <span class="n">sample_rate</span></div>
+
+    
+<div class="viewcode-block" id="DataRecorder.get_sample_period_ms_for_duration">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.get_sample_period_ms_for_duration">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_period_ms_for_duration</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">milliseconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the sample period in seconds that is possible with the specified duration in milliseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_sample_rate_for_duration</span><span class="p">(</span><span class="n">milliseconds</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sample_rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sample_rate</span> <span class="o">*</span> <span class="mf">1000.0</span>  <span class="c1"># Convert to milliseconds</span></div>
+
+
+
+<div class="viewcode-block" id="DataRecorder.set_recording_duration_ms">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.set_recording_duration_ms">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_recording_duration_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">milliseconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecorderParam</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the recording duration in milliseconds and adjusts the recorder parameters accordingly.</span>
+
+<span class="sd">        This method calculates the appropriate stride, sample rate, and buffer size based on the </span>
+<span class="sd">        specified recording duration and the recorder&#39;s configuration. It then updates the recorder </span>
+<span class="sd">        settings to match these calculated values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            milliseconds (float): The desired recording duration in milliseconds.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            RecorderParam: An object containing the updated buffer length, stride, and sample rate.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the calculated buffer size or stride is invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">duration_s</span> <span class="o">=</span> <span class="n">milliseconds</span> <span class="o">/</span> <span class="mf">1000.0</span>
+        <span class="n">buffer_duration_s</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span>
+        <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration_s</span> <span class="o">/</span> <span class="n">buffer_duration_s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">/</span> <span class="n">stride</span>
+        <span class="n">buflen</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">sample_rate</span> <span class="o">*</span> <span class="n">duration_s</span><span class="p">)</span>
+        <span class="n">buflen</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">buflen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_recorder_stride</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_sample_buffer_size</span><span class="p">(</span><span class="n">buflen</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">RecorderParam</span><span class="p">(</span><span class="n">buflen</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.start_recording">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.start_recording">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts / stops the data recorder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;recrun,</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.stop_recording">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.stop_recording">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stops the recording process by invoking the `start_recording` method with False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.is_recording">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.is_recording">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the recoder is currently recording.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;recrun&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="DataRecorder.wait_until_finished">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.wait_until_finished">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_until_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Waits asynchronously until the recording process has finished or the specified timeout is reached.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout_s (float): The maximum time to wait in seconds. Defaults to 10.0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the recording process finished within the timeout, False otherwise.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            asyncio.TimeoutError: If the timeout is reached before the recording process finishes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">wait_until</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_recording</span><span class="p">,</span>
+            <span class="n">check_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">recoding_active</span><span class="p">:</span> <span class="ow">not</span> <span class="n">recoding_active</span><span class="p">,</span>
+            <span class="n">poll_interval_s</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">timeout_s</span><span class="o">=</span><span class="n">timeout_s</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataRecorder.read_recorded_data_of_channel">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.read_recorded_data_of_channel">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_recorded_data_of_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span> <span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChannelRecordingData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads recorded data from a specified channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (int): The channel number from which to read the recorded data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ChannelRecordingData: An object containing the recording source as a string </span>
+<span class="sd">            and a list of floating-point numbers representing the recorded data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions raised by the underlying device communication methods.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid channel: </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">. Must be 0 or 1.&quot;</span><span class="p">)</span>
+
+        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="n">recsrc</span> <span class="o">=</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;recsrc,</span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">param_index</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">number_strings</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_values</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;recoutf,</span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">BUFFER_READ_TIMEOUT_SECS</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">stride</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s2">&quot;recstr&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sample_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_SAMPLE_RATE_HZ</span> <span class="o">/</span> <span class="n">stride</span>
+
+        <span class="n">numbers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">number_strings</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>  <span class="c1"># starts from the second element</span>
+            <span class="n">numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ChannelRecordingData</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="mi">1000</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_rate</span><span class="p">,</span> <span class="n">recsrc</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="DataRecorder.read_recorded_data">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.read_recorded_data">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_recorded_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ChannelRecordingData</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads recorded data for two channels and returns it as a list.</span>
+
+<span class="sd">        This method retrieves the recorded data for channel 0 and channel 1 by </span>
+<span class="sd">        calling `read_recorded_data_of_channel` for each channel. The results are </span>
+<span class="sd">        returned as a list of `ChannelRecordingData` objects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[ChannelRecordingData]: A list containing the recorded data for </span>
+<span class="sd">            channel 0 and channel 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chan_data0</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_recorded_data_of_channel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">chan_data1</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_recorded_data_of_channel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">chan_data0</span><span class="p">,</span> <span class="n">chan_data1</span><span class="p">]</span></div>
+
+    
+
+<div class="viewcode-block" id="DataRecorder.read_recorded_value">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.read_recorded_value">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_recorded_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a single recorded value from the specified channel at the given index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel (int): The channel number from which to read the recorded value.</span>
+<span class="sd">            index (int): The index of the recorded value to read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The recorded value at the specified index in the specified channel.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions raised by the underlying device communication methods.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid channel: </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">. Must be 0 or 1.&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid index: </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">. Must be in the range from 0 to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NV200_RECORDER_BUFFER_SIZE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;recout,</span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">,1&#39;</span><span class="p">,</span> <span class="n">param_index</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="DataRecorder.read_single_value_from">
+<a class="viewcode-back" href="../../data_recorder.html#nv200.data_recorder.DataRecorder.read_single_value_from">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_single_value_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span> <span class="p">:</span> <span class="n">DataRecorderSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a single float value from the specified data recorder source.</span>
+
+<span class="sd">        You can use this method i.e. to read the current piezo voltage because this</span>
+<span class="sd">        functionality is not provided by the NV200 device directly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            source (DataRecorderSource): The data source from which to read the value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The recorded value from the specified source.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_autostart_mode</span><span class="p">(</span><span class="n">RecorderAutoStartMode</span><span class="o">.</span><span class="n">OFF</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_recording_duration_ms</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_recorded_value</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+</div>
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

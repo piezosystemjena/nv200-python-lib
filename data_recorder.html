@@ -1,0 +1,817 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Recorder &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Trigger In and Trigger Out" href="trigger_io.html" />
+    <link rel="prev" title="PID Controller and Filters" href="pid_and_filters.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Recorder</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#step-by-step-guide-to-using-the-data-recorder">Step by step guide to using the Data Recorder</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-import-necessary-modules">Step 1: Import Necessary Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-setup-the-device">Step 2: Setup the Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-create-a-datarecorder-instance">Step 3: Create a DataRecorder Instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-set-data-sources-for-recording">Step 4: Set Data Sources for Recording</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-set-auto-start-mode">Step 5: Set Auto-Start Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-6-configure-recording-duration">Step 6: Configure Recording Duration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-7-start-recording">Step 7: Start Recording</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-8-execute-device-move-and-record-data">Step 8: Execute Device Move and Record Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-9-plot-the-recorded-data-optional">Step 9: Plot the Recorded Data (Optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nv200.data_recorder">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.data_recorder.DataRecorder"><code class="docutils literal notranslate"><span class="pre">DataRecorder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData"><code class="docutils literal notranslate"><span class="pre">ChannelRecordingData</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.RecorderParam"><code class="docutils literal notranslate"><span class="pre">RecorderParam</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.get_sample_period_ms_for_duration"><code class="docutils literal notranslate"><span class="pre">get_sample_period_ms_for_duration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.get_sample_rate_for_duration"><code class="docutils literal notranslate"><span class="pre">get_sample_rate_for_duration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.is_recording"><code class="docutils literal notranslate"><span class="pre">is_recording()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.max_sample_buffer_size"><code class="docutils literal notranslate"><span class="pre">max_sample_buffer_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.read_recorded_data"><code class="docutils literal notranslate"><span class="pre">read_recorded_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.read_recorded_data_of_channel"><code class="docutils literal notranslate"><span class="pre">read_recorded_data_of_channel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.read_recorded_value"><code class="docutils literal notranslate"><span class="pre">read_recorded_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.read_single_value_from"><code class="docutils literal notranslate"><span class="pre">read_single_value_from()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_autostart_mode"><code class="docutils literal notranslate"><span class="pre">set_autostart_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_data_source"><code class="docutils literal notranslate"><span class="pre">set_data_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_recorder_stride"><code class="docutils literal notranslate"><span class="pre">set_recorder_stride()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_recording_duration_ms"><code class="docutils literal notranslate"><span class="pre">set_recording_duration_ms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_sample_buffer_size"><code class="docutils literal notranslate"><span class="pre">set_sample_buffer_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.start_recording"><code class="docutils literal notranslate"><span class="pre">start_recording()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.stop_recording"><code class="docutils literal notranslate"><span class="pre">stop_recording()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.wait_until_finished"><code class="docutils literal notranslate"><span class="pre">wait_until_finished()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource"><code class="docutils literal notranslate"><span class="pre">DataRecorderSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.ABS_POSITION_ERROR"><code class="docutils literal notranslate"><span class="pre">ABS_POSITION_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.PIEZO_CURRENT_1"><code class="docutils literal notranslate"><span class="pre">PIEZO_CURRENT_1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.PIEZO_CURRENT_2"><code class="docutils literal notranslate"><span class="pre">PIEZO_CURRENT_2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.PIEZO_POSITION"><code class="docutils literal notranslate"><span class="pre">PIEZO_POSITION</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.PIEZO_VOLTAGE"><code class="docutils literal notranslate"><span class="pre">PIEZO_VOLTAGE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.POSITION_ERROR"><code class="docutils literal notranslate"><span class="pre">POSITION_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource.SETPOINT"><code class="docutils literal notranslate"><span class="pre">SETPOINT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode"><code class="docutils literal notranslate"><span class="pre">RecorderAutoStartMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.OFF"><code class="docutils literal notranslate"><span class="pre">OFF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.START_ON_SET_COMMAND"><code class="docutils literal notranslate"><span class="pre">START_ON_SET_COMMAND</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN"><code class="docutils literal notranslate"><span class="pre">START_ON_WAVEFORM_GEN_RUN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.get_mode"><code class="docutils literal notranslate"><span class="pre">get_mode()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Data Recorder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-recorder">
+<h1>Data Recorder<a class="headerlink" href="#data-recorder" title="Link to this heading"></a></h1>
+<p>If the device provides data recorder functionality, such as the NV200 amplifier
+you can use the <a class="reference internal" href="#nv200.data_recorder.DataRecorder" title="nv200.data_recorder.DataRecorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRecorder</span></code></a> class to access the data
+recorder functionality. For example, the NV200 data recorder consists of two memory banks that are
+written to in parallel. In this way, two individual signals can be stored synchronously.</p>
+<p><strong>Example</strong>: A step input via the set command is used to trigger the data recorder and measure the
+piezo position and current of amplifier 1 for 25 ms.</p>
+<img alt="Data recorder example" class="align-center" src="_images/data_recorder_example.png" />
+<p>The following example demonstrates how to use the <a class="reference internal" href="#module-nv200.data_recorder" title="nv200.data_recorder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nv200.data_recorder</span></code></a> module with the
+<a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a> from the <a class="reference internal" href="api.html#module-nv200.nv200_device" title="nv200.nv200_device"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.nv200_device</span></code></a>. It covers setting up the <a class="reference internal" href="#nv200.data_recorder.DataRecorder" title="nv200.data_recorder.DataRecorder"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DataRecorder</span></code></a>,
+configuring data sources, and recording data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.data_recorder</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataRecorderSource</span><span class="p">,</span> <span class="n">RecorderAutoStartMode</span><span class="p">,</span> <span class="n">DataRecorder</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">data_recorder_tests</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">NV200Device</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Asynchronous function to test the functionality of the DataRecorder with a given device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Move the device to its initial position and wait for a short duration to stabilize</span>
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">move_to_position</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+
+    <span class="c1"># Create a DataRecorder instance and configure it</span>
+    <span class="n">recorder</span> <span class="o">=</span> <span class="n">DataRecorder</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_POSITION</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_VOLTAGE</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_autostart_mode</span><span class="p">(</span><span class="n">RecorderAutoStartMode</span><span class="o">.</span><span class="n">START_ON_SET_COMMAND</span><span class="p">)</span>
+    <span class="n">rec_param</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_recording_duration_ms</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recording parameters:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Used buffer entries: </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">bufsize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stride: </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">stride</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Sample frequency (Hz): </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">sample_freq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Start recording and move the device to a new position to record the parameters</span>
+    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">move_to_position</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading recorded data of both channels...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Read the recorded data from the DataRecorder</span>
+    <span class="n">rec_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">read_recorded_data</span><span class="p">()</span>
+
+    <span class="c1"># Use matplotlib to plot the recorded data</span>
+    <span class="n">prepare_plot_style</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">show_plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="step-by-step-guide-to-using-the-data-recorder">
+<h2>Step by step guide to using the Data Recorder<a class="headerlink" href="#step-by-step-guide-to-using-the-data-recorder" title="Link to this heading"></a></h2>
+<p>This guide will walk you through the steps to set up and use the data recorder using the given
+example code.</p>
+<section id="step-1-import-necessary-modules">
+<h3>Step 1: Import Necessary Modules<a class="headerlink" href="#step-1-import-necessary-modules" title="Link to this heading"></a></h3>
+<p>You will need to import the required modules to interact with the device and set
+up the data recorder. These include <a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a> from <a class="reference internal" href="api.html#module-nv200.nv200_device" title="nv200.nv200_device"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.nv200_device</span></code></a>,
+and <a class="reference internal" href="#nv200.data_recorder.DataRecorder" title="nv200.data_recorder.DataRecorder"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DataRecorder</span></code></a>, <a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DataRecorderSource</span></code></a>, and <a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode" title="nv200.data_recorder.RecorderAutoStartMode"><code class="xref any py py-class docutils literal notranslate"><span class="pre">RecorderAutoStartMode</span></code></a> from <a class="reference internal" href="#module-nv200.data_recorder" title="nv200.data_recorder"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.data_recorder</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.data_recorder</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataRecorderSource</span><span class="p">,</span> <span class="n">RecorderAutoStartMode</span><span class="p">,</span> <span class="n">DataRecorder</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-setup-the-device">
+<h3>Step 2: Setup the Device<a class="headerlink" href="#step-2-setup-the-device" title="Link to this heading"></a></h3>
+<p>The <a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a> instance is responsible for interacting with the hardware, allowing you
+to control the movement of the device and manage the data recorder.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">data_recorder_tests</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">NV200Device</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">move_to_position</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Move device to initial position (0)</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>  <span class="c1"># Allow the device to settle</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-create-a-datarecorder-instance">
+<h3>Step 3: Create a DataRecorder Instance<a class="headerlink" href="#step-3-create-a-datarecorder-instance" title="Link to this heading"></a></h3>
+<p>Once the device is ready, create an instance of the <a class="reference internal" href="#nv200.data_recorder.DataRecorder" title="nv200.data_recorder.DataRecorder"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DataRecorder</span></code></a> class, passing t
+he <a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><code class="xref any py py-class docutils literal notranslate"><span class="pre">NV200Device</span></code></a> instance to it. This will allow the DataRecorder to manage data recording.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recorder</span> <span class="o">=</span> <span class="n">DataRecorder</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-set-data-sources-for-recording">
+<h3>Step 4: Set Data Sources for Recording<a class="headerlink" href="#step-4-set-data-sources-for-recording" title="Link to this heading"></a></h3>
+<p>Choose what data each of the two channels should record. Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_POSITION</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_VOLTAGE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Available options in <a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DataRecorderSource</span></code></a> include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PIEZO_POSITION</span></code>: Piezo position (μm or mrad)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SETPOINT</span></code>: Setpoint (μm or mrad)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PIEZO_VOLTAGE</span></code>: Piezo voltage (V)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">POSITION_ERROR</span></code>: Position error</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ABS_POSITION_ERROR</span></code>: Absolute position error</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PIEZO_CURRENT_1</span></code>: Piezo current 1 (A)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PIEZO_CURRENT_2</span></code>: Piezo current 2 (A)</p></li>
+</ul>
+</section>
+<section id="step-5-set-auto-start-mode">
+<h3>Step 5: Set Auto-Start Mode<a class="headerlink" href="#step-5-set-auto-start-mode" title="Link to this heading"></a></h3>
+<p>The <a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_autostart_mode" title="nv200.data_recorder.DataRecorder.set_autostart_mode"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">set_autostart_mode</span></code></a> function defines when the recording will start.
+In this example, the recording starts when the set command is issued.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_autostart_mode</span><span class="p">(</span><span class="n">RecorderAutoStartMode</span><span class="o">.</span><span class="n">START_ON_SET_COMMAND</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can choose different start modes from <a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode" title="nv200.data_recorder.RecorderAutoStartMode"><code class="xref any py py-class docutils literal notranslate"><span class="pre">RecorderAutoStartMode</span></code></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.OFF" title="nv200.data_recorder.RecorderAutoStartMode.OFF"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">OFF</span></code></a>: No auto-start - recording starts immediately when <a class="reference internal" href="#nv200.data_recorder.DataRecorder.start_recording" title="nv200.data_recorder.DataRecorder.start_recording"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">start_recording</span></code></a> is called</p></li>
+<li><p><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.START_ON_SET_COMMAND" title="nv200.data_recorder.RecorderAutoStartMode.START_ON_SET_COMMAND"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">START_ON_SET_COMMAND</span></code></a>: Starts when a set command is issued after the <a class="reference internal" href="#nv200.data_recorder.DataRecorder.start_recording" title="nv200.data_recorder.DataRecorder.start_recording"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">start_recording</span></code></a> call</p></li>
+<li><p><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN" title="nv200.data_recorder.RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">START_ON_WAVEFORM_GEN_RUN</span></code></a>: Starts recording when the waveform generator is started after the <a class="reference internal" href="#nv200.data_recorder.DataRecorder.start_recording" title="nv200.data_recorder.DataRecorder.start_recording"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">start_recording</span></code></a> call</p></li>
+</ul>
+</section>
+<section id="step-6-configure-recording-duration">
+<h3>Step 6: Configure Recording Duration<a class="headerlink" href="#step-6-configure-recording-duration" title="Link to this heading"></a></h3>
+<p>Next, you can set the recording duration. The <a class="reference internal" href="#nv200.data_recorder.DataRecorder.set_recording_duration_ms" title="nv200.data_recorder.DataRecorder.set_recording_duration_ms"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">set_recording_duration_ms</span></code></a> method calculates
+the necessary buffer size and sample rate based on the specified duration. You can print
+the returned parameters to see that calculated values that have been transferred to the device.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rec_param</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_recording_duration_ms</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recording parameters:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Used buffer entries: </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">bufsize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stride: </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">stride</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Sample frequency (Hz): </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">sample_freq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is the expected output for this example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Recording parameters:
+  Used buffer entries: 1000
+  Stride: 1
+  Sample frequency (Hz): 10.0
+</pre></div>
+</div>
+</section>
+<section id="step-7-start-recording">
+<h3>Step 7: Start Recording<a class="headerlink" href="#step-7-start-recording" title="Link to this heading"></a></h3>
+<p>Once everything is set up, you can start the recording by calling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>  <span class="c1"># Starts the data recording</span>
+</pre></div>
+</div>
+<p>This will not start the recording immediately, but it will prepare
+the device to start recording when the specified trigger condition is met
+(in this case, when the set command is issued).</p>
+</section>
+<section id="step-8-execute-device-move-and-record-data">
+<h3>Step 8: Execute Device Move and Record Data<a class="headerlink" href="#step-8-execute-device-move-and-record-data" title="Link to this heading"></a></h3>
+<p>Now you can trigger the actual recording start by moving the device to a new position.
+in this example, the <a class="reference internal" href="api.html#nv200.nv200_device.NV200Device.move_to_position" title="nv200.nv200_device.NV200Device.move_to_position"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">move_to_position</span></code></a> method triggers the data recorder to start recording.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">move_to_position</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>  <span class="c1"># Move the device to position 80</span>
+<span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>  <span class="c1"># Wait while the data is being recorded</span>
+</pre></div>
+</div>
+<p>Once the device has moved, you can read the recorded data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">recorded_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">read_recorded_data</span><span class="p">()</span>  <span class="c1"># Read the data from both channels</span>
+</pre></div>
+</div>
+<p>This will return a list containing data from channel 0 and channel 1. Each channel’s data is
+stored as a <a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="nv200.data_recorder.DataRecorder.ChannelRecordingData"><code class="xref any py py-class docutils literal notranslate"><span class="pre">ChannelRecordingData</span></code></a> object, which includes:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>sample_times_ms:</dt><dd><p>The time at which each sample was taken (in milliseconds).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>values:</dt><dd><p>The recorded data values.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>source:</dt><dd><p>The data source that was recorded (e.g., “Piezo Voltage”).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="step-9-plot-the-recorded-data-optional">
+<h3>Step 9: Plot the Recorded Data (Optional)<a class="headerlink" href="#step-9-plot-the-recorded-data-optional" title="Link to this heading"></a></h3>
+<p>After retrieving the recorded data, you can plot it using a library like <a class="reference external" href="https://matplotlib.org/">matplotlib</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prepare_plot_style</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+<span class="n">show_plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The expected output is a plot showing the recorded data from both channels:</p>
+<img alt="_images/data_recorder_matplotlib.png" src="_images/data_recorder_matplotlib.png" />
+<div class="note admonition">
+<p class="admonition-title">Important</p>
+<p>Important Considerations</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Device Connection:</dt><dd><p>Ensure the device is properly connected and configured before starting recording.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Buffer Size Limitations:</dt><dd><p>The NV200 device has a fixed buffer size, so be mindful of memory constraints. Use the max_sample_buffer_size property to check the buffer size limit.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Auto-Start Behavior:</dt><dd><p>Depending on the chosen auto-start mode, recordings might begin automatically or require explicit start commands.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="module-nv200.data_recorder">
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-nv200.data_recorder" title="Link to this heading"></a></h2>
+<p>This module provides access to the NV200 data recorder functionality.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DataRecorder</span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data recorder class provides an interface for NV200 data recorder.
+The data recorder consists of two memory banks that are written to in parallel.
+In this way, two individual signals can be stored synchronously.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ChannelRecordingData</span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.ChannelRecordingData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="api.html#nv200.shared_types.TimeSeries" title="nv200.shared_types.TimeSeries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></p>
+<p>WaveformData is a NamedTuple that represents waveform data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData.x_time">
+<span class="sig-name descname"><span class="pre">x_time</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData.x_time" title="Link to this definition"></a></dt>
+<dd><p>A list of time values (in seconds) corresponding to the waveform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData.y_values">
+<span class="sig-name descname"><span class="pre">y_values</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData.y_values" title="Link to this definition"></a></dt>
+<dd><p>A list of amplitude values corresponding to the waveform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData.sample_time_us">
+<span class="sig-name descname"><span class="pre">sample_time_us</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData.sample_time_us" title="Link to this definition"></a></dt>
+<dd><p>The sampling time in microseconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData.sample_factor">
+<span class="sig-name descname"><span class="pre">sample_factor</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData.sample_factor" title="Link to this definition"></a></dt>
+<dd><p>A factor used to calculate the sample time from the base sample time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_time_ms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><span class="pre">DataRecorderSource</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.ChannelRecordingData.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the ChannelData instance with amplitude values, sample time, and source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>list</em>) – The amplitude values corresponding to the waveform.</p></li>
+<li><p><strong>sample_time_ms</strong> (<em>int</em>) – The sample time in milliseconds (sampling interval).</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – The data recorder source</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.ChannelRecordingData.source">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><span class="pre">DataRecorderSource</span></a></em><a class="headerlink" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData.source" title="Link to this definition"></a></dt>
+<dd><p>Read-only property to get the maximum sample buffer size for the data recorder.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.RecorderParam">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RecorderParam</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.RecorderParam" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>RecorderParam(bufsize, stride, sample_freq)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.RecorderParam.__new__">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bufsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_freq</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.RecorderParam.__new__" title="Link to this definition"></a></dt>
+<dd><p>Create new instance of RecorderParam(bufsize, stride, sample_freq)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.RecorderParam.bufsize">
+<span class="sig-name descname"><span class="pre">bufsize</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.RecorderParam.bufsize" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.RecorderParam.sample_freq">
+<span class="sig-name descname"><span class="pre">sample_freq</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.RecorderParam.sample_freq" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.RecorderParam.stride">
+<span class="sig-name descname"><span class="pre">stride</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder.RecorderParam.stride" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><span class="pre">NV200Device</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the data recorder with the specified NV200 device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device</strong> (<a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device"><em>NV200Device</em></a>) – The NV200 device instance to be used by the data recorder.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder._dev">
+<span class="sig-name descname"><span class="pre">_dev</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder._dev" title="Link to this definition"></a></dt>
+<dd><p>Stores the provided NV200 device instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="api.html#nv200.nv200_device.NV200Device" title="nv200.nv200_device.NV200Device">NV200Device</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder._sample_rate">
+<span class="sig-name descname"><span class="pre">_sample_rate</span></span><a class="headerlink" href="#nv200.data_recorder.DataRecorder._sample_rate" title="Link to this definition"></a></dt>
+<dd><p>The sample rate for data recording, initially set to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.get_sample_period_ms_for_duration">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_sample_period_ms_for_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">milliseconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.get_sample_period_ms_for_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.get_sample_period_ms_for_duration" title="Link to this definition"></a></dt>
+<dd><p>Calculates the sample period in seconds that is possible with the specified duration in milliseconds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.get_sample_rate_for_duration">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_sample_rate_for_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">milliseconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.get_sample_rate_for_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.get_sample_rate_for_duration" title="Link to this definition"></a></dt>
+<dd><p>Calculates the sample rate that is possible with the specified duration in milliseconds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.is_recording">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.is_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.is_recording" title="Link to this definition"></a></dt>
+<dd><p>Check if the recoder is currently recording.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.max_sample_buffer_size">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_sample_buffer_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorder.max_sample_buffer_size" title="Link to this definition"></a></dt>
+<dd><p>Read-only property to get the maximum sample buffer size for the data recorder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.read_recorded_data">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_recorded_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="nv200.data_recorder.DataRecorder.ChannelRecordingData"><span class="pre">ChannelRecordingData</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.read_recorded_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.read_recorded_data" title="Link to this definition"></a></dt>
+<dd><p>Asynchronously reads recorded data for two channels and returns it as a list.</p>
+<p>This method retrieves the recorded data for channel 0 and channel 1 by
+calling <a class="reference internal" href="#nv200.data_recorder.DataRecorder.read_recorded_data_of_channel" title="nv200.data_recorder.DataRecorder.read_recorded_data_of_channel"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">read_recorded_data_of_channel</span></code></a> for each channel. The results are
+returned as a list of <a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="nv200.data_recorder.DataRecorder.ChannelRecordingData"><code class="xref any py py-class docutils literal notranslate"><span class="pre">ChannelRecordingData</span></code></a> objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list containing the recorded data for
+channel 0 and channel 1.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="nv200.data_recorder.DataRecorder.ChannelRecordingData">ChannelRecordingData</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.read_recorded_data_of_channel">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_recorded_data_of_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="nv200.data_recorder.DataRecorder.ChannelRecordingData"><span class="pre">ChannelRecordingData</span></a></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.read_recorded_data_of_channel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.read_recorded_data_of_channel" title="Link to this definition"></a></dt>
+<dd><p>Asynchronously reads recorded data from a specified channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> (<em>int</em>) – The channel number from which to read the recorded data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An object containing the recording source as a string
+and a list of floating-point numbers representing the recorded data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nv200.data_recorder.DataRecorder.ChannelRecordingData" title="nv200.data_recorder.DataRecorder.ChannelRecordingData">ChannelRecordingData</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Any exceptions raised by the underlying device communication methods.</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.read_recorded_value">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_recorded_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.read_recorded_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.read_recorded_value" title="Link to this definition"></a></dt>
+<dd><p>Reads a single recorded value from the specified channel at the given index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<em>int</em>) – The channel number from which to read the recorded value.</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – The index of the recorded value to read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The recorded value at the specified index in the specified channel.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Any exceptions raised by the underlying device communication methods.</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.read_single_value_from">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_single_value_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><span class="pre">DataRecorderSource</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.read_single_value_from"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.read_single_value_from" title="Link to this definition"></a></dt>
+<dd><p>Reads a single float value from the specified data recorder source.</p>
+<p>You can use this method i.e. to read the current piezo voltage because this
+functionality is not provided by the NV200 device directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> (<a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><em>DataRecorderSource</em></a>) – The data source from which to read the value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The recorded value from the specified source.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.set_autostart_mode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_autostart_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode" title="nv200.data_recorder.RecorderAutoStartMode"><span class="pre">RecorderAutoStartMode</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.set_autostart_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.set_autostart_mode" title="Link to this definition"></a></dt>
+<dd><p>Sets the autostart mode of the data recorder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.set_data_source">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_data_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nv200.data_recorder.DataRecorderSource" title="nv200.data_recorder.DataRecorderSource"><span class="pre">DataRecorderSource</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.set_data_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.set_data_source" title="Link to this definition"></a></dt>
+<dd><p>Sets the channel and the source of data to be stored in the data recorder channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.set_recorder_stride">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_recorder_stride</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.set_recorder_stride"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.set_recorder_stride" title="Link to this definition"></a></dt>
+<dd><p>Sets the recorder stride.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.set_recording_duration_ms">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_recording_duration_ms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">milliseconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.data_recorder.DataRecorder.RecorderParam" title="nv200.data_recorder.RecorderParam"><span class="pre">RecorderParam</span></a></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.set_recording_duration_ms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.set_recording_duration_ms" title="Link to this definition"></a></dt>
+<dd><p>Sets the recording duration in milliseconds and adjusts the recorder parameters accordingly.</p>
+<p>This method calculates the appropriate stride, sample rate, and buffer size based on the
+specified recording duration and the recorder’s configuration. It then updates the recorder
+settings to match these calculated values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>milliseconds</strong> (<em>float</em>) – The desired recording duration in milliseconds.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An object containing the updated buffer length, stride, and sample rate.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nv200.data_recorder.DataRecorder.RecorderParam" title="nv200.data_recorder.DataRecorder.RecorderParam">RecorderParam</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the calculated buffer size or stride is invalid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.set_sample_buffer_size">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_sample_buffer_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.set_sample_buffer_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.set_sample_buffer_size" title="Link to this definition"></a></dt>
+<dd><p>Sets the sample buffer size for each of the two data recorder channels (0..6144)
+A value of 0 means infinite loop over maximum length until recorder is stopped manually.
+If you would like to have an infinite loop, use the constant <a class="reference internal" href="api.html#nv200.data_recorder.DataRecorder.INFINITE_RECORDING_DURATION" title="nv200.data_recorder.DataRecorder.INFINITE_RECORDING_DURATION"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">DataRecorder.INFINITE_RECORDING_DURATION</span></code></a>.
+You can get the maximum buffer size using the <a class="reference internal" href="#nv200.data_recorder.DataRecorder.max_sample_buffer_size" title="nv200.data_recorder.DataRecorder.max_sample_buffer_size"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">max_sample_buffer_size</span></code></a> property.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.start_recording">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_recording</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.start_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.start_recording" title="Link to this definition"></a></dt>
+<dd><p>Starts / stops the data recorder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.stop_recording">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.stop_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.stop_recording" title="Link to this definition"></a></dt>
+<dd><p>Stops the recording process by invoking the <a class="reference internal" href="#nv200.data_recorder.DataRecorder.start_recording" title="nv200.data_recorder.DataRecorder.start_recording"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">start_recording</span></code></a> method with False.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorder.wait_until_finished">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait_until_finished</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorder.wait_until_finished"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorder.wait_until_finished" title="Link to this definition"></a></dt>
+<dd><p>Waits asynchronously until the recording process has finished or the specified timeout is reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout_s</strong> (<em>float</em>) – The maximum time to wait in seconds. Defaults to 10.0.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the recording process finished within the timeout, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>asyncio.TimeoutError</strong> – If the timeout is reached before the recording process finishes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DataRecorderSource</span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#DataRecorderSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum representing the source of data to be stored in the data recorder channel,
+ignoring the buffer (A or B) distinction.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.ABS_POSITION_ERROR">
+<span class="sig-name descname"><span class="pre">ABS_POSITION_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.ABS_POSITION_ERROR" title="Link to this definition"></a></dt>
+<dd><p>Absolute position error</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.PIEZO_CURRENT_1">
+<span class="sig-name descname"><span class="pre">PIEZO_CURRENT_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.PIEZO_CURRENT_1" title="Link to this definition"></a></dt>
+<dd><p>Piezo current 1 (A)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.PIEZO_CURRENT_2">
+<span class="sig-name descname"><span class="pre">PIEZO_CURRENT_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.PIEZO_CURRENT_2" title="Link to this definition"></a></dt>
+<dd><p>Piezo current 2 (A)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.PIEZO_POSITION">
+<span class="sig-name descname"><span class="pre">PIEZO_POSITION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.PIEZO_POSITION" title="Link to this definition"></a></dt>
+<dd><p>Piezo position (μm or mrad)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.PIEZO_VOLTAGE">
+<span class="sig-name descname"><span class="pre">PIEZO_VOLTAGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.PIEZO_VOLTAGE" title="Link to this definition"></a></dt>
+<dd><p>Piezo voltage (V)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.POSITION_ERROR">
+<span class="sig-name descname"><span class="pre">POSITION_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.POSITION_ERROR" title="Link to this definition"></a></dt>
+<dd><p>Position error</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.DataRecorderSource.SETPOINT">
+<span class="sig-name descname"><span class="pre">SETPOINT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#nv200.data_recorder.DataRecorderSource.SETPOINT" title="Link to this definition"></a></dt>
+<dd><p>Setpoint (μm or mrad)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nv200.data_recorder.RecorderAutoStartMode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RecorderAutoStartMode</span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#RecorderAutoStartMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.RecorderAutoStartMode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum representing the autostart mode of the data recorder.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.RecorderAutoStartMode.OFF">
+<span class="sig-name descname"><span class="pre">OFF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#nv200.data_recorder.RecorderAutoStartMode.OFF" title="Link to this definition"></a></dt>
+<dd><p>Autostart off - start recording manually with recorder start command</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.RecorderAutoStartMode.START_ON_SET_COMMAND">
+<span class="sig-name descname"><span class="pre">START_ON_SET_COMMAND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#nv200.data_recorder.RecorderAutoStartMode.START_ON_SET_COMMAND" title="Link to this definition"></a></dt>
+<dd><p>Start on set-command</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nv200.data_recorder.RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN">
+<span class="sig-name descname"><span class="pre">START_ON_WAVEFORM_GEN_RUN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#nv200.data_recorder.RecorderAutoStartMode.START_ON_WAVEFORM_GEN_RUN" title="Link to this definition"></a></dt>
+<dd><p>Start on waveform generator run</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nv200.data_recorder.RecorderAutoStartMode.get_mode">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nv200.data_recorder.RecorderAutoStartMode" title="nv200.data_recorder.RecorderAutoStartMode"><span class="pre">RecorderAutoStartMode</span></a></span></span><a class="reference internal" href="_modules/nv200/data_recorder.html#RecorderAutoStartMode.get_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nv200.data_recorder.RecorderAutoStartMode.get_mode" title="Link to this definition"></a></dt>
+<dd><p>Given a mode value, return the corresponding RecorderAutoStartMode enum.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pid_and_filters.html" class="btn btn-neutral float-left" title="PID Controller and Filters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="trigger_io.html" class="btn btn-neutral float-right" title="Trigger In and Trigger Out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

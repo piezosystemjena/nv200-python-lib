@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="API Reference" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#device-discovery">Device Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#serial-connection">Serial Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ethernet-connection">Ethernet Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-recorder">Data Recorder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#waveform-generator">Waveform Generator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<section id="device-discovery">
+<h2>Device Discovery<a class="headerlink" href="#device-discovery" title="Link to this heading"></a></h2>
+<p>This example demonstrates how to asynchronously discover compatible devices on all available
+interfaces. The first discovery is done without extended information, so it is faster, while
+the second discovery includes extended information about the devices, which takes longer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">discover_devices</span><span class="p">,</span> <span class="n">DiscoverFlags</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1"># async Main execution</span>
+<span class="linenos"> 6</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main_async</span><span class="p">():</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 8</span><span class="sd">    Asynchronously discovers available devices and prints their information.</span>
+<span class="linenos"> 9</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">10</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Discovering devices...&quot;</span><span class="p">)</span>
+<span class="linenos">11</span>    <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">()</span>
+<span class="linenos">12</span>    
+<span class="linenos">13</span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+<span class="linenos">14</span>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+<span class="linenos">15</span>    <span class="k">else</span><span class="p">:</span>
+<span class="linenos">16</span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> device(s):&quot;</span><span class="p">)</span>
+<span class="linenos">17</span>        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+<span class="linenos">18</span>            <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Discovering devices with extended information...&quot;</span><span class="p">)</span>
+<span class="linenos">21</span>    <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">(</span><span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">ALL_INTERFACES</span> <span class="o">|</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">READ_DEVICE_INFO</span><span class="p">)</span>	
+<span class="linenos">22</span>    
+<span class="linenos">23</span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+<span class="linenos">24</span>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+<span class="linenos">25</span>    <span class="k">else</span><span class="p">:</span>
+<span class="linenos">26</span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> device(s):&quot;</span><span class="p">)</span>
+<span class="linenos">27</span>        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+<span class="linenos">28</span>            <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="c1"># Running the async main function</span>
+<span class="linenos">32</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">33</span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main_async</span><span class="p">())</span>
+<span class="linenos">34</span>
+</pre></div>
+</div>
+<p>The output of the above example can look like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Discovering devices...
+Found 4 device(s):
+Telnet @ 192.168.101.3 (MAC: 00:80:A3:5A:7F:CB)
+Telnet @ 192.168.101.2 (MAC: 00:80:A3:79:C6:1E)
+Telnet @ 192.168.101.4 (MAC: 00:80:A3:6F:60:F5)
+Serial @ COM5 - SPI Controller Box
+
+Discovering devices with extended information...
+Found 4 device(s):
+Telnet @ 192.168.101.4 (MAC: 00:80:A3:6F:60:F5) - NV200/D_NET - {&#39;actuator_name&#39;: &#39;PSH15SG_Y   &#39;, &#39;actuator_serial&#39;: &#39;123910&#39;}
+Telnet @ 192.168.101.2 (MAC: 00:80:A3:79:C6:1E) - NV200/D_NET - {&#39;actuator_name&#39;: &#39;PSH20       &#39;, &#39;actuator_serial&#39;: &#39;123910&#39;}
+Telnet @ 192.168.101.3 (MAC: 00:80:A3:5A:7F:CB) - SPI Controller Box
+Serial @ COM5 - SPI Controller Box
+</pre></div>
+</div>
+</section>
+<section id="serial-connection">
+<h2>Serial Connection<a class="headerlink" href="#serial-connection" title="Link to this heading"></a></h2>
+<p>The example below demonstrates how to establish a serial connection to the NV200/D Compact Amplifier.
+Because no serial port is specified, the library will automatically search for available serial ports
+and connect to the first one it finds.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportType</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.connection_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_to_single_device</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ethernet_auto_detect</span><span class="p">():</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 9</span><span class="sd">    Automatically detects and establishes an Ethernet connection to the first detected device using Telnet.</span>
+<span class="linenos">10</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">11</span>    <span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">NV200Device</span><span class="p">,</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">)</span>
+<span class="linenos">12</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to device: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">13</span>    <span class="k">await</span>  <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">17</span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ethernet_auto_detect</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This is the expected output of the above example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Connected to device on serial port: COM3
+</pre></div>
+</div>
+</section>
+<section id="ethernet-connection">
+<h2>Ethernet Connection<a class="headerlink" href="#ethernet-connection" title="Link to this heading"></a></h2>
+<p>The example shows, how to manually create a NV200Device instance for a device connected via Ethernet.
+Because no IP address is specified, the library will automatically search for available devices
+and connect to the first one it finds.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportType</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.connection_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_to_single_device</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ethernet_auto_detect</span><span class="p">():</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 9</span><span class="sd">    Automatically detects and establishes an Ethernet connection to the first detected device using Telnet.</span>
+<span class="linenos">10</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">11</span>    <span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">NV200Device</span><span class="p">,</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">)</span>
+<span class="linenos">12</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to device: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">13</span>    <span class="k">await</span>  <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">17</span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ethernet_auto_detect</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This is the expected output of the above example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Connected to device: Telnet @ 192.168.101.4 - NV200/D_NET
+</pre></div>
+</div>
+</section>
+<section id="data-recorder">
+<h2>Data Recorder<a class="headerlink" href="#data-recorder" title="Link to this heading"></a></h2>
+<p>The example shows, how to use the data recorder functionality of the NV200/D Compact Amplifier.
+It demonstrates how to start and stop the data recorder, as well as how to retrieve recorded data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span> 
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscoverFlags</span>
+<span class="linenos"> 6</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">discover_devices</span>
+<span class="linenos"> 7</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.data_recorder</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataRecorder</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="p">,</span> <span class="n">RecorderAutoStartMode</span>
+<span class="linenos"> 8</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib_helpers</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">data_recorder_test</span><span class="p">():</span>
+<span class="linenos">13</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">14</span><span class="sd">    Asynchronous function to test the functionality of the DataRecorder with a given device.</span>
+<span class="linenos">15</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span>    <span class="c1"># Discover devices connected via USB interface</span>
+<span class="linenos">18</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Discovering devices connected via USB interface...&quot;</span><span class="p">)</span>
+<span class="linenos">19</span>    <span class="n">detected_devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">(</span><span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">DETECT_SERIAL</span> <span class="o">|</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">READ_DEVICE_INFO</span><span class="p">)</span>
+<span class="linenos">20</span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">detected_devices</span><span class="p">:</span>
+<span class="linenos">21</span>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+<span class="linenos">22</span>        <span class="k">return</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>    <span class="c1"># connect to the first detected device</span>
+<span class="linenos">25</span>    <span class="n">device</span> <span class="o">=</span> <span class="n">NV200Device</span><span class="o">.</span><span class="n">from_detected_device</span><span class="p">(</span><span class="n">detected_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="linenos">26</span>    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="linenos">27</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to device: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span>    <span class="c1"># Move the device to its initial position and wait for a short duration to stabilize</span>
+<span class="linenos">30</span>    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">move_to_position</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="linenos">31</span>    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>    <span class="c1"># Create a DataRecorder instance and configure it</span>
+<span class="linenos">34</span>    <span class="n">recorder</span> <span class="o">=</span> <span class="n">DataRecorder</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="linenos">35</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_POSITION</span><span class="p">)</span>
+<span class="linenos">36</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_VOLTAGE</span><span class="p">)</span>
+<span class="linenos">37</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_autostart_mode</span><span class="p">(</span><span class="n">RecorderAutoStartMode</span><span class="o">.</span><span class="n">START_ON_SET_COMMAND</span><span class="p">)</span>
+<span class="linenos">38</span>    <span class="n">rec_param</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_recording_duration_ms</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="linenos">39</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recording parameters:&quot;</span><span class="p">)</span>
+<span class="linenos">40</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Used buffer entries: </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">bufsize</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">41</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stride: </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">stride</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">42</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Sample frequency (Hz): </span><span class="si">{</span><span class="n">rec_param</span><span class="o">.</span><span class="n">sample_freq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span>    <span class="c1"># Start recording and move the device to a new position to record the parameters</span>
+<span class="linenos">45</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
+<span class="linenos">46</span>    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">move_to_position</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="linenos">47</span>    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="linenos">48</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading recorded data of both channels...&quot;</span><span class="p">)</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span>    <span class="c1"># Read the recorded data from the DataRecorder</span>
+<span class="linenos">51</span>    <span class="n">rec_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">read_recorded_data</span><span class="p">()</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span>    <span class="c1"># Use matplotlib to plot the recorded data</span>
+<span class="linenos">54</span>    <span class="n">matplotlib_helpers</span><span class="o">.</span><span class="n">prepare_plot_style</span><span class="p">()</span>
+<span class="linenos">55</span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+<span class="linenos">56</span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>   
+<span class="linenos">57</span>    <span class="n">matplotlib_helpers</span><span class="o">.</span><span class="n">show_plot</span><span class="p">()</span>
+<span class="linenos">58</span>
+<span class="linenos">59</span>    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos">60</span>
+<span class="linenos">61</span>
+<span class="linenos">62</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">63</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running data recorder test...&quot;</span><span class="p">)</span>
+<span class="linenos">64</span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">data_recorder_test</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This is the expected output of the above example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Running data recorder test...
+Discovering devices connected via USB interface...
+Connected to device: Serial @ COM3 - NV200/D_NET
+Recording parameters:
+Used buffer entries: 2000
+Stride: 1
+Sample frequency (Hz): 20000.0
+Reading recorded data of both channels...
+</pre></div>
+</div>
+<p>And the created matplotlib figure will look like this:</p>
+<img alt="_images/data_recorder_matplotlib.png" src="_images/data_recorder_matplotlib.png" />
+</section>
+<section id="waveform-generator">
+<h2>Waveform Generator<a class="headerlink" href="#waveform-generator" title="Link to this heading"></a></h2>
+<p>The example shows, how to use the arbitrary waveform generator functionality of the NV200/D Compact Amplifier.
+It demonstrates how to generate a sine waveform, transfer it to the device, start the waveform generator,
+and read back the recorded data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="linenos"> 2</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span>
+<span class="linenos"> 5</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.waveform_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaveformGenerator</span><span class="p">,</span> <span class="n">WaveformUnit</span><span class="p">,</span> <span class="n">WaveformType</span>
+<span class="linenos"> 6</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportType</span><span class="p">,</span> <span class="n">PidLoopMode</span>
+<span class="linenos"> 7</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.connection_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_to_single_device</span>
+<span class="linenos"> 8</span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.data_recorder</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataRecorder</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="p">,</span> <span class="n">RecorderAutoStartMode</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib_helpers</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">waveform_generator_test</span><span class="p">():</span>
+<span class="linenos">16</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">17</span><span class="sd">    Asynchronous function to test the functionality of the WaveformGenerator class in closes loop mode.</span>
+<span class="linenos">18</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span>    <span class="c1"># Connect to the one and only NV200 device connected via serial port</span>
+<span class="linenos">21</span>    <span class="n">dev</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">NV200Device</span><span class="p">,</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">)</span>
+<span class="linenos">22</span>    <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">pid</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">PidLoopMode</span><span class="o">.</span><span class="n">CLOSED_LOOP</span><span class="p">)</span>   
+<span class="linenos">23</span>
+<span class="linenos">24</span>    <span class="c1"># Generate a sine waveform with specified frequency and amplitude and</span>
+<span class="linenos">25</span>    <span class="c1"># transfer it to the device</span>
+<span class="linenos">26</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating sine waveform...&quot;</span><span class="p">)</span>
+<span class="linenos">27</span>    <span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">WaveformGenerator</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="linenos">28</span>    <span class="n">pos_range</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">get_position_range</span><span class="p">()</span>
+<span class="linenos">29</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Position range: </span><span class="si">{</span><span class="n">pos_range</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">30</span>    <span class="n">sine</span> <span class="o">=</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">generate_waveform</span><span class="p">(</span><span class="n">waveform_type</span><span class="o">=</span><span class="n">WaveformType</span><span class="o">.</span><span class="n">SINE</span><span class="p">,</span> <span class="n">freq_hz</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">low_level</span><span class="o">=</span><span class="n">pos_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">high_level</span><span class="o">=</span><span class="n">pos_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="linenos">31</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample factor </span><span class="si">{</span><span class="n">sine</span><span class="o">.</span><span class="n">sample_factor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">32</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transferring waveform data to device...&quot;</span><span class="p">)</span>
+<span class="linenos">33</span>    <span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">set_waveform</span><span class="p">(</span><span class="n">waveform</span><span class="o">=</span><span class="n">sine</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">WaveformUnit</span><span class="o">.</span><span class="n">POSITION</span><span class="p">)</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span>    <span class="c1"># Create a DataRecorder instance and configure it to record the movement of the piezo actuator</span>
+<span class="linenos">36</span>    <span class="n">recorder</span> <span class="o">=</span> <span class="n">DataRecorder</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="linenos">37</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_POSITION</span><span class="p">)</span>
+<span class="linenos">38</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_data_source</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">DataRecorderSource</span><span class="o">.</span><span class="n">PIEZO_VOLTAGE</span><span class="p">)</span>
+<span class="linenos">39</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_autostart_mode</span><span class="p">(</span><span class="n">RecorderAutoStartMode</span><span class="o">.</span><span class="n">START_ON_WAVEFORM_GEN_RUN</span><span class="p">)</span>
+<span class="linenos">40</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">set_recording_duration_ms</span><span class="p">(</span><span class="n">sine</span><span class="o">.</span><span class="n">cycle_time_ms</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">)</span>
+<span class="linenos">41</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
+<span class="linenos">42</span>
+<span class="linenos">43</span>    <span class="c1"># Start the waveform generator to run the sine wave for one cycle. This will also </span>
+<span class="linenos">44</span>    <span class="c1"># trigger the DataRecorder to start recording</span>
+<span class="linenos">45</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting waveform generator...&quot;</span><span class="p">)</span>
+<span class="linenos">46</span>    <span class="k">await</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">cycles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="linenos">47</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is running: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">waveform_generator</span><span class="o">.</span><span class="n">is_running</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">48</span>    <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">wait_until_finished</span><span class="p">()</span>
+<span class="linenos">49</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is running: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">waveform_generator</span><span class="o">.</span><span class="n">is_running</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">50</span>
+<span class="linenos">51</span>    <span class="c1"># Read the recorded data from the DataRecorder</span>
+<span class="linenos">52</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading recorded data of both channels...&quot;</span><span class="p">)</span>
+<span class="linenos">53</span>    <span class="n">rec_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">recorder</span><span class="o">.</span><span class="n">read_recorded_data</span><span class="p">()</span>
+<span class="linenos">54</span>
+<span class="linenos">55</span>    <span class="c1"># Use matplotlib to plot the generated sine wave and the recorded data</span>
+<span class="linenos">56</span>    <span class="n">matplotlib_helpers</span><span class="o">.</span><span class="n">prepare_plot_style</span><span class="p">()</span>
+<span class="linenos">57</span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sine</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">sine</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Generated Sine Wave&quot;</span><span class="p">)</span>
+<span class="linenos">58</span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+<span class="linenos">59</span>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">rec_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="p">)</span> 
+<span class="linenos">60</span>    <span class="n">matplotlib_helpers</span><span class="o">.</span><span class="n">show_plot</span><span class="p">()</span>
+<span class="linenos">61</span>
+<span class="linenos">62</span>    <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos">63</span>
+<span class="linenos">64</span>
+<span class="linenos">65</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">66</span>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">waveform_generator_test</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This is the expected output of the above example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Generating sine waveform...
+Sample factor 2.0
+Transferring waveform data to device...
+Starting waveform generator...
+Is running: True
+Is running: False
+Reading recorded data of both channels...
+</pre></div>
+</div>
+<p>And the created matplotlib figure will look like this:</p>
+<img alt="_images/waveform_generator_matplotlib.png" src="_images/waveform_generator_matplotlib.png" />
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

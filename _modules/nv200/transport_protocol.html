@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.transport_protocol &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.transport_protocol</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.transport_protocol</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module defines the transport protocols for communicating with NV200 devices, including Telnet and Serial interfaces.</span>
+
+<span class="sd">Classes:</span>
+<span class="sd">    - :class:`.TransportProtocol`: Abstract base class for transport protocols.</span>
+<span class="sd">    - :class:`.TelnetProtocol`: Implements Telnet-based communication with NV200 devices.</span>
+<span class="sd">    - :class:`.SerialProtocol`: Implements serial communication with NV200 devices.</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import asyncio</span>
+<span class="sd">        from nv200.device_interface import DeviceClient</span>
+<span class="sd">        from nv200.transport_protocols import SerialProtocol</span>
+
+<span class="sd">        async def serial_port_auto_detect():</span>
+<span class="sd">            transport = SerialProtocol()</span>
+<span class="sd">            client = DeviceClient(transport)</span>
+<span class="sd">            await client.connect()</span>
+<span class="sd">            print(f&quot;Connected to device on serial port: {transport.port}&quot;)</span>
+<span class="sd">            await client.close()</span>
+
+<span class="sd">        if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">            asyncio.run(serial_port_auto_detect())</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocolInfo</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PiezoDeviceBase</span>
+
+
+<span class="c1"># Global module locker</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># An async function taking a TransportProtocol and returning nothing</span>
+<span class="n">DiscoveryCallback</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;TransportProtocol&quot;</span><span class="p">,</span> <span class="s2">&quot;DetectedDevice&quot;</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="TransportProtocol">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransportProtocol</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class representing a transport protocol interface for a device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">XON</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x11</span><span class="s1">&#39;</span>
+    <span class="n">XOFF</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x13</span><span class="s1">&#39;</span>
+    <span class="n">LF</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0A</span><span class="s1">&#39;</span>
+    <span class="n">CR</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0D</span><span class="s1">&#39;</span>
+    <span class="n">CRLF</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0D\x0A</span><span class="s1">&#39;</span>
+    <span class="n">DEFAULT_TIMEOUT_SECS</span> <span class="o">=</span> <span class="mf">0.6</span>
+
+<div class="viewcode-block" id="TransportProtocol.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the TransportProtocol base class.</span>
+<span class="sd">        Subclasses may extend this constructor to initialize protocol-specific state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rx_delimiter</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">XON</span>  <span class="c1"># Default delimiter for reading messages</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.connect">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.connect">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">device</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;PiezoDeviceBase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Establishes an asynchronous connection to the NV200 device.</span>
+
+<span class="sd">        This method is intended to handle the initialization of a connection</span>
+<span class="sd">        to the NV200 device. The implementation should include the necessary</span>
+<span class="sd">        steps to ensure the connection is successfully established.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the connection fails or encounters an error.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.read_message">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.read_message">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads a complete delimited message from the device</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The response read from the source.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rx_delimiter</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.read_until">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.read_until">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">XON</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads data from the connection until the specified expected byte sequence is encountered.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expected (bytes, optional): The byte sequence to read until. Defaults to serial.XON.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The data read from the serial connection, decoded as a string, .</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.get_info">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.get_info">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransportProtocolInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns metadata about the transport protocol, such as type and identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.flush_input">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.flush_input">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">flush_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously flushes or clears the input buffer of the transport protocol.</span>
+
+<span class="sd">        This method is intended to remove any pending or unread data from the input stream,</span>
+<span class="sd">        ensuring that subsequent read operations start with a clean buffer. It is typically</span>
+<span class="sd">        used to prevent processing of stale or unwanted data.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.write">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.write">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends a command to the NV200 device asynchronously.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cmd (str): The command string to be sent to the device.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If there is an error while sending the command.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransportProtocol.close">
+<a class="viewcode-back" href="../../api.html#nv200.transport_protocol.TransportProtocol.close">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously closes the connection or resource associated with this instance.</span>
+
+<span class="sd">        This method should be used to release any resources or connections</span>
+<span class="sd">        that were opened during the lifetime of the instance. Ensure that this</span>
+<span class="sd">        method is called to avoid resource leaks.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If an error occurs while attempting to close the resource.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

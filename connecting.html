@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connecting to device &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started with the API" href="getting_started.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Connecting to device</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-a-single-device">Working with a single device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-multiple-devices">Working with multiple devices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#discovering-devices">Discovering Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#connecting-to-a-device">Connecting To a Device</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Connecting to device</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="connecting-to-device">
+<h1>Connecting to device<a class="headerlink" href="#connecting-to-device" title="Link to this heading"></a></h1>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<section id="working-with-a-single-device">
+<h3>Working with a single device<a class="headerlink" href="#working-with-a-single-device" title="Link to this heading"></a></h3>
+<p>If you work with only one single device, then the quickest way to connect to the device is to
+use the <a class="reference internal" href="api.html#nv200.connection_utils.connect_to_single_device" title="nv200.connection_utils.connect_to_single_device"><code class="xref any py py-func docutils literal notranslate"><span class="pre">connect_to_single_device()</span></code></a> function from the <a class="reference internal" href="api.html#module-nv200.connection_utils" title="nv200.connection_utils"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.connection_utils</span></code></a> module.
+With a single line of code you can discover the device and connect to it.</p>
+<p>If no parameters are passed to the function, it will first try to connect to the first device
+found via USB, and if no USB device is found, it will try to connect to the first device found via Ethernet.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.connection_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_to_single_device</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_single_device</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connected to device.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Perform your device operations here</span>
+
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connection closed.&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>If you would like to limit the discovery to a specific interface or if you would like to connect
+to a device with a specific MAC address or IP address, you can pass additional parameters to the
+function. The following example shows how to connect to a device with a specific MAC address</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">nv200.connection_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_to_single_device</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">,</span> <span class="s2">&quot;00:80:A3:79:C6:18&quot;</span><span class="p">)</span>
+    <span class="c1"># Perform your device operations here</span>
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Here are some examples of how to use the function:</p>
+<dl>
+<dt>Auto Discovery</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nv200</span><span class="o">.</span><span class="n">connection_utils</span><span class="o">.</span><span class="n">connect_to_single_device</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt>Serial Port Auto Discovery</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nv200</span><span class="o">.</span><span class="n">connection_utils</span><span class="o">.</span><span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Ethernet Auto Discovery</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nv200</span><span class="o">.</span><span class="n">connection_utils</span><span class="o">.</span><span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Connect to specific MAC address</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nv200</span><span class="o">.</span><span class="n">connection_utils</span><span class="o">.</span><span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">,</span> <span class="s2">&quot;00:80:A3:79:C6:18&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Connect to specific IP address</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nv200</span><span class="o">.</span><span class="n">connection_utils</span><span class="o">.</span><span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">,</span> <span class="s2">&quot;192.168.102.3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Connect to specific serial port</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">nv200</span><span class="o">.</span><span class="n">connection_utils</span><span class="o">.</span><span class="n">connect_to_single_device</span><span class="p">(</span><span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="s2">&quot;COM3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>For a detailed description of the parameters, please refer to the
+<a class="reference internal" href="api.html#nv200.connection_utils.connect_to_single_device" title="nv200.connection_utils.connect_to_single_device"><code class="xref py py-func docutils literal notranslate"><span class="pre">API</span> <span class="pre">Reference</span></code></a> of this function.</p>
+<div class="note admonition">
+<p class="admonition-title">Important</p>
+<blockquote>
+<div><p>All device interactions are asynchronous. Make sure to use the <code class="docutils literal notranslate"><span class="pre">await</span></code> keyword
+when calling any asynchronous function, such as <a class="reference internal" href="api.html#nv200.connection_utils.connect_to_single_device" title="nv200.connection_utils.connect_to_single_device"><code class="xref any py py-func docutils literal notranslate"><span class="pre">connect_to_single_device()</span></code></a>.
+These functions do not block the main thread and allow for
+concurrent operations within an asynchronous application.</p>
+</div></blockquote>
+</div>
+</section>
+<section id="working-with-multiple-devices">
+<h3>Working with multiple devices<a class="headerlink" href="#working-with-multiple-devices" title="Link to this heading"></a></h3>
+<p>If you work with multiple devices, you can use the <a class="reference internal" href="api.html#nv200.device_discovery.discover_devices" title="nv200.device_discovery.discover_devices"><code class="xref any py py-func docutils literal notranslate"><span class="pre">discover_devices()</span></code></a>
+function from the <a class="reference internal" href="api.html#module-nv200.device_discovery" title="nv200.device_discovery"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.device_discovery</span></code></a> module to discover all devices connected via USB or Ethernet and then connect
+to specific or all devices.
+The following example shows, how to discover NV200 devices connected via USB or Ethernet
+and connect to the first detected device using the asynchronous API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">discover_devices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.connection_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_to_detected_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscoverFlags</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Discovering devices...&quot;</span><span class="p">)</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">(</span><span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">ALL_INTERFACES</span> <span class="o">|</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">READ_DEVICE_INFO</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> device(s). Connecting to the first device...&quot;</span><span class="p">)</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_detected_device</span><span class="p">(</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_info</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Perform your device operations here</span>
+
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connection closed.&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This is the possible output of the example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Discovering devices...
+Found 2 device(s). Connecting to the first device...
+Connected to device Telnet @ 192.168.10.180 - NV200/D_NET.
+Connection closed.
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Important</p>
+<blockquote>
+<div><p>For the <a class="reference internal" href="api.html#nv200.connection_utils.connect_to_detected_device" title="nv200.connection_utils.connect_to_detected_device"><code class="xref any py py-func docutils literal notranslate"><span class="pre">connect_to_detected_device()</span></code></a> function to work properly, you must first discover the devices
+using the <a class="reference internal" href="api.html#nv200.shared_types.DiscoverFlags.READ_DEVICE_INFO" title="nv200.shared_types.DiscoverFlags.READ_DEVICE_INFO"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">DiscoverFlags.READ_DEVICE_INFO</span></code></a> flag. This flag is necessary to enrich the device information with
+additional details such as the name and device type.</p>
+</div></blockquote>
+</div>
+</section>
+</section>
+<section id="discovering-devices">
+<h2>Discovering Devices<a class="headerlink" href="#discovering-devices" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="api.html#module-nv200.device_discovery" title="nv200.device_discovery"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.device_discovery</span></code></a> module provides a way to automatically discover all NV200 devices
+connected by USB or Ethernet. You just need to call the <a class="reference internal" href="api.html#nv200.device_discovery.discover_devices" title="nv200.device_discovery.discover_devices"><code class="xref any py py-func docutils literal notranslate"><span class="pre">discover_devices()</span></code></a>
+function and it will return a list of all detected devices.</p>
+<p>The <a class="reference internal" href="api.html#nv200.device_discovery.discover_devices" title="nv200.device_discovery.discover_devices"><code class="xref any py py-func docutils literal notranslate"><span class="pre">discover_devices()</span></code></a> function accepts a <a class="reference internal" href="api.html#nv200.shared_types.DiscoverFlags" title="nv200.shared_types.DiscoverFlags"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DiscoverFlags</span></code></a> parameter to
+specify the type of devices to discover.</p>
+<ul class="simple">
+<li><p>Telnet discovery - <a class="reference internal" href="api.html#nv200.shared_types.DiscoverFlags.DETECT_ETHERNET" title="nv200.shared_types.DiscoverFlags.DETECT_ETHERNET"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">DiscoverFlags.DETECT_ETHERNET</span></code></a></p></li>
+<li><p>Serial discovery - <a class="reference internal" href="api.html#nv200.shared_types.DiscoverFlags.DETECT_SERIAL" title="nv200.shared_types.DiscoverFlags.DETECT_SERIAL"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">DiscoverFlags.DETECT_SERIAL</span></code></a></p></li>
+<li><p>Device info enrichment - <a class="reference internal" href="api.html#nv200.shared_types.DiscoverFlags.READ_DEVICE_INFO" title="nv200.shared_types.DiscoverFlags.READ_DEVICE_INFO"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">DiscoverFlags.READ_DEVICE_INFO</span></code></a></p></li>
+</ul>
+<p>The <a class="reference internal" href="api.html#nv200.shared_types.DiscoverFlags.READ_DEVICE_INFO" title="nv200.shared_types.DiscoverFlags.READ_DEVICE_INFO"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">DiscoverFlags.READ_DEVICE_INFO</span></code></a> flag is used to enrich the device information with additional details such as the
+name and serial number of the actuator connected to the amplifier. This is useful for identifying the device
+and its capabilities.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">discover_devices</span><span class="p">,</span> <span class="n">DiscoverFlags</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main_async</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Asynchronously discovers available devices and prints their information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Discovering devices...&quot;</span><span class="p">)</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> device(s):&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Discovering devices with extended information...&quot;</span><span class="p">)</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">(</span><span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">ALL_INTERFACES</span> <span class="o">|</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">READ_DEVICE_INFO</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> device(s):&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="c1"># Running the async main function</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main_async</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>In this example, there are two discovery calls. The first one discovers all devices but does not
+query the actuator information. The second one discovers all devices and queries the actuator
+information. The output of the example may look like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Discovering devices...
+Found 4 device(s):
+Telnet @ 192.168.101.3 (MAC: 00:80:A3:5A:7F:CB)
+Telnet @ 192.168.101.2 (MAC: 00:80:A3:79:C6:1E)
+Telnet @ 192.168.101.4 (MAC: 00:80:A3:6F:60:F5)
+Serial @ COM5 - SPI Controller Box
+
+Discovering devices with extended information...
+Found 4 device(s):
+Telnet @ 192.168.101.4 (MAC: 00:80:A3:6F:60:F5) - NV200/D_NET - {&#39;actuator_name&#39;: &#39;PSH15SG_Y   &#39;, &#39;actuator_serial&#39;: &#39;123910&#39;}
+Telnet @ 192.168.101.2 (MAC: 00:80:A3:79:C6:1E) - NV200/D_NET - {&#39;actuator_name&#39;: &#39;PSH20       &#39;, &#39;actuator_serial&#39;: &#39;123910&#39;}
+Telnet @ 192.168.101.3 (MAC: 00:80:A3:5A:7F:CB) - SPI Controller Box
+Serial @ COM5 - SPI Controller Box
+</pre></div>
+</div>
+</section>
+<section id="connecting-to-a-device">
+<h2>Connecting To a Device<a class="headerlink" href="#connecting-to-a-device" title="Link to this heading"></a></h2>
+<p>The recommended way to connect to a device is to use the <a class="reference internal" href="api.html#nv200.connection_utils.connect_to_detected_device" title="nv200.connection_utils.connect_to_detected_device"><code class="xref any py py-func docutils literal notranslate"><span class="pre">connect_to_detected_device</span></code></a> function from the <a class="reference internal" href="api.html#module-nv200.connection_utils" title="nv200.connection_utils"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.connection_utils</span></code></a> module.
+This function takes a <a class="reference internal" href="api.html#nv200.shared_types.DeviceInfo" title="nv200.shared_types.DeviceInfo"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DeviceInfo</span></code></a> object as an argument, which can be obtained from the
+<a class="reference internal" href="api.html#nv200.device_discovery.discover_devices" title="nv200.device_discovery.discover_devices"><code class="xref any py py-func docutils literal notranslate"><span class="pre">discover_devices()</span></code></a> function.</p>
+<p>The following example shows how to connect to the first detected device:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">(</span><span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">ALL_INTERFACES</span> <span class="o">|</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">READ_DEVICE_INFO</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">devices</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No devices found.&quot;</span><span class="p">)</span>
+    <span class="k">return</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> device(s). Connecting to the first device...&quot;</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connect_to_detected_device</span><span class="p">(</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>If you would like to separate device object creation from the connection, you can use the <a class="reference internal" href="api.html#nv200.device_factory.create_device_from_detected_device" title="nv200.device_factory.create_device_from_detected_device"><code class="xref any py py-func docutils literal notranslate"><span class="pre">create_device_from_detected_device</span></code></a>
+function from the <a class="reference internal" href="api.html#module-nv200.device_factory" title="nv200.device_factory"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">nv200.device_factory</span></code></a> module to create a device object from the <a class="reference internal" href="api.html#nv200.shared_types.DeviceInfo" title="nv200.shared_types.DeviceInfo"><code class="xref any py py-class docutils literal notranslate"><span class="pre">DeviceInfo</span></code></a> object.
+Later you can call the <a class="reference internal" href="api.html#nv200.device_base.PiezoDeviceBase" title="nv200.device_base.PiezoDeviceBase"><code class="xref py py-func docutils literal notranslate"><span class="pre">connect()</span></code></a> method on the device object
+to establish the connection:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">discover_devices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_device_from_detected_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscoverFlags</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Detect all device on all interfaces. The DiscoverFlags.READ_DEVICE_INFO flag is used to</span>
+    <span class="c1"># enrich the device information -this is required for the create_device_from_detected_device function.</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discover_devices</span><span class="p">(</span><span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">ALL_INTERFACES</span> <span class="o">|</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">READ_DEVICE_INFO</span><span class="p">)</span>
+
+    <span class="c1"># Create a device object from the first detected device</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">create_device_from_detected_device</span><span class="p">(</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Connect to the device</span>
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+    <span class="c1"># Perform your device operations here</span>
+
+    <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting Started with the API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

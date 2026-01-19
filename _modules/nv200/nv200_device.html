@@ -1,0 +1,1266 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.nv200_device &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.nv200_device</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.nv200_device</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PiezoDeviceBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PidLoopMode</span><span class="p">,</span>
+    <span class="n">ModulationSource</span><span class="p">,</span>
+    <span class="n">StatusRegister</span><span class="p">,</span>
+    <span class="n">StatusFlags</span><span class="p">,</span>
+    <span class="n">DetectedDevice</span><span class="p">,</span>
+    <span class="n">TransportType</span><span class="p">,</span>
+    <span class="n">AnalogMonitorSource</span><span class="p">,</span>
+    <span class="n">SPIMonitorSource</span><span class="p">,</span>
+    <span class="n">PIDGains</span><span class="p">,</span>
+    <span class="n">PCFGains</span><span class="p">,</span>
+    <span class="n">CtrlMode</span><span class="p">,</span>
+    <span class="n">ValueRange</span><span class="p">,</span>
+    <span class="n">PostionSensorType</span><span class="p">,</span>
+    <span class="n">TriggerInFunction</span><span class="p">,</span>
+    <span class="n">TriggerOutEdge</span><span class="p">,</span>
+    <span class="n">TriggerOutSource</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.telnet_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TelnetProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.serial_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">SerialProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.transport_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceParamFile</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="c1"># For forward reference of NV200Device within inner classes</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="NV200Device">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NV200Device</span><span class="p">(</span><span class="n">PiezoDeviceBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A high-level asynchronous client for communicating with NV200 piezo controllers.</span>
+
+<span class="sd">    This class extends the `PiezoDeviceBase` base class and provides high-level methods</span>
+<span class="sd">    for setting and getting various device parameters, such as PID mode, setpoint, etc.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        setpoint_lpf (NV200Device.LowpassFilter): Interface for the setpoint low-pass filter.</span>
+<span class="sd">        position_lpf (NV200Device.LowpassFilter): Interface for the position low-pass filter.</span>
+<span class="sd">        notch_filter (NV200Device.NotchFilter): Interface for the notch filter.</span>
+<span class="sd">        pid (NV200Device.PIDController): Interface for the PID controller to set the controller mode and PID gains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEVICE_ID</span> <span class="o">=</span> <span class="s2">&quot;NV200/D_NET&quot;</span>
+    <span class="n">CACHEABLE_COMMANDS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;cl&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ctrlmode&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unitcl&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unitol&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avmin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avmax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;posmin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;posmax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;modsrc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;monsrc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spisrc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ki&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kd&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;setlpf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;setlpon&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;poslpf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;poslpon&quot;</span>
+        <span class="s2">&quot;notchf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notchon&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notchb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acmeasure&quot;</span>
+    <span class="p">}</span>
+    <span class="n">_help_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># General Commands</span>
+        <span class="s2">&quot;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Print full command list&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reset&quot;</span><span class="p">:</span> <span class="s2">&quot;Hardware-reset of the controller&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fenable&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable/disable full range voltage sweep during power-up (0=disabled, 1=enabled)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sinit&quot;</span><span class="p">:</span> <span class="s2">&quot;Set initial actuator position after power-up (0 to 100 %)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;set&quot;</span><span class="p">:</span> <span class="s2">&quot;Setpoint: voltage (open loop) or position (closed loop), range limited by actuator&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;setst&quot;</span><span class="p">:</span> <span class="s2">&quot;Smooth setpoint: setst,&lt;value1&gt;=Setpoint,&lt;value2&gt;=JumpTime; same rules as &#39;set&#39;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;meas&quot;</span><span class="p">:</span> <span class="s2">&quot;Read position (with sensor) or piezo voltage (no sensor)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;imeas&quot;</span><span class="p">:</span> <span class="s2">&quot;Read measured piezo current (0=channel 1, 1=channel 2)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ctrlmode&quot;</span><span class="p">:</span> <span class="s2">&quot;Controller mode (0=PID, 1=ILC identification, 2=ILC feedforward, 3=ILC feedback)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="s2">&quot;Read heat sink temperature&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;stat&quot;</span><span class="p">:</span> <span class="s2">&quot;Read status register&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;posmin&quot;</span><span class="p">:</span> <span class="s2">&quot;Lower motion range limit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;posmax&quot;</span><span class="p">:</span> <span class="s2">&quot;Upper motion range limit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avmin&quot;</span><span class="p">:</span> <span class="s2">&quot;Lower voltage range limit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avmax&quot;</span><span class="p">:</span> <span class="s2">&quot;Upper voltage range limit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;modsrc&quot;</span><span class="p">:</span> <span class="s2">&quot;Setpoint source (0=USB/Ethernet, 1=Analog In, 2=SPI, 3=AWG)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;monsrc&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;Analog output source (0=position closed loop, 1=setpoint, 2=piezo voltage, &quot;</span>
+            <span class="s2">&quot;3=position error, 4=abs(position error), 5=position open loop, 6=piezo current 1, 7=piezo current 2)&quot;</span>
+        <span class="p">),</span>
+
+        <span class="c1"># actuator information</span>
+        <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Actuator description (type such as &#39;TRITOR100SG&#39;)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acserno&quot;</span><span class="p">:</span> <span class="s2">&quot;Actuator serial number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;acmeasure&quot;</span><span class="p">:</span> <span class="s2">&quot;Actuator position sensor type (0=none, 1=straingauge, 2=capacitive, 3=LVDT)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># PID and Filters</span>
+        <span class="s2">&quot;cl&quot;</span><span class="p">:</span> <span class="s2">&quot;Loop mode (0=open loop, 1=closed loop)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sr&quot;</span><span class="p">:</span> <span class="s2">&quot;Slew rate limit (0.0000008 to 2000.0 %/ms; 2000=disabled)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kp&quot;</span><span class="p">:</span> <span class="s2">&quot;PID proportional gain (0 to 10000)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ki&quot;</span><span class="p">:</span> <span class="s2">&quot;PID integral gain (0 to 10000)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kd&quot;</span><span class="p">:</span> <span class="s2">&quot;PID differential gain (0 to 10000)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tf&quot;</span><span class="p">:</span> <span class="s2">&quot;PID differential term (time constant)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pcf&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;PID feedforward gain: pcf,&lt;position_gain&gt;,&lt;velocity_gain&gt;,&lt;acceleration_gain&gt; &quot;</span>
+            <span class="s2">&quot;(acceleration scaled internally by 1/1,000,000)&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;setlpon&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable/disable setpoint lowpass filter (0=off, 1=on)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;setlpf&quot;</span><span class="p">:</span> <span class="s2">&quot;Setpoint lowpass cutoff frequency (1 to 10000 Hz)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notchon&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable/disable notch filter (0=off, 1=on)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notchf&quot;</span><span class="p">:</span> <span class="s2">&quot;Notch filter frequency (1 to 10000 Hz)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notchb&quot;</span><span class="p">:</span> <span class="s2">&quot;Notch filter bandwidth (-3dB) (1 to 10000 Hz; max = 2 * notchf)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;poslpon&quot;</span><span class="p">:</span> <span class="s2">&quot;Enable/disable position lowpass filter (0=off, 1=on)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;poslpf&quot;</span><span class="p">:</span> <span class="s2">&quot;Position lowpass cutoff frequency (1 to 10000 Hz)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Arbitrary Waveform Generator</span>
+        <span class="s2">&quot;grun&quot;</span><span class="p">:</span> <span class="s2">&quot;Start/stop AWG (0=stop, 1=start)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gsarb&quot;</span><span class="p">:</span> <span class="s2">&quot;AWG start index (0 to 1023)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gearb&quot;</span><span class="p">:</span> <span class="s2">&quot;AWG end index (0 to 1023)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gcarb&quot;</span><span class="p">:</span> <span class="s2">&quot;AWG cycles (0=infinite, 1 to 65535)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;goarb&quot;</span><span class="p">:</span> <span class="s2">&quot;AWG offset index (0 to 1023)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;giarb&quot;</span><span class="p">:</span> <span class="s2">&quot;Read current AWG index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gtarb&quot;</span><span class="p">:</span> <span class="s2">&quot;Output sampling factor (1 to 65535; sample time = factor * 50µs)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gbarb&quot;</span><span class="p">:</span> <span class="s2">&quot;Write AWG buffer in </span><span class="si">% u</span><span class="s2">nits (index: 0 to 1023, value: 0.0 to 100.0)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gparb&quot;</span><span class="p">:</span> <span class="s2">&quot;Write AWG buffer in length units (index: 0 to 1023, value: posmin to posmax)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gsave&quot;</span><span class="p">:</span> <span class="s2">&quot;Save AWG buffer to EEPROM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gload&quot;</span><span class="p">:</span> <span class="s2">&quot;Load AWG buffer from EEPROM&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Data Recorder</span>
+        <span class="s2">&quot;recsrc&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;Set data recorder source: recsrc,&lt;ch&gt;,&lt;src&gt;; ch: 0=A, 1=B; &quot;</span>
+            <span class="s2">&quot;src: 0=position, 1=setpoint, 2=voltage, 3=error, 4=abs(error), &quot;</span>
+            <span class="s2">&quot;5=position (open loop), 6=piezo current 1, 7=piezo current 2&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;recast&quot;</span><span class="p">:</span> <span class="s2">&quot;Recorder autostart (0=off, 1=start on set, 2=start on grun)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recstr&quot;</span><span class="p">:</span> <span class="s2">&quot;Recorder stride (store every nth value) (1 to 65535)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;reclen&quot;</span><span class="p">:</span> <span class="s2">&quot;Recorder length (0 to 6144; 0=infinite loop)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recrun&quot;</span><span class="p">:</span> <span class="s2">&quot;Start/stop recorder (0=stop, 1=start)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recidx&quot;</span><span class="p">:</span> <span class="s2">&quot;Read current recorder write index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recout&quot;</span><span class="p">:</span> <span class="s2">&quot;Read recorder by index: recout,&lt;ch&gt;,&lt;index&gt;,&lt;value&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recoutf&quot;</span><span class="p">:</span> <span class="s2">&quot;Read full recorder buffer (comma-separated)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># Trigger In</span>
+        <span class="s2">&quot;trgfkt&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;Trigger input function (0=none, 1=AWG start, 2=AWG step, 3=AWG sync, &quot;</span>
+            <span class="s2">&quot;4=ILC sync, 5=recorder start)&quot;</span>
+        <span class="p">),</span>
+
+        <span class="c1"># Trigger Out</span>
+        <span class="s2">&quot;trgedg&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger edge mode (0=off, 1=rising, 2=falling, 3=both)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;trgsrc&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger signal source (0=position, 1=setpoint)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;trgss&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger start position (posmin+0.001 to posmax-0.001)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;trgse&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger stop position (posmin+0.001 to posmax-0.001)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;trgsi&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger step size (0.001 to posmax-0.001)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;trglen&quot;</span><span class="p">:</span> <span class="s2">&quot;Trigger pulse length in samples (0 to 255, time = length * 50µs)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># SPI</span>
+        <span class="s2">&quot;spisrc&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;SPI return source (0=0x0000, 1=position, 2=setpoint, 3=voltage, 4=error, &quot;</span>
+            <span class="s2">&quot;5=abs(error), 6=position open loop, 7=piezo current 1, 8=piezo current 2, 9=test 0x5A5A)&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;spitrg&quot;</span><span class="p">:</span> <span class="s2">&quot;SPI interrupt source (0=internal, 1=SPI)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;spis&quot;</span><span class="p">:</span> <span class="s2">&quot;SPI setpoint format (0=hex, 1=decimal, 2=stroke/voltage)&quot;</span><span class="p">,</span>
+
+        <span class="c1"># ILC</span>
+        <span class="s2">&quot;idata&quot;</span><span class="p">:</span> <span class="s2">&quot;Read all ILC parameters&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iemin&quot;</span><span class="p">:</span> <span class="s2">&quot;ILC lower error threshold &#39;emin&#39; (0.0001 to 1.0)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;irho&quot;</span><span class="p">:</span> <span class="s2">&quot;ILC learning rate &#39;rho&#39; (0.0001 to 1.0)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;in0&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of basic scans (≥ in1) (2 to 65535)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;in1&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of subsamples (power of 2: 2, 4, 8...1024)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inx&quot;</span><span class="p">:</span> <span class="s2">&quot;Frequency components to learn (1 to 128, must be &lt; ½ * in1)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iut&quot;</span><span class="p">:</span> <span class="s2">&quot;Read piezo voltage profile (time domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iyt&quot;</span><span class="p">:</span> <span class="s2">&quot;Read measured position profile (time domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ii1t&quot;</span><span class="p">:</span> <span class="s2">&quot;Read piezo current channel 1 (time domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ii2t&quot;</span><span class="p">:</span> <span class="s2">&quot;Read piezo current channel 2 (time domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;igc&quot;</span><span class="p">:</span> <span class="s2">&quot;Read learning function (frequency domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iuc&quot;</span><span class="p">:</span> <span class="s2">&quot;Read piezo voltage profile (frequency domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iwc&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;Set/read desired position profile (frequency domain): &quot;</span>
+            <span class="s2">&quot;iwc,&lt;index&gt;,&lt;real&gt;,&lt;imag&gt;; index: 0 to inx&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;iyc&quot;</span><span class="p">:</span> <span class="s2">&quot;Read measured position profile (frequency domain)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;igt&quot;</span><span class="p">:</span> <span class="s2">&quot;Correction mode (0=no learning, 1=offline ID, 2=online ID)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;isave&quot;</span><span class="p">:</span> <span class="s2">&quot;Save ILC learning profiles to actuator&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;iload&quot;</span><span class="p">:</span> <span class="s2">&quot;Load ILC learning profiles from actuator&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="NV200Device.LowpassFilter">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.LowpassFilter">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">LowpassFilter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interface to a low-pass filter configuration on the NV200 device.</span>
+
+<span class="sd">        This class is parameterized by the command strings for enabling the filter and</span>
+<span class="sd">        setting/getting the cutoff frequency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NV200Device.LowpassFilter.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.LowpassFilter.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="s2">&quot;NV200Device&quot;</span><span class="p">,</span> <span class="n">enable_cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cutoff_cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cutoff_range</span><span class="p">:</span> <span class="n">ValueRange</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initialize the LowpassFilter.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                device (NV200Device): The parent device instance.</span>
+<span class="sd">                enable_cmd (str): The device command to enable/disable the filter.</span>
+<span class="sd">                cutoff_cmd (str): The device command to set/get the cutoff frequency.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_enable_cmd</span> <span class="o">=</span> <span class="n">enable_cmd</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cutoff_cmd</span> <span class="o">=</span> <span class="n">cutoff_cmd</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_range</span> <span class="o">=</span> <span class="n">cutoff_range</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.LowpassFilter.enable">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.LowpassFilter.enable">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Enable or disable the low-pass filter.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                enable (bool): True to enable, False to disable.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_enable_cmd</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">enable</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.LowpassFilter.is_enabled">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.LowpassFilter.is_enabled">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Check if the low-pass filter is enabled.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                bool: True if enabled, False otherwise.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_enable_cmd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.LowpassFilter.set_cutoff">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.LowpassFilter.set_cutoff">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Set the cutoff frequency of the low-pass filter.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                frequency (int): The cutoff frequency in Hz (valid range 1..10000).</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cutoff_cmd</span><span class="p">,</span> <span class="n">frequency</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.LowpassFilter.get_cutoff">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.LowpassFilter.get_cutoff">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Get the cutoff frequency of the low-pass filter.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                int: The cutoff frequency in Hz.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cutoff_cmd</span><span class="p">)</span></div>
+</div>
+
+        
+
+<div class="viewcode-block" id="NV200Device.NotchFilter">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">NotchFilter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interface to a notch filter configuration on the NV200 device.</span>
+
+<span class="sd">        Allows enabling/disabling the notch filter and configuring its</span>
+<span class="sd">        center frequency and -3 dB bandwidth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="s2">&quot;NV200Device&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initialize the NotchFilter interface.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                device (NV200Device): The parent device instance used for communication.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_range</span> <span class="p">:</span> <span class="n">ValueRange</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>  <span class="c1"># Valid range for notch frequency</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bandwidth_range</span> <span class="p">:</span> <span class="n">ValueRange</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>  <span class="c1"># Valid range for notch bandwidth</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.enable">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.enable">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Enable or disable the notch filter.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                enable (bool): True to enable the filter, False to disable.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;notchon&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">enable</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.is_enabled">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.is_enabled">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Check if the notch filter is currently enabled.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                bool: True if the filter is enabled, False otherwise.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s2">&quot;notchon&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.set_frequency">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.set_frequency">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Set the center frequency of the notch filter.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                frequency (int): Center frequency in Hz. Valid range is 1 to 10,000 Hz.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;notchf&quot;</span><span class="p">,</span> <span class="n">frequency</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.get_frequency">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.get_frequency">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Get the center frequency of the notch filter.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                int: Current center frequency in Hz.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s2">&quot;notchf&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.set_bandwidth">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.set_bandwidth">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Set the -3 dB bandwidth of the notch filter.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                bandwidth (int): Bandwidth in Hz. Valid range is 1 to 10,000 Hz,</span>
+<span class="sd">                                but must not exceed 2 × center frequency.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;notchb&quot;</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.NotchFilter.get_bandwidth">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.NotchFilter.get_bandwidth">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_bandwidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Get the -3 dB bandwidth of the notch filter.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                int: Current bandwidth in Hz.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s2">&quot;notchb&quot;</span><span class="p">)</span></div>
+</div>
+
+        
+
+<div class="viewcode-block" id="NV200Device.PIDController">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">PIDController</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PIDController provides an interface for configuring and controlling the PID control loop of an NV200 device.</span>
+<span class="sd">        This class allows enabling/disabling closed loop control, setting and retrieving PID gains, and </span>
+<span class="sd">        configuring feed-forward control amplification factors for position, velocity, and acceleration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+<div class="viewcode-block" id="NV200Device.PIDController.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="s2">&quot;NV200Device&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initialize the NotchFilter interface.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                device (NV200Device): The parent device instance used for communication.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.PIDController.set_closed_loop">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.set_closed_loop">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_closed_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Enable or disable closed loop control mode.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">PidLoopMode</span><span class="o">.</span><span class="n">CLOSED_LOOP</span> <span class="k">if</span> <span class="n">enable</span> <span class="k">else</span> <span class="n">PidLoopMode</span><span class="o">.</span><span class="n">OPEN_LOOP</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.PIDController.is_closed_loop">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.is_closed_loop">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_closed_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Check if the device is currently in closed loop control mode.</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                bool: True if in closed loop mode, False otherwise.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mode</span><span class="p">()</span> <span class="o">==</span> <span class="n">PidLoopMode</span><span class="o">.</span><span class="n">CLOSED_LOOP</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.PIDController.set_mode">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.set_mode">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">PidLoopMode</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Sets the PID mode of the device to either open loop or closed loop.&quot;&quot;&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s1">&#39;cl&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.PIDController.get_mode">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.get_mode">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PidLoopMode</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Retrieves the current PID mode of the device.&quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="n">PidLoopMode</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;cl&#39;</span><span class="p">))</span></div>
+
+        
+
+<div class="viewcode-block" id="NV200Device.PIDController.set_pid_gains">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.set_pid_gains">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_pid_gains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ki</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets the PID gains for the device.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
+            <span class="k">if</span> <span class="n">kp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;kp&quot;</span><span class="p">,</span> <span class="n">kp</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ki</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;ki&quot;</span><span class="p">,</span> <span class="n">ki</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;kd&quot;</span><span class="p">,</span> <span class="n">kd</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.PIDController.get_pid_gains">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.get_pid_gains">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_pid_gains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PIDGains</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Retrieves the PID gains (kp, ki, kd) for the device.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                PIDGains: A named tuple with fields kp, ki, and kd.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
+            <span class="n">kp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;kp&#39;</span><span class="p">)</span>
+            <span class="n">ki</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;ki&#39;</span><span class="p">)</span>
+            <span class="n">kd</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;kd&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PIDGains</span><span class="p">(</span><span class="n">kp</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">kd</span><span class="p">)</span></div>
+
+        
+
+<div class="viewcode-block" id="NV200Device.PIDController.set_pcf_gains">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.set_pcf_gains">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_pcf_gains</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">position</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">acceleration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Sets the PID controllers feed forward control amplification factors.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                position (float | None): Factor for position feed-forward. Leave unchanged if None.</span>
+<span class="sd">                velocity (float | None): Factor for velocity feed-forward. Leave unchanged if None.</span>
+<span class="sd">                acceleration (float | None): Factor for acceleration feed-forward (scaled by 1/1_000_000 internally). Leave unchanged if None.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Read existing values if any factor is None to preserve them</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">acceleration</span><span class="p">):</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pcf_gains</span><span class="p">()</span>
+
+            <span class="n">pcf_x</span> <span class="o">=</span> <span class="n">position</span> <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current</span><span class="o">.</span><span class="n">position</span>
+            <span class="n">pcf_v</span> <span class="o">=</span> <span class="n">velocity</span> <span class="k">if</span> <span class="n">velocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current</span><span class="o">.</span><span class="n">velocity</span>
+            <span class="c1"># Scale acceleration before sending command</span>
+            <span class="c1"># Do not scale acceleration in UI!!! This is to be done on firmware level</span>
+            <span class="c1"># pcf_a = int(acceleration * 1_000_000) if acceleration is not None else int(current.acceleration * 1_000_000)</span>
+            <span class="n">pcf_a</span> <span class="o">=</span> <span class="n">acceleration</span> <span class="k">if</span> <span class="n">acceleration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current</span><span class="o">.</span><span class="n">acceleration</span>
+
+            <span class="c1"># Compose the command string (assuming a single write command)</span>
+            <span class="n">command_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pcf_x</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">pcf_v</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">pcf_a</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;pcf&quot;</span><span class="p">,</span> <span class="n">command_value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.PIDController.get_pcf_gains">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.PIDController.get_pcf_gains">[docs]</a>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_pcf_gains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PCFGains</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Retrieves the feed forward control amplification factors.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                PCFGains: The feed forward factors for position, velocity, and acceleration.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Assume read_value returns the string &quot;&lt;pcf_x&gt;,&lt;pcf_v&gt;,&lt;pcf_a&gt;&quot;</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">read_cached_response_parameters_tring</span><span class="p">(</span><span class="s1">&#39;pcf&#39;</span><span class="p">)</span>
+            <span class="n">pcf_x_str</span><span class="p">,</span> <span class="n">pcf_v_str</span><span class="p">,</span> <span class="n">pcf_a_str</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">pcf_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pcf_x_str</span><span class="p">)</span>
+            <span class="n">pcf_v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pcf_v_str</span><span class="p">)</span>
+            <span class="c1"># pcf_a = float(pcf_a_str) / 1_000_000  # scale back</span>
+            <span class="n">pcf_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pcf_a_str</span><span class="p">)</span> <span class="c1"># Do not scale acceleration in UI!!! This is to be done on firmware level</span>
+
+            <span class="k">return</span> <span class="n">PCFGains</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">pcf_x</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">pcf_v</span><span class="p">,</span> <span class="n">acceleration</span><span class="o">=</span><span class="n">pcf_a</span><span class="p">)</span></div>
+</div>
+
+        
+
+<div class="viewcode-block" id="NV200Device.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">:</span> <span class="n">TransportProtocol</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize NV200Device and its low-pass filter interfaces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>  <span class="c1"># call base class constructor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setpoint_lpf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LowpassFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;setlpon&quot;</span><span class="p">,</span> <span class="s2">&quot;setlpf&quot;</span><span class="p">,</span> <span class="n">ValueRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position_lpf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LowpassFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;poslpon&quot;</span><span class="p">,</span> <span class="s2">&quot;poslpf&quot;</span><span class="p">,</span> <span class="n">ValueRange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notch_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NotchFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PIDController</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.enrich_device_info">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.enrich_device_info">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">enrich_device_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detected_device</span> <span class="p">:</span> <span class="n">DetectedDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get additional information about the device.</span>
+
+<span class="sd">        A derived class should implement this method to enrich the device information in the given</span>
+<span class="sd">        detected_device object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            detected_device (DetectedDevice): The detected device object to enrich with additional information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">detected_device</span><span class="o">.</span><span class="n">device_info</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">detected_device</span><span class="o">.</span><span class="n">device_info</span><span class="p">[</span><span class="s1">&#39;actuator_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_name</span><span class="p">()</span>
+        <span class="n">detected_device</span><span class="o">.</span><span class="n">device_info</span><span class="p">[</span><span class="s1">&#39;actuator_serial&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_serial_number</span><span class="p">()</span></div>
+
+
+    
+<div class="viewcode-block" id="NV200Device.set_modulation_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_modulation_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_modulation_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">ModulationSource</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the setpoint modulation source.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;modsrc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_modulation_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_modulation_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_modulation_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModulationSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current setpoint modulation source.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ModulationSource</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;modsrc&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_spi_monitor_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_spi_monitor_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_spi_monitor_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">SPIMonitorSource</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the source for the SPI/Monitor value returned via SPI MISO.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;spisrc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_spi_monitor_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_spi_monitor_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_spi_monitor_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SPIMonitorSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source for the SPI/Monitor value returned via SPI MISO.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SPIMonitorSource</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;spisrc&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_analog_monitor_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_analog_monitor_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_analog_monitor_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">AnalogMonitorSource</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the source of data for analog output (monsrc).&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;monsrc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_analog_monitor_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_analog_monitor_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_analog_monitor_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnalogMonitorSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source of data for analog output (monsrc).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AnalogMonitorSource</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;monsrc&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_setpoint">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_setpoint">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_setpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setpoint</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the setpoint value for the device.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">setpoint</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_setpoint">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_setpoint">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_setpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current setpoint of the device.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;set&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_function">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_function">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">TriggerInFunction</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger input function.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trgfkt&quot;</span><span class="p">,</span> <span class="n">function</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_function">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_function">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_function</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TriggerInFunction</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger input function.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TriggerInFunction</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;trgfkt&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_output_edge">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_output_edge">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_output_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">:</span> <span class="n">TriggerOutEdge</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger output edge mode.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trgedg&quot;</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_output_edge">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_output_edge">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_output_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TriggerOutEdge</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger output edge mode.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TriggerOutEdge</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;trgedg&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_output_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_output_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_output_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">TriggerOutSource</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger output source.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trgsrc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_output_source">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_output_source">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_output_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TriggerOutSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger output source.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TriggerOutSource</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;trgsrc&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_start_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_start_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_start_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger start position.&quot;&quot;&quot;</span>
+        <span class="n">movement_range</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_position_range</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">movement_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="n">position</span> <span class="o">&lt;=</span> <span class="n">movement_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Trigger start position must be within the movement range &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">movement_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.001</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">movement_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.001</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trgss&quot;</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_start_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_start_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_start_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger start position.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;trgss&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_stop_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_stop_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_stop_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger stop position.&quot;&quot;&quot;</span>
+        <span class="n">movement_range</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_position_range</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">movement_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="n">position</span> <span class="o">&lt;=</span> <span class="n">movement_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.001</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Trigger stop position must be within the movement range &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">movement_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.001</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">movement_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">0.001</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trgse&quot;</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_stop_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_stop_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_stop_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger stop position.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;trgse&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_step_size">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_step_size">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger step size.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">step_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trigger step size must be a positive value.&quot;</span><span class="p">)</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trgsi&quot;</span><span class="p">,</span> <span class="n">step_size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_step_size">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_step_size">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger step size.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;trgsi&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_trigger_pulse_length">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_trigger_pulse_length">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_pulse_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the trigger pulse length in samples.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trigger pulse length must be between 0 and 255 samples.&quot;</span><span class="p">)</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;trglen&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_trigger_pulse_length">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_trigger_pulse_length">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_pulse_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the current trigger pulse length in samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;trglen&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.move_to_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.move_to_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">move_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves the device to the specified position in closed loop&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">PidLoopMode</span><span class="o">.</span><span class="n">CLOSED_LOOP</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_modulation_source</span><span class="p">(</span><span class="n">ModulationSource</span><span class="o">.</span><span class="n">SET_CMD</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_setpoint</span><span class="p">(</span><span class="n">position</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.move_to_voltage">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.move_to_voltage">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">move_to_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves the device to the specified voltage in open loop&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">PidLoopMode</span><span class="o">.</span><span class="n">OPEN_LOOP</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_modulation_source</span><span class="p">(</span><span class="n">ModulationSource</span><span class="o">.</span><span class="n">SET_CMD</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_setpoint</span><span class="p">(</span><span class="n">voltage</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.move">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.move">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Moves the device to the specified target position or voltage.</span>
+<span class="sd">        The target is interpreted as a position in closed loop or a voltage in open loop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_modulation_source</span><span class="p">(</span><span class="n">ModulationSource</span><span class="o">.</span><span class="n">SET_CMD</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_setpoint</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_current_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_current_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_current_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the current position of the device.</span>
+<span class="sd">        For actuators with sensor: Position in actuator units (μm or mrad)</span>
+<span class="sd">        For actuators without sensor: Piezo voltage in V</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;meas&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_max_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_max_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_max_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the maximum position of the device.</span>
+<span class="sd">        For actuators with sensor: Maximum position in actuator units (μm or mrad)</span>
+<span class="sd">        For actuators without sensor: Maximum piezo voltage in V</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;posmax&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_min_position">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_min_position">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_min_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the minimum position of the device.</span>
+<span class="sd">        For actuators with sensor: Minimum position in actuator units (μm or mrad)</span>
+<span class="sd">        For actuators without sensor: Minimum piezo voltage in V</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;posmin&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_position_range">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_position_range">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_position_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the position range of the device for closed loop control.</span>
+<span class="sd">        Returns a tuple containing the minimum and maximum position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_pos</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_min_position</span><span class="p">()</span>
+        <span class="n">max_pos</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_position</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">min_pos</span><span class="p">,</span> <span class="n">max_pos</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_max_voltage">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_max_voltage">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_max_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the maximum voltage of the device.</span>
+<span class="sd">        This is the maximum voltage that can be applied to the piezo actuator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;avmax&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_min_voltage">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_min_voltage">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_min_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the minimum voltage of the device.</span>
+<span class="sd">        This is the minimum voltage that can be applied to the piezo actuator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;avmin&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_voltage_range">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_voltage_range">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_voltage_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the voltage range of the device for open loop control.</span>
+<span class="sd">        Returns a tuple containing the minimum and maximum voltage.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_voltage</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_min_voltage</span><span class="p">()</span>
+        <span class="n">max_voltage</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_voltage</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">min_voltage</span><span class="p">,</span> <span class="n">max_voltage</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_setpoint_range">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_setpoint_range">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_setpoint_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the setpoint range of the device.</span>
+<span class="sd">        Returns a tuple containing the minimum and maximum setpoint.</span>
+<span class="sd">        The setpoint range is determined by the position range for closed loop control</span>
+<span class="sd">        and the voltage range for open loop control.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="o">.</span><span class="n">get_mode</span><span class="p">()</span> <span class="o">==</span> <span class="n">PidLoopMode</span><span class="o">.</span><span class="n">CLOSED_LOOP</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_position_range</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_voltage_range</span><span class="p">()</span></div>
+
+        
+<div class="viewcode-block" id="NV200Device.get_voltage_unit">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_voltage_unit">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_voltage_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the voltage unit of the device.</span>
+<span class="sd">        This is typically &quot;V&quot; for volts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_string_value</span><span class="p">(</span><span class="s1">&#39;unitol&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_position_unit">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_position_unit">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_position_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the position unit of the device.</span>
+<span class="sd">        This is typically &quot;μm&quot; for micrometers for linear actuatros or &quot;mrad&quot; for </span>
+<span class="sd">        milliradians for tilting actuators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_string_value</span><span class="p">(</span><span class="s1">&#39;unitcl&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_setpoint_unit">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_setpoint_unit">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_setpoint_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the current setpoint unit of the device.</span>
+<span class="sd">        This is typically &quot;V&quot; for volts in open loop or the position unit in closed loop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="o">.</span><span class="n">get_mode</span><span class="p">()</span> <span class="o">==</span> <span class="n">PidLoopMode</span><span class="o">.</span><span class="n">CLOSED_LOOP</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_position_unit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_voltage_unit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_heat_sink_temperature">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_heat_sink_temperature">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_heat_sink_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the heat sink temperature in degrees Celsius.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.get_status_register">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_status_register">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_status_register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatusRegister</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the status register of the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">StatusRegister</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;stat&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="NV200Device.is_status_flag_set">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.is_status_flag_set">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_status_flag_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">:</span> <span class="n">StatusFlags</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a specific status flag is set in the status register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">status_reg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_status_register</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">status_reg</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_actuator_name">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_actuator_name">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_actuator_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the name of the actuator that is connected to the NV200 device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_string_value</span><span class="p">(</span><span class="s1">&#39;desc&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_actuator_serial_number">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_actuator_serial_number">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_actuator_serial_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the serial number of the actuator that is connected to the NV200 device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_string_value</span><span class="p">(</span><span class="s1">&#39;acserno&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_actuator_description">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_actuator_description">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_actuator_description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the description of the actuator that is connected to the NV200 device.</span>
+<span class="sd">        The description consists of the actuator type and the serial number.</span>
+<span class="sd">        For example: &quot;TRITOR100SG, #85533&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_name</span><span class="p">()</span>
+        <span class="n">serial_number</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_serial_number</span><span class="p">()</span>   
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> #</span><span class="si">{</span><span class="n">serial_number</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_actuator_sensor_type">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_actuator_sensor_type">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_actuator_sensor_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PostionSensorType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the type of position sensor used by the actuator.</span>
+<span class="sd">        Returns a PostionSensorType enum value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sensor_type_value</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;acmeasure&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PostionSensorType</span><span class="p">(</span><span class="n">sensor_type_value</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.has_position_sensor">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.has_position_sensor">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">has_position_sensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the actuator has a position sensor.</span>
+<span class="sd">        Returns True if the sensor type is not None, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_sensor_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">PostionSensorType</span><span class="o">.</span><span class="n">NONE</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.get_slew_rate">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_slew_rate">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_slew_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the slew rate of the device.</span>
+<span class="sd">        The slew rate is the maximum speed at which the device can move.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="s1">&#39;sr&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NV200Device.set_slew_rate">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_slew_rate">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_slew_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slew_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the slew rate of the device.</span>
+<span class="sd">        0.0000008 ... 2000.0 %ms⁄ (2000 = disabled)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;sr&quot;</span><span class="p">,</span> <span class="n">slew_rate</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.default_actuator_export_filename">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.default_actuator_export_filename">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">default_actuator_export_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the default filename for exporting actuator configuration.</span>
+<span class="sd">        The filename is based on the actuator&#39;s description and serial number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_name</span><span class="p">()</span>
+        <span class="n">acserno</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_serial_number</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;actuator_conf_</span><span class="si">{</span><span class="n">desc</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">acserno</span><span class="si">}</span><span class="s2">.ini&quot;</span></div>
+
+    
+
+<div class="viewcode-block" id="NV200Device.backup_actuator_config">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.backup_actuator_config">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">backup_actuator_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously retrieves the actuator configuration parameters from the device.</span>
+<span class="sd">        This method reads a predefined set of actuator configuration parameters and returns them</span>
+<span class="sd">        as a dictionary. The keys are the parameter names, and the values are their corresponding values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing the actuator configuration parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">export_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;setlpon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;setlpf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kd&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ki&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notchf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notchb&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notchon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;poslpon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;poslpf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pcf&quot;</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">backup_parameters</span><span class="p">(</span><span class="n">export_keys</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.export_actuator_config">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.export_actuator_config">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">export_actuator_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">filepath</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously exports the actuator configuration parameters to an INI file.</span>
+<span class="sd">        This method reads a predefined set of actuator configuration parameters from the device,</span>
+<span class="sd">        and writes them to an INI file. The file can be saved to a specified path and filename,</span>
+<span class="sd">        or defaults will be used based on the actuator&#39;s description and serial number.</span>
+<span class="sd">        The complete path including all parent directories will be created if it does not exist.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str, optional): Directory path where the configuration file will be saved.</span>
+<span class="sd">                If not provided, the file will be saved in the current working directory.</span>
+<span class="sd">            filename (str, optional): Name of the configuration file. If not provided,</span>
+<span class="sd">                a default name in the format &#39;actuator_conf_{desc}_{acserno}.ini&#39; will be used.</span>
+<span class="sd">            filepath (str, optional): Full path to the configuration file. If provided,</span>
+<span class="sd">                this will be used instead of the path and filename arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The full path to the saved configuration file.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Any exceptions raised during file writing or parameter reading will propagate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">backup_actuator_config</span><span class="p">()</span>
+        <span class="n">config_values</span><span class="p">[</span><span class="s1">&#39;acserno&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_serial_number</span><span class="p">()</span>
+        <span class="n">config_values</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_actuator_name</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">filepath</span><span class="p">:</span>    
+            <span class="n">full_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_actuator_export_filename</span><span class="p">()</span>
+            <span class="n">full_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">DeviceParamFile</span><span class="p">(</span><span class="n">config_values</span><span class="p">)</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.import_actuator_config">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.import_actuator_config">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">import_actuator_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Imports actuator configuration from an INI file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filepath: Path to the INI file with the actuator configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">import_keys</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;setlpon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;setlpf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kd&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ki&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notchf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notchb&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notchon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;poslpon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;poslpf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pcf&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">file</span> <span class="o">=</span> <span class="n">DeviceParamFile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">allowed_keys</span><span class="o">=</span><span class="n">import_keys</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">restore_parameters</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.from_detected_device">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.from_detected_device">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_detected_device</span><span class="p">(</span><span class="n">detected_device</span><span class="p">:</span> <span class="n">DetectedDevice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;NV200Device&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an NV200Device instance from a DetectedDevice object by selecting the appropriate</span>
+<span class="sd">        transport protocol based on the detected device&#39;s transport type.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            detected_device (DetectedDevice): The detected device containing transport type and identifier.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            NV200Device: An instance of NV200Device initialized with the correct transport protocol.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">detected_device</span><span class="o">.</span><span class="n">transport</span> <span class="o">==</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">:</span>
+            <span class="n">transport</span> <span class="o">=</span> <span class="n">TelnetProtocol</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="n">detected_device</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">detected_device</span><span class="o">.</span><span class="n">transport</span> <span class="o">==</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">:</span>
+            <span class="n">transport</span> <span class="o">=</span> <span class="n">SerialProtocol</span><span class="p">(</span><span class="n">port</span> <span class="o">=</span> <span class="n">detected_device</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported transport type: </span><span class="si">{</span><span class="n">detected_device</span><span class="o">.</span><span class="n">transport</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Return a DeviceClient initialized with the correct transport protocol</span>
+        <span class="k">return</span> <span class="n">NV200Device</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span></div>
+
+
+    
+
+<div class="viewcode-block" id="NV200Device.set_control_mode">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.set_control_mode">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_control_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">CtrlMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the control mode of the device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode (CtrlMode): The control mode to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_value</span><span class="p">(</span><span class="s2">&quot;ctrlmode&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NV200Device.get_control_mode">
+<a class="viewcode-back" href="../../api.html#nv200.nv200_device.NV200Device.get_control_mode">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_control_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CtrlMode</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the current control mode of the device.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CtrlMode: The current control mode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CtrlMode</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;ctrlmode&#39;</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

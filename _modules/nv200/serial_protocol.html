@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.serial_protocol &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.serial_protocol</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.serial_protocol</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aioserial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">serial.tools.list_ports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.transport_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiscoverFlags</span><span class="p">,</span> <span class="n">DetectedDevice</span><span class="p">,</span> <span class="n">TransportType</span><span class="p">,</span> <span class="n">TransportProtocolInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PiezoDeviceBase</span><span class="p">,</span> <span class="n">DEVICE_MODEL_REGISTRY</span>
+
+
+<span class="c1"># Global module locker</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SerialProtocol">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SerialProtocol</span><span class="p">(</span><span class="n">TransportProtocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle serial communication with an NV200 device using the AioSerial library.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        port (str): The serial port to connect to. Defaults to None. If port is None, the class</span>
+<span class="sd">        will try to auto detect the port.</span>
+<span class="sd">        baudrate (int): The baud rate for the serial connection. Defaults to 115200.</span>
+<span class="sd">        serial (AioSerial): The AioSerial instance for asynchronous serial communication.</span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+<div class="viewcode-block" id="SerialProtocol.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">baudrate</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">115200</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the NV200 driver with the specified serial port settings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            port (str, optional): The serial port to connect to. Defaults to None.</span>
+<span class="sd">                                  If port is None, the class will try to auto detect the port.</span>
+<span class="sd">            baudrate (int, optional): The baud rate for the serial connection. Defaults to 115200.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span> <span class="p">:</span> <span class="n">aioserial</span><span class="o">.</span><span class="n">AioSerial</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="p">:</span> <span class="nb">str</span>  <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__baudrate</span> <span class="p">:</span> <span class="nb">int</span><span class="o">=</span> <span class="n">baudrate</span></div>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">aioserial</span><span class="o">.</span><span class="n">AioSerial</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides access to the internal AioSerial interface.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            AioSerial: The internal AioSerial instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span>
+
+
+<div class="viewcode-block" id="SerialProtocol.detect_port">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.detect_port">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">detect_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span> <span class="p">:</span> <span class="n">PiezoDeviceBase</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously detects and configures the serial port for the NV200 device.</span>
+
+<span class="sd">        This method scans through all available serial ports to find one with a </span>
+<span class="sd">        manufacturer matching &quot;FTDI&quot;. If such a port is found, it attempts to </span>
+<span class="sd">        communicate with the device to verify if it is an NV200 device. If the </span>
+<span class="sd">        device is successfully detected, the port is configured and returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The device name of the detected port if successful, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ports</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ports</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">manufacturer</span> <span class="o">!=</span> <span class="s2">&quot;FTDI&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">device</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+            <span class="k">if</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">check_device_type</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">port</span><span class="o">.</span><span class="n">device</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    
+
+<div class="viewcode-block" id="SerialProtocol.discover_devices">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.discover_devices">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">discover_devices</span><span class="p">(</span><span class="n">flags</span><span class="p">:</span> <span class="n">DiscoverFlags</span><span class="p">)</span>  <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedDevice</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously discovers all devices connected via serial interface.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of serial port strings where a device has been detected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ports</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()</span>
+        <span class="n">valid_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">device</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ports</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">manufacturer</span> <span class="o">==</span> <span class="s2">&quot;FTDI&quot;</span><span class="p">]</span>
+
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">detect_on_port</span><span class="p">(</span><span class="n">port_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectedDevice</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">protocol</span> <span class="o">=</span> <span class="n">SerialProtocol</span><span class="p">(</span><span class="n">port_name</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">detected_device</span> <span class="o">=</span> <span class="n">DetectedDevice</span><span class="p">(</span>
+                    <span class="n">transport</span><span class="o">=</span><span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">,</span>
+                    <span class="n">identifier</span><span class="o">=</span><span class="n">port_name</span>
+                <span class="p">)</span>
+                <span class="k">await</span> <span class="n">protocol</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+                <span class="n">dev</span> <span class="o">=</span> <span class="n">PiezoDeviceBase</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span>
+                <span class="c1"># We always read the device ID because for serial port this is required</span>
+                <span class="n">detected_device</span><span class="o">.</span><span class="n">device_id</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dev</span><span class="o">.</span><span class="n">get_device_type</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Detected device ID: </span><span class="si">%s</span><span class="s2"> on port </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">detected_device</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span> <span class="n">port_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">detected_device</span><span class="o">.</span><span class="n">device_id</span> <span class="ow">in</span> <span class="n">DEVICE_MODEL_REGISTRY</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">detected_device</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>     
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># We do ignore the exception - if it is not possible to connect to the device, we just return None</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error on port </span><span class="si">{</span><span class="n">port_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">protocol</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Run all detections concurrently</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">detect_on_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">valid_ports</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
+        <span class="c1"># Filter out Nones</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dev</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">dev</span><span class="p">]</span></div>
+
+    
+
+<div class="viewcode-block" id="SerialProtocol.connect">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.connect">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">device</span> <span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;PiezoDeviceBase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Establishes an asynchronous connection to the NV200 device using the specified serial port settings.</span>
+
+<span class="sd">        This method initializes the serial connection with the given port, baud rate, and flow control settings.</span>
+<span class="sd">        If the port is not specified, it attempts to automatically detect the NV200 device&#39;s port. If the device</span>
+<span class="sd">        cannot be found, a RuntimeError is raised.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If the NV200 device cannot be detected or connected to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span> <span class="o">=</span> <span class="n">aioserial</span><span class="o">.</span><span class="n">AioSerial</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__port</span><span class="p">,</span> <span class="n">xonxoff</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__baudrate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect_port</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;NV200 device not found&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SerialProtocol.flush_input">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.flush_input">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">flush_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Discard all available input within a short timeout window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">reset_input_buffer</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SerialProtocol.write">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.write">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">flush_input</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">write_async</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;latin1&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SerialProtocol.read_until">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.read_until">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">XON</span><span class="p">,</span> <span class="n">timeout</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_SECS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">read_until_async</span><span class="p">(</span><span class="n">expected</span><span class="p">),</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="c1">#return data.replace(TransportProtocol.XON, b&#39;&#39;).replace(TransportProtocol.XOFF, b&#39;&#39;) # strip XON and XOFF characters</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;latin1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x11\x13</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># strip XON and XOFF characters</span></div>
+
+
+<div class="viewcode-block" id="SerialProtocol.close">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.close">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">port</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the serial port the device is connected to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__port</span>
+    
+
+<div class="viewcode-block" id="SerialProtocol.get_info">
+<a class="viewcode-back" href="../../api.html#nv200.serial_protocol.SerialProtocol.get_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransportProtocolInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns metadata about the transport protocol, such as type and identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TransportProtocolInfo</span><span class="p">(</span>
+            <span class="n">transport</span><span class="o">=</span><span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__port</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

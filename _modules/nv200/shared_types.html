@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.shared_types &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.shared_types</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.shared_types</h1><div class="highlight"><pre>
+<span></span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module defines enumerations, classes, and data structures for representing device types,</span>
+<span class="sd">status flags, error codes, and related information for NV200 devices.</span>
+
+<span class="sd">Classes and Enums:</span>
+<span class="sd">------------------</span>
+<span class="sd">- :class:`.PidLoopMode` (Enum): Modes of operation for a PID control loop (open/closed loop).</span>
+<span class="sd">- :class:`.ErrorCode` (Enum): Error codes and descriptions for device errors.</span>
+<span class="sd">- :class:`.StatusFlags` (IntFlag): Bit flags representing the status register of a device.</span>
+<span class="sd">- :class:`.ModulationSource` (Enum): Sources for setpoint modulation.</span>
+<span class="sd">- :class:`.StatusRegister`: Class for parsing and representing a 16-bit status register.</span>
+<span class="sd">- :class:`.DeviceError` (Exception): Custom exception for device-related errors.</span>
+<span class="sd">- :class:`.TransportType` (Enum): Supported transport types (telnet, serial).</span>
+<span class="sd">- :class:`.DetectedDevice` (dataclass): Structure for detected device information.</span>
+
+
+<span class="sd">Functionality:</span>
+<span class="sd">--------------</span>
+<span class="sd">- Provides enums for device modes, errors, and status flags.</span>
+<span class="sd">- Offers utility methods for error code conversion and description lookup.</span>
+<span class="sd">- Parses and interprets status register values.</span>
+<span class="sd">- Defines a custom exception for device errors.</span>
+<span class="sd">- Structures device detection information for network or serial connections.</span>
+<span class="sd">&quot;&quot;&quot;</span>    
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">IntFlag</span><span class="p">,</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Generator</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Awaitable</span><span class="p">,</span>
+    <span class="n">Protocol</span><span class="p">,</span>
+    <span class="n">NamedTuple</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">Generic</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="ProgressCallback">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ProgressCallback">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProgressCallback</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A callback to report progress during long running tasks</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        current_index (int): The current item being processed (1-based).</span>
+<span class="sd">        total_count (int): The total number of items.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="PidLoopMode">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.PidLoopMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PidLoopMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PidLoopMode is an enumeration that defines the modes of operation for a PID control loop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">OPEN_LOOP</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CLOSED_LOOP</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="TriggerInFunction">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TriggerInFunction">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TriggerInFunction</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for Trigger Input Functions.</span>
+<span class="sd">    Defines the behavior of the trigger input on the device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">DISABLED</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger input is disabled.&quot;&quot;&quot;</span>
+
+    <span class="n">WAVEFORM_START</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger input starts waveform playback.&quot;&quot;&quot;</span>
+
+    <span class="n">WAVEFORM_STEP</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger input steps waveform playback.&quot;&quot;&quot;</span>
+
+    <span class="n">WAVEFORM_SYNC</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger input sets the waveform generator index to the start value.&quot;&quot;&quot;</span>
+
+    <span class="n">ILC_SYNC</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the ILC counter to the beginning of the setpoint curve.&quot;&quot;&quot;</span>
+
+    <span class="n">DATARECORDER_START</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the data recorder.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TriggerOutEdge">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TriggerOutEdge">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TriggerOutEdge</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for Trigger Output Edge Types.</span>
+<span class="sd">    Defines the edge type for trigger output signals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">RISING_EDGE</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger output on rising edge.&quot;&quot;&quot;</span>
+
+    <span class="n">FALLING_EDGE</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger output on falling edge.&quot;&quot;&quot;</span>
+
+    <span class="n">BOTH</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger output on both rising and falling edges.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TriggerOutSource">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TriggerOutSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TriggerOutSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for Trigger Output Sources.</span>
+<span class="sd">    Defines the source of the trigger output signal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">POSITION</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger output based on position.&quot;&quot;&quot;</span>
+
+    <span class="n">SETPOINT</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger output based on setpoint.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="CtrlMode">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.CtrlMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CtrlMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for Controller Operation Modes.</span>
+<span class="sd">    Defines how the controller operates in various configurations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">PID</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PID control mode: Standard Proportional-Integral-Derivative control.&quot;&quot;&quot;</span>
+
+    <span class="n">ILC_IDENTIFICATION</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ILC Identification Mode: Used for system identification in Iterative Learning Control.&quot;&quot;&quot;</span>
+
+    <span class="n">ILC_FEEDFORWARD</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ILC Feedforward Mode: Applies learned feedforward control based on previous iterations.&quot;&quot;&quot;</span>
+
+    <span class="n">ILC_FEEDBACK</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ILC Feedback Mode: Combines feedback with learned feedforward for improved performance.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ErrorCode">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ErrorCode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErrorCode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ErrorCode(Enum):</span>
+<span class="sd">        An enumeration representing various error codes and their corresponding descriptions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ERROR_NOT_SPECIFIED</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">UNKNOWN_COMMAND</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">PARAMETER_MISSING</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">ADMISSIBLE_PARAMETER_RANGE_EXCEEDED</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">COMMAND_PARAMETER_COUNT_EXCEEDED</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">PARAMETER_LOCKED_OR_READ_ONLY</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">UNDERLOAD</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">OVERLOAD</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">PARAMETER_TOO_LOW</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">PARAMETER_TOO_HIGH</span> <span class="o">=</span> <span class="mi">10</span>
+
+<div class="viewcode-block" id="ErrorCode.from_value">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ErrorCode.from_value">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span> <span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert an integer into an ErrorCode enum member.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_value2member_map_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ERROR_NOT_SPECIFIED</span>  <span class="c1"># Default error if value is invalid</span></div>
+
+
+    <span class="c1"># Method to get the error description based on the error code</span>
+<div class="viewcode-block" id="ErrorCode.get_description">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ErrorCode.get_description">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_description</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">error_code</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a human-readable description for a given error code.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            error_code (int): The error code for which the description is requested.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A string describing the error associated with the provided error code.</span>
+<span class="sd">                 If the error code is not recognized, &quot;Unknown error&quot; is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">ERROR_NOT_SPECIFIED</span><span class="p">:</span> <span class="s2">&quot;Error not specified&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">UNKNOWN_COMMAND</span><span class="p">:</span> <span class="s2">&quot;Unknown command&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">PARAMETER_MISSING</span><span class="p">:</span> <span class="s2">&quot;Parameter missing&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">ADMISSIBLE_PARAMETER_RANGE_EXCEEDED</span><span class="p">:</span> <span class="s2">&quot;Admissible parameter range exceeded&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">COMMAND_PARAMETER_COUNT_EXCEEDED</span><span class="p">:</span> <span class="s2">&quot;Command&#39;s parameter count exceeded&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">PARAMETER_LOCKED_OR_READ_ONLY</span><span class="p">:</span> <span class="s2">&quot;Parameter is locked or read only&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">UNDERLOAD</span><span class="p">:</span> <span class="s2">&quot;Underload&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">OVERLOAD</span><span class="p">:</span> <span class="s2">&quot;Overload&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">PARAMETER_TOO_LOW</span><span class="p">:</span> <span class="s2">&quot;Parameter too low&quot;</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">PARAMETER_TOO_HIGH</span><span class="p">:</span> <span class="s2">&quot;Parameter too high&quot;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">descriptions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">error_code</span><span class="p">,</span> <span class="s2">&quot;Unknown error&quot;</span><span class="p">)</span></div>
+</div>
+
+    
+<div class="viewcode-block" id="StatusFlags">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.StatusFlags">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatusFlags</span><span class="p">(</span><span class="n">IntFlag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum representing the individual status flags within a 16-bit status register.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ACTUATOR_CONNECTED</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
+    <span class="n">SENSOR_TYPE_0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+    <span class="n">SENSOR_TYPE_1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
+    <span class="n">CLOSED_LOOP_MODE</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">3</span>
+    <span class="n">LOW_PASS_FILTER_ON</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span>
+    <span class="n">NOTCH_FILTER_ON</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span>
+    <span class="n">SIGNAL_PROCESSING_ACTIVE</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">7</span>
+    <span class="n">AMPLIFIER_CHANNELS_BRIDGED</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>
+    <span class="n">TEMPERATURE_TOO_HIGH</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">10</span>
+    <span class="n">ACTUATOR_ERROR</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">11</span>
+    <span class="n">HARDWARE_ERROR</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span>
+    <span class="n">I2C_ERROR</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">13</span>
+    <span class="n">LOWER_CONTROL_LIMIT_REACHED</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">14</span>
+    <span class="n">UPPER_CONTROL_LIMIT_REACHED</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">15</span>
+
+<div class="viewcode-block" id="StatusFlags.get_sensor_type">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.StatusFlags.get_sensor_type">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sensor_type</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines the type of sensor based on the sensor bits in the status register.</span>
+<span class="sd">        </span>
+<span class="sd">        :param value: The 16-bit status register value.</span>
+<span class="sd">        :return: A string describing the sensor type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sensor_bits</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">SENSOR_TYPE_0</span> <span class="o">|</span> <span class="n">StatusFlags</span><span class="o">.</span><span class="n">SENSOR_TYPE_1</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+        <span class="n">sensor_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mb">0b00</span><span class="p">:</span> <span class="s2">&quot;No position sensor&quot;</span><span class="p">,</span>
+            <span class="mb">0b01</span><span class="p">:</span> <span class="s2">&quot;Strain gauge sensor&quot;</span><span class="p">,</span>
+            <span class="mb">0b10</span><span class="p">:</span> <span class="s2">&quot;Capacitive sensor&quot;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">sensor_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sensor_bits</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span></div>
+</div>
+
+    
+
+<div class="viewcode-block" id="ModulationSource">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ModulationSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModulationSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for setpoint modulation source.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SET_CMD</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ANALOG_IN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">SPI</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">WAVEFORM_GENERATOR</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="SPIMonitorSource">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.SPIMonitorSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SPIMonitorSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum representing sources for SPI monitor return values via MISO.</span>
+
+<span class="sd">    Each value corresponds to a specific source of data returned over SPI.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ZERO</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="c1">#: 0x0000 (constant zero value)</span>
+    <span class="n">CLOSED_LOOP_POS</span> <span class="o">=</span> <span class="mi">1</span>       <span class="c1">#: Position in closed-loop mode</span>
+    <span class="n">SETPOINT</span> <span class="o">=</span> <span class="mi">2</span>              <span class="c1">#: Setpoint value</span>
+    <span class="n">PIEZO_VOLTAGE</span> <span class="o">=</span> <span class="mi">3</span>         <span class="c1">#: Piezo voltage (controller output)</span>
+    <span class="n">POSITION_ERROR</span> <span class="o">=</span> <span class="mi">4</span>        <span class="c1">#: Position error</span>
+    <span class="n">ABS_POSITION_ERROR</span> <span class="o">=</span> <span class="mi">5</span>    <span class="c1">#: Absolute position error</span>
+    <span class="n">OPEN_LOOP_POS</span> <span class="o">=</span> <span class="mi">6</span>         <span class="c1">#: Position in open-loop mode</span>
+    <span class="n">PIEZO_CURRENT_1</span> <span class="o">=</span> <span class="mi">7</span>       <span class="c1">#: Piezo current channel 1</span>
+    <span class="n">PIEZO_CURRENT_2</span> <span class="o">=</span> <span class="mi">8</span>       <span class="c1">#: Piezo current channel 2</span>
+    <span class="n">TEST_VALUE_0x5A5A</span> <span class="o">=</span> <span class="mi">9</span>     <span class="c1">#: Test value (0x5A5A)</span></div>
+
+
+
+<div class="viewcode-block" id="AnalogMonitorSource">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.AnalogMonitorSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalogMonitorSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum representing sources for SPI monitor return values via MISO.</span>
+
+<span class="sd">    Each value corresponds to a specific source of data returned over SPI.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CLOSED_LOOP_POS</span> <span class="o">=</span> <span class="mi">0</span>       <span class="c1">#: Position in closed-loop mode</span>
+    <span class="n">SETPOINT</span> <span class="o">=</span> <span class="mi">1</span>              <span class="c1">#: Setpoint value</span>
+    <span class="n">PIEZO_VOLTAGE</span> <span class="o">=</span> <span class="mi">2</span>         <span class="c1">#: Piezo voltage (controller output)</span>
+    <span class="n">POSITION_ERROR</span> <span class="o">=</span> <span class="mi">3</span>        <span class="c1">#: Position error</span>
+    <span class="n">ABS_POSITION_ERROR</span> <span class="o">=</span> <span class="mi">4</span>    <span class="c1">#: Absolute position error</span>
+    <span class="n">OPEN_LOOP_POS</span> <span class="o">=</span> <span class="mi">5</span>         <span class="c1">#: Position in open-loop mode</span>
+    <span class="n">PIEZO_CURRENT_1</span> <span class="o">=</span> <span class="mi">6</span>       <span class="c1">#: Piezo current channel 1</span>
+    <span class="n">PIEZO_CURRENT_2</span> <span class="o">=</span> <span class="mi">7</span>       <span class="c1">#: Piezo current channel 2</span></div>
+
+
+
+<div class="viewcode-block" id="PostionSensorType">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.PostionSensorType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PostionSensorType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum representing the type of position sensor used in the actuator.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        NONE: No position sensor is connected.</span>
+<span class="sd">        STRAIN_GAUGE: A strain gauge sensor is connected.</span>
+<span class="sd">        CAPACITIVE: A capacitive sensor is connected.</span>
+<span class="sd">        LVDT_INDUCTIVE: An inductive LVDT (Linear Variable Differential Transformer) sensor is connected.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">STRAIN_GAUGE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">CAPACITIVE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">LVDT_INDUCTIVE</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="StatusRegister">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.StatusRegister">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatusRegister</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing the 16-bit status register of an actuator or amplifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="StatusRegister.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.StatusRegister.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the StatusRegister with a given 16-bit value.</span>
+<span class="sd">        </span>
+<span class="sd">        :param value: The 16-bit status register value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">StatusFlags</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="StatusRegister.has_flag">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.StatusRegister.has_flag">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">:</span> <span class="n">StatusFlags</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a given status flag is set in the register.</span>
+<span class="sd">        </span>
+<span class="sd">        :param flag: A StatusFlags enum value to check.</span>
+<span class="sd">        :return: True if the flag is set, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">flag</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides a string representation of the status register with human-readable information.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: A formatted string showing the status register details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;StatusRegister(value=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Actuator Connected=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">ACTUATOR_CONNECTED</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Sensor=</span><span class="si">{</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">get_sensor_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Closed Loop Mode=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">CLOSED_LOOP_MODE</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Low Pass Filter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">LOW_PASS_FILTER_ON</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Notch Filter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">NOTCH_FILTER_ON</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Signal Processing=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">SIGNAL_PROCESSING_ACTIVE</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Bridged Amplifier=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">AMPLIFIER_CHANNELS_BRIDGED</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Temp High=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">TEMPERATURE_TOO_HIGH</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Actuator Error=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">ACTUATOR_ERROR</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Hardware Error=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">HARDWARE_ERROR</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">I2C Error=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">I2C_ERROR</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Lower Limit Reached=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">LOWER_CONTROL_LIMIT_REACHED</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Upper Limit Reached=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">has_flag</span><span class="p">(</span><span class="n">StatusFlags</span><span class="o">.</span><span class="n">UPPER_CONTROL_LIMIT_REACHED</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DeviceError">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.DeviceError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeviceError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom exception class for handling device-related errors.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        error_code (ErrorCode): The error code associated with the exception.</span>
+<span class="sd">        description (str): A human-readable description of the error.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        error_code (ErrorCode): An instance of the ErrorCode enum representing the error.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the provided error_code is not a valid instance of the ErrorCode enum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DeviceError.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.DeviceError.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_code</span> <span class="p">:</span> <span class="n">ErrorCode</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_code</span> <span class="o">=</span> <span class="n">error_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">ErrorCode</span><span class="o">.</span><span class="n">get_description</span><span class="p">(</span><span class="n">error_code</span><span class="p">)</span>
+        <span class="c1"># Call the base class constructor with the formatted error message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error_code</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TransportType">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TransportType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransportType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration of supported transport types for device communication.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        TELNET: Represents the Telnet protocol for network communication.</span>
+<span class="sd">        SERIAL: Represents serial communication (e.g., RS-232).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TELNET</span> <span class="o">=</span> <span class="s2">&quot;telnet&quot;</span>
+    <span class="n">SERIAL</span> <span class="o">=</span> <span class="s2">&quot;serial&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a string representation of the transport type, capitalized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TransportProtocolInfo">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TransportProtocolInfo">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransportProtocolInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the protocol information for a transport type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">TransportType</span>
+    <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># e.g., IP or serial port</span>
+    <span class="n">mac</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>   
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a string representation of the TransportProtocolInfo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="si">}</span><span class="s2"> @ </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+
+<div class="viewcode-block" id="DeviceInfo">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.DeviceInfo">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeviceInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents information about a device, including its transport type, identifier, and optional metadata.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        transport (TransportType): The type of transport used to communicate with the device.</span>
+<span class="sd">        identifier (str): The primary identifier for the device (e.g., IP address or serial port).</span>
+<span class="sd">        mac (Optional[str]): The MAC address of the device, if available.</span>
+<span class="sd">        device_id (Optional[str]): A unique identifier for the device, if available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transport_info</span><span class="p">:</span> <span class="n">TransportProtocolInfo</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Unique identifier for the device, if available</span>
+    <span class="n">extended_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a string representation of the transport type, capitalized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">device_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transport_info</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">:</span>
+            <span class="n">device_info</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extended_info</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_info</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">extended_info</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">device_info</span></div>
+
+
+
+<div class="viewcode-block" id="DetectedDevice">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.DetectedDevice">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectedDevice</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a device detected on the network or via serial connection</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        transport (TransportType): The transport type used to communicate with the device (e.g., Ethernet, Serial).</span>
+<span class="sd">        identifier (str): A unique identifier for the device, such as an IP address or serial port name.</span>
+<span class="sd">        mac (Optional[str]): The MAC address of the device, if available.</span>
+<span class="sd">        device_id (Optional[str]): A unique identifier for the device, if available. such as NV200/D_NET</span>
+<span class="sd">        device_info: Dictionary with additional information about the device, such as actuator name and serial number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">TransportType</span>
+    <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># e.g., IP or serial port</span>
+    <span class="n">mac</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Unique identifier for the device, if available</span>
+    <span class="n">device_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a string representation of the transport type, capitalized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="si">}</span><span class="s2"> @ </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mac</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; (MAC: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mac</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_info</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_info</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span></div>
+
+
+    
+
+<div class="viewcode-block" id="DiscoverFlags">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.DiscoverFlags">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscoverFlags</span><span class="p">(</span><span class="n">Flag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flags to configure the behavior of the device discovery process.</span>
+
+<span class="sd">    These flags can be combined using the bitwise OR (``|``) operator.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        DETECT_SERIAL: Enables detection of serial devices.</span>
+<span class="sd">        DETECT_ETHERNET: Enables detection of ethernet devices.</span>
+<span class="sd">        READ_DEVICE_INFO: Enriches discovered devices with additional information such as actuator name and actuator serial number.</span>
+<span class="sd">        ADJUST_COMM_PARAMS: Automatically adjusts communication parameters for discovered devices. This may take some</span>
+<span class="sd">           additional time, as it may involve reading and writing to the device or even resetting it.</span>
+<span class="sd">        ALL: Enables all discovery actions (serial, ethernet, and enrichment).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DETECT_SERIAL</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DETECT_ETHERNET</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">READ_DEVICE_INFO</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">ADJUST_COMM_PARAMS</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>  <span class="c1"># Adjust communication parameters automatically</span>
+    <span class="n">ALL_INTERFACES</span> <span class="o">=</span> <span class="n">DETECT_SERIAL</span> <span class="o">|</span> <span class="n">DETECT_ETHERNET</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="n">ALL_INTERFACES</span> <span class="o">|</span> <span class="n">READ_DEVICE_INFO</span>
+    
+
+<div class="viewcode-block" id="DiscoverFlags.flags_for_transport">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.DiscoverFlags.flags_for_transport">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flags_for_transport</span><span class="p">(</span><span class="n">transport</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TransportType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DiscoverFlags&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maps a TransportType to the appropriate DiscoverFlags.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            transport: The transport type (e.g., SERIAL or TELNET)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DiscoverFlags corresponding to the selected transport type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">transport</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">ALL_INTERFACES</span>
+        <span class="k">elif</span> <span class="n">transport</span> <span class="o">==</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">SERIAL</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">DETECT_SERIAL</span>
+        <span class="k">elif</span> <span class="n">transport</span> <span class="o">==</span> <span class="n">TransportType</span><span class="o">.</span><span class="n">TELNET</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DiscoverFlags</span><span class="o">.</span><span class="n">DETECT_ETHERNET</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported transport type: </span><span class="si">{</span><span class="n">transport</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NetworkEndpoint">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.NetworkEndpoint">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NetworkEndpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a network endpoint identified by a MAC and IP address.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        mac (str): The MAC (Media Access Control) address of the endpoint,</span>
+<span class="sd">                   typically in the format &#39;00:1A:2B:3C:4D:5E&#39;.</span>
+<span class="sd">        ip (str): The IPv4 or IPv6 address of the endpoint,</span>
+<span class="sd">                  e.g., &#39;192.168.1.100&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mac</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a user-friendly string representation of the endpoint.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;MAC=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mac</span><span class="si">}</span><span class="s2">, IP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ip</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TimeSeries">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TimeSeries">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimeSeries</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TimeSeries represents waveform data with amplitude values (values) and corresponding sample times (sample_times_ms).</span>
+<span class="sd">    It also includes a sample time in milliseconds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TimeSeries.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TimeSeries.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">sample_time_ms</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the TimeSeries instance with amplitude values and sample time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            values (list): The amplitude values corresponding to the waveform.</span>
+<span class="sd">            sample_time_ms (int): The sample time in milliseconds (sampling interval).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span> <span class="o">=</span> <span class="n">sample_time_ms</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_time_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the sample time in milliseconds.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span>
+    
+
+    <span class="nd">@sample_time_ms</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_time_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the sample time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (float): The new sample time in milliseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span> <span class="o">=</span> <span class="n">value</span>
+    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_period_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sample period in milliseconds, which is the same as sample_time_ms.</span>
+<span class="sd">        This property is provided for compatibility with other systems that may expect this terminology.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_freq_hz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sample frequency in Hertz (Hz), calculated as the inverse of the sample time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sample time must be greater than zero.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_time_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the total time covered by the waveform data in milliseconds.</span>
+<span class="sd">        This is calculated as the number of samples multiplied by the sample time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the amplitude values (values) as a list.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span>
+
+    <span class="nd">@values</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the amplitude values (values).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">values</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of samples in the TimeSeries.</span>
+<span class="sd">        This is equivalent to the length of the values list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeries.set_value_at_index">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TimeSeries.set_value_at_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_value_at_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the amplitude value at a specific index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): The index at which to set the value.</span>
+<span class="sd">            value (float): The new amplitude value.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If the index is out of range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Index out of range.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="TimeSeries.generate_sample_times_ms">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.TimeSeries.generate_sample_times_ms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_sample_times_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generator function to return time (sample_times_ms) values as they are requested.</span>
+<span class="sd">        This will calculate and yield the corresponding time values based on sample_time_us.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)):</span>
+            <span class="k">yield</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_time_ms</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_times_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all time (sample_times_ms) values as a list, calculated based on the sample time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_sample_times_ms</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string representation of the TimeSeries object, showing pairs of time and value.</span>
+<span class="sd">        Example: [(0, 1.2), (10, 2.5), (20, 3.7), ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_value_pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_times_ms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TimeSeries(</span><span class="si">{</span><span class="n">time_value_pairs</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="PIDGains">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.PIDGains">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PIDGains</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A NamedTuple representing the proportional, integral, and derivative gains for a PID controller.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kp</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ki</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">kd</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="PCFGains">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.PCFGains">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PCFGains</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents feed-forward control amplification factors for</span>
+<span class="sd">    position, velocity, and acceleration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">position</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">velocity</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">acceleration</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># Note: scaled internally by 1/1_000_000</span></div>
+
+
+
+
+<span class="n">ValueRangeType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ValueRangeType&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ValueRange">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ValueRange">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ValueRange</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ValueRangeType</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An immutable generic value range with a minimum and maximum value.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        min (ValueRangeType): The minimum value of the range.</span>
+<span class="sd">        max (ValueRangeType): The maximum value of the range.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">min</span><span class="p">:</span> <span class="n">ValueRangeType</span>
+    <span class="nb">max</span><span class="p">:</span> <span class="n">ValueRangeType</span>
+
+<div class="viewcode-block" id="ValueRange.contains">
+<a class="viewcode-back" href="../../api.html#nv200.shared_types.ValueRange.contains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">ValueRangeType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether a value is within the range.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (ValueRangeType): The value to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if value is within the range (inclusive), False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ValueRange(min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="si">}</span><span class="s2">, max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

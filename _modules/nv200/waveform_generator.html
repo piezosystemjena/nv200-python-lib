@@ -1,0 +1,930 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.waveform_generator &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.waveform_generator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.waveform_generator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">WaveformGenerator module for controlling waveform generation on a connected NV200 device.</span>
+
+<span class="sd">This module defines the `WaveformGenerator` class, which provides methods to configure and control waveform generation,</span>
+<span class="sd">including the ability to generate sine waves, set cycles, adjust sampling times, and manage waveform buffers. It supports</span>
+<span class="sd">asynchronous interaction with the device for real-time control of waveform generation.</span>
+
+<span class="sd">Classes:</span>
+<span class="sd">    - :class:`.WaveformGenerator`: Manages waveform generation and configuration on the NV200 device.</span>
+<span class="sd">    - :class:`.WaveformData`: Represents waveform data with time, amplitude, and sample time.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.nv200_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">NV200Device</span><span class="p">,</span> <span class="n">ModulationSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.shared_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeSeries</span><span class="p">,</span> <span class="n">ProgressCallback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">wait_until</span>
+
+<span class="c1"># Global module locker</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="calculate_sampling_time_ms">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.calculate_sampling_time_ms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_sampling_time_ms</span><span class="p">(</span><span class="n">time_samples</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the sampling time in milliseconds from a sequence of time samples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        time_samples (Union[Sequence[float], np.ndarray]): A list or NumPy array of time samples in milliseconds.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: The sampling time in milliseconds.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the sequence has fewer than 2 time samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_samples</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least two time samples are required to calculate sampling time.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">time_samples</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">time_samples</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_samples</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>      <span class="c1">#</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformType">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">WaveformType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for different waveform types supported by the generator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SINE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TRIANGLE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">SQUARE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">CONSTANT</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformUnit">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformUnit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">WaveformUnit</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumeration for different waveform units used in the generator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PERCENT</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Percentage of the range (0-100%)</span>
+    <span class="n">POSITION</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Length units (e.g., micrometers, millimeters)</span>
+    <span class="n">VOLTAGE</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Voltage units (e.g., volts)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">WaveformGenerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    WaveformGenerator is a class responsible for generating waveforms using a connected device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NV200_WAVEFORM_BUFFER_SIZE</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># Size of the data buffer for waveform generator</span>
+    <span class="n">NV200_BASE_SAMPLE_TIME_US</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Base sample time in microseconds</span>
+    <span class="n">NV200_INFINITE_CYCLES</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Infinite cycles constant for the waveform generator</span>
+    
+<div class="viewcode-block" id="WaveformGenerator.WaveformData">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.WaveformData">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">WaveformData</span><span class="p">(</span><span class="n">TimeSeries</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        WaveformData is a NamedTuple that represents waveform data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WaveformGenerator.WaveformData.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.WaveformData.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">sample_time_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">):</span> <span class="c1"># 50 microseconds</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initialize the TimeSeries instance with amplitude values and sample time.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">sample_time_ms</span><span class="o">=</span><span class="n">sample_time_ms</span><span class="p">)</span></div>
+
+
+
+        <span class="nd">@property</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">sample_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the sample factor used to calculate the sample time from the base sample time.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_time_ms</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">/</span> <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">NV200_BASE_SAMPLE_TIME_US</span><span class="p">)</span>
+        
+        <span class="nd">@property</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">cycle_time_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the cycle of a single cycle in milliseconds.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_time_ms</span></div>
+
+        
+
+<div class="viewcode-block" id="WaveformGenerator.__init__">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">NV200Device</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the WaveformGenerator instance with the specified device client.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            device (DeviceClient): The device client used for communication with the hardware. </span>
+<span class="sd">                                   Pass None to disable communication (e.g. for SPI Box devices).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_waveform</span> <span class="p">:</span> <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">WaveformData</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.start">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.start">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cycles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts / stops the waveform generator</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start (bool, optional): If True, starts the waveform generator. If False, stops it. Defaults to True.</span>
+<span class="sd">            cycles (int, optional): The number of cycles to run the waveform generator. </span>
+<span class="sd">                        If set to -1, the value configured via set_cycles() will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cycles</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_cycles</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_start_index</span><span class="p">(</span><span class="n">start_index</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">set_modulation_source</span><span class="p">(</span><span class="n">ModulationSource</span><span class="o">.</span><span class="n">WAVEFORM_GENERATOR</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;grun,</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WaveformGenerator.stop">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.stop">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stops the waveform generator.</span>
+<span class="sd">        This is equivalent to calling start(False).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;grun,</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_loop_start_index">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_loop_start_index">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_loop_start_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the start index for the waveform generator loop. </span>
+<span class="sd">        If you use multiple cycles, the loop start index is the index defines the index</span>
+<span class="sd">        where the waveform generator starts in the next cycle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gsarb,</span><span class="si">{</span><span class="n">start_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.get_loop_start_index">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.get_loop_start_index">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_loop_start_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the start index for the waveform generator loop.</span>
+<span class="sd">        The loop start index is the index where the waveform generator starts in the next cycle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;gsarb&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_loop_end_index">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_loop_end_index">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_loop_end_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the end index for arbitrary waveform generator output.</span>
+<span class="sd">        The loop end index is the index where the waveform generator jumps to the next</span>
+<span class="sd">        cycle or finishes if only one cycle is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gearb,</span><span class="si">{</span><span class="n">end_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WaveformGenerator.get_loop_end_index">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.get_loop_end_index">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_loop_end_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the end index for arbitrary waveform generator output.</span>
+<span class="sd">        The loop end index is the index where the waveform generator jumps to the next</span>
+<span class="sd">        cycle or finishes if only one cycle is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;gearb&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_start_index">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_start_index">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_start_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the offset index when arbitrary waveform generator </span>
+<span class="sd">        gets started. That means after the start() function is called, the arbitrary </span>
+<span class="sd">        waveform generator starts at the index defined by set_start_index() and runs </span>
+<span class="sd">        until the index defined by set_loop_end_index(). In all successive cycles, the arbitrary </span>
+<span class="sd">        waveform generator starts at set_loop_start_index(). This is repeated until the number </span>
+<span class="sd">        of cycles reaches the value given by set_cycles().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;goarb,</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.get_start_index">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.get_start_index">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_start_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the start index for arbitrary waveform generator output.</span>
+<span class="sd">        The start index is the index where the waveform generator starts when it is started.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;goarb&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_cycles">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_cycles">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cycles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the number of cycles to run.</span>
+<span class="sd">        - WaveformGenerator.NV200_INFINITE_CYCLES - 0 = infinitely</span>
+<span class="sd">        - 1…65535</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gcarb,</span><span class="si">{</span><span class="n">cycles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.configure_waveform_loop">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.configure_waveform_loop">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">configure_waveform_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">loop_start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">loop_end_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the start and end indices for the waveform loop.</span>
+<span class="sd">        The start index is the index where the waveform generator starts when it is started.</span>
+<span class="sd">        The loop start index is the index where the waveform generator starts in the next cycle</span>
+<span class="sd">        and the loop end index is the index where the waveform generator jumps to the next cycle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_start_index</span><span class="p">(</span><span class="n">start_index</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_loop_start_index</span><span class="p">(</span><span class="n">loop_start_index</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_loop_end_index</span><span class="p">(</span><span class="n">loop_end_index</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.get_loop_settings">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.get_loop_settings">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_loop_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the current waveform loop settings.</span>
+<span class="sd">        Returns a dictionary with the following keys:</span>
+<span class="sd">        - &#39;start_index&#39;: The start index for the waveform generator.</span>
+<span class="sd">        - &#39;loop_start_index&#39;: The loop start index for the waveform generator.</span>
+<span class="sd">        - &#39;loop_end_index&#39;: The loop end index for the waveform generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;start_index&#39;</span><span class="p">:</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_start_index</span><span class="p">(),</span>
+            <span class="s1">&#39;loop_start_index&#39;</span><span class="p">:</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loop_start_index</span><span class="p">(),</span>
+            <span class="s1">&#39;loop_end_index&#39;</span><span class="p">:</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loop_end_index</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_output_sampling_time">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_output_sampling_time">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_output_sampling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampling_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the output sampling time for the waveform generator.</span>
+<span class="sd">        The output sampling time can be given in multiples of 50 µs from</span>
+<span class="sd">        1 * 50µs to 65535 * 50µs. If the sampling time is not a multiple</span>
+<span class="sd">        of 50, it will be rounded to the nearest multiple of 50µs.</span>
+<span class="sd">        The calculated sampling time is returned in microseconds.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: The set sampling time in microseconds.</span>
+
+<span class="sd">        Note: Normally you do not need to set the sampling time manually because it is set automatically</span>
+<span class="sd">        calculated when the waveform is generated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rounded_sampling_time</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">sampling_time</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span> <span class="o">*</span> <span class="mi">50</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="n">rounded_sampling_time</span> <span class="o">//</span> <span class="mi">50</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="mi">65535</span><span class="p">))</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gtarb,</span><span class="si">{</span><span class="n">factor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rounded_sampling_time</span></div>
+
+   
+
+<div class="viewcode-block" id="WaveformGenerator.set_waveform_value_percent">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_waveform_value_percent">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform_value_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">percent</span> <span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the value of the waveform at the specified index in percent from 0 - 100%</span>
+<span class="sd">        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)</span>
+<span class="sd">        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Buffer index must be in the range from 0 to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="si">}</span><span class="s2"> , got </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">percent</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waveform value must be in the range from 0 to 100%, got </span><span class="si">{</span><span class="n">percent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gbarb,</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">percent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.get_waveform_value_percent">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.get_waveform_value_percent">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_waveform_value_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the value of the waveform at the specified index in percent from 0 - 100%</span>
+<span class="sd">        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)</span>
+<span class="sd">        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Buffer index must be in the range from 0 to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="si">}</span><span class="s2"> , got </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_float_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;gbarb,</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">param_index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_waveform_buffer">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_waveform_buffer">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">unit</span><span class="p">:</span> <span class="n">WaveformUnit</span> <span class="o">=</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">PERCENT</span><span class="p">,</span> <span class="n">on_progress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProgressCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes a full waveform buffer to the device by setting each value</span>
+<span class="sd">        using set_waveform_value.</span>
+<span class="sd">        The buffer should contain waveform values in percent (0-100).</span>
+<span class="sd">        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)</span>
+<span class="sd">        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            buffer (list of float): The waveform values in percent (0-100).</span>
+<span class="sd">            unit (WaveformUnit): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</span>
+<span class="sd">            on_progress (Optional[ProgressCallback]): Optional callback for progress updates.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the buffer size exceeds the maximum buffer length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Buffer too large: max size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        
+        <span class="n">value_range</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">POSITION</span><span class="p">:</span>
+            <span class="n">value_range</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">get_position_range</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">VOLTAGE</span><span class="p">:</span>
+            <span class="n">value_range</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">get_voltage_range</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">value_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Scale values to to percent</span>
+            <span class="n">scaled_buffer</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">value_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">buffer</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use percent values directly</span>
+            <span class="n">scaled_buffer</span> <span class="o">=</span> <span class="n">buffer</span>
+
+
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scaled_buffer</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">percent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scaled_buffer</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_waveform_value_percent</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">percent</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">on_progress</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">on_progress</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.read_waveform_buffer">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.read_waveform_buffer">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_waveform_buffer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">unit</span><span class="p">:</span> <span class="n">WaveformUnit</span> <span class="o">=</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">PERCENT</span><span class="p">,</span>
+        <span class="n">on_progress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProgressCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Asynchronously reads a sequence of waveform values from the device waveform buffer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_index (int): The starting index in the waveform buffer.</span>
+<span class="sd">            count (int): The number of values to read from the buffer.</span>
+<span class="sd">            unit (WaveformUnit): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</span>
+<span class="sd">            on_progress (Optional[ProgressCallback]): Optional callback for progress updates.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[float]: A list of waveform values as percentages.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If count exceeds the buffer size or if the specified range is invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count exceeds buffer size: max </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid buffer range: start </span><span class="si">{</span><span class="n">start_index</span><span class="si">}</span><span class="s2">, count </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">values</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">count</span><span class="p">):</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_waveform_value_percent</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">on_progress</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">on_progress</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+
+        <span class="n">value_range</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">POSITION</span><span class="p">:</span>
+            <span class="n">value_range</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">get_position_range</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">VOLTAGE</span><span class="p">:</span>
+            <span class="n">value_range</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">get_voltage_range</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">value_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Scale values from percent to the actual range</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">value_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>   
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use percent values directly</span>
+            <span class="k">return</span> <span class="n">values</span></div>
+
+             
+             
+<div class="viewcode-block" id="WaveformGenerator.set_waveform">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_waveform">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">waveform</span><span class="p">:</span> <span class="n">WaveformData</span><span class="p">,</span>
+        <span class="n">unit</span><span class="p">:</span> <span class="n">WaveformUnit</span> <span class="o">=</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">PERCENT</span><span class="p">,</span>
+        <span class="n">adjust_loop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">on_progress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProgressCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the waveform data in the device.</span>
+<span class="sd">        The WaveformData object should contain the waveform values and the sample time.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            waveform (WaveformData): The waveform data to be set.</span>
+<span class="sd">            unit (WaveformUnit): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</span>
+<span class="sd">            adjust_loop (bool): If True, adjusts the loop indices based on the</span>
+<span class="sd">                                waveform data, if false, the loop indices are not adjusted.</span>
+<span class="sd">                                If the loop indices are adjusted, then they will be set to</span>
+<span class="sd">                                the following value:</span>
+<span class="sd">                                - start_index = 0 (first waveform value)</span>
+<span class="sd">                                - loop_start_index = 0 (first waveform value)</span>
+<span class="sd">                                - loop_end_index = last waveform value</span>
+<span class="sd">            on_progress (Optional[ProgressCallback]): Optional callback for progress updates.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the waveform data is invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_waveform_buffer</span><span class="p">(</span><span class="n">waveform</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span> <span class="n">on_progress</span><span class="o">=</span><span class="n">on_progress</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_waveform</span> <span class="o">=</span> <span class="n">waveform</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_output_sampling_time</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">waveform</span><span class="o">.</span><span class="n">sample_time_ms</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">adjust_loop</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># Adjust loop indices based on the waveform data</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">configure_waveform_loop</span><span class="p">(</span>
+            <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">loop_start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">loop_end_index</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">waveform</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WaveformGenerator.set_waveform_from_samples">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.set_waveform_from_samples">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform_from_samples</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time_samples</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">unit</span><span class="p">:</span> <span class="n">WaveformUnit</span> <span class="o">=</span> <span class="n">WaveformUnit</span><span class="o">.</span><span class="n">PERCENT</span><span class="p">,</span>
+        <span class="n">adjust_loop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the waveform data in the device from separate time samples and values.</span>
+<span class="sd">        The waveform data should contain the time samples in milliseconds and the corresponding</span>
+<span class="sd">        amplitude values. in percent (0-100).</span>
+<span class="sd">        In closed loop mode, the value is interpreted as a percentage of the position range (i.e. 0 - 80 mra)</span>
+<span class="sd">        and in open loop mode, the value is interpreted as a percentage of the voltage range (i.e. -20 - 130 V).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time_samples (Sequence[float] or np.ndarray): Time samples in milliseconds.</span>
+<span class="sd">            values (Sequence[float] or np.ndarray): Corresponding waveform amplitude values in percent (0-100).</span>
+<span class="sd">            unit (WaveformUnit, optional): The unit of the waveform values. Defaults to WaveformUnit.PERCENT.</span>
+<span class="sd">            adjust_loop (bool): If True, adjusts loop indices based on data length.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If inputs are invalid or lengths mismatch.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_samples</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time samples and values must have the same length.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input arrays cannot be empty.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate sample_time_ms from time_samples</span>
+        <span class="n">sample_time_ms</span> <span class="o">=</span> <span class="n">calculate_sampling_time_ms</span><span class="p">(</span><span class="n">time_samples</span><span class="p">)</span>
+
+        <span class="c1"># Create WaveformData object (assuming it takes values and sample_time_ms)</span>
+        <span class="n">waveform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">sample_time_ms</span><span class="o">=</span><span class="n">sample_time_ms</span><span class="p">)</span>
+
+        <span class="c1"># Use existing set_waveform method to actually send data</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_waveform</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span> <span class="n">adjust_loop</span><span class="o">=</span><span class="n">adjust_loop</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.is_running">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.is_running">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the waveform generator is currently running.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the waveform generator is running, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev</span><span class="o">.</span><span class="n">read_int_value</span><span class="p">(</span><span class="s1">&#39;grun&#39;</span><span class="p">))</span></div>
+
+    
+<div class="viewcode-block" id="WaveformGenerator.wait_until_finished">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.wait_until_finished">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_until_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Waits until the waveform generator is finished running.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout_s (float): The maximum time to wait in seconds. Defaults to 10 seconds.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the waveform generator finished running, False if timed out.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">wait_until</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_running</span><span class="p">,</span>
+            <span class="n">check_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="p">,</span>
+            <span class="n">poll_interval_s</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">timeout_s</span><span class="o">=</span><span class="n">timeout_s</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="WaveformGenerator.generate_time_samples_list">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_time_samples_list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_time_samples_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a list of time samples (in milliseconds) for one period of a waveform at the specified frequency.</span>
+<span class="sd">        Sampling is adjusted based on hardware base sample time and buffer constraints.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            freq_hz (float): The frequency of the waveform in Hertz.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[float]: Time samples (in milliseconds).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">freq_hz</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Frequency must be greater than zero.&quot;</span><span class="p">)</span>
+
+        <span class="n">buf_size</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NV200_WAVEFORM_BUFFER_SIZE</span>
+        <span class="n">base_sample_time_us</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NV200_BASE_SAMPLE_TIME_US</span>
+
+        <span class="n">period_us</span> <span class="o">=</span> <span class="mi">1_000_000</span> <span class="o">/</span> <span class="n">freq_hz</span>
+        <span class="n">ideal_sample_time_us</span> <span class="o">=</span> <span class="n">period_us</span> <span class="o">/</span> <span class="n">buf_size</span>
+
+        <span class="n">sample_factor</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">ideal_sample_time_us</span> <span class="o">/</span> <span class="n">base_sample_time_us</span><span class="p">)</span>
+        <span class="n">sample_time_us</span> <span class="o">=</span> <span class="n">sample_factor</span> <span class="o">*</span> <span class="n">base_sample_time_us</span>
+        <span class="n">sample_time_s</span> <span class="o">=</span> <span class="n">sample_time_us</span> <span class="o">/</span> <span class="mi">1_000_000</span>
+
+        <span class="n">required_buffer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">period_us</span> <span class="o">/</span> <span class="n">sample_time_us</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">sample_time_s</span> <span class="o">*</span> <span class="mi">1000</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">required_buffer</span><span class="p">)]</span></div>
+
+    
+
+<div class="viewcode-block" id="WaveformGenerator.generate_time_samples_array">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_time_samples_array">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_time_samples_array</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a NumPy array of time samples (in milliseconds) for one period of a waveform at the specified frequency.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            freq_hz (float): The frequency of the waveform in Hertz.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Time samples (in milliseconds).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">generate_time_samples_list</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="WaveformGenerator.generate_sine_wave">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_sine_wave">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_sine_wave</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">low_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">high_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">phase_shift_rad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaveformData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a sine wave based on the specified frequency and amplitude levels.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            freq_hz (float): The frequency of the sine wave in Hertz (Hz).</span>
+<span class="sd">            low_level (float): The minimum value (low level) of the sine wave.</span>
+<span class="sd">            high_level (float): The maximum value (high level) of the sine wave.</span>
+<span class="sd">            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            WaveformData: An object containing the generated sine wave data, including:</span>
+<span class="sd">                - x_time (List[float]): A list of time points in ms corresponding to the sine wave samples.</span>
+<span class="sd">                - y_values (List[float]): A list of amplitude values for the sine wave at each time point.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - The method calculates an optimal sample time based on the desired frequency and the</span>
+<span class="sd">              hardware&#39;s base sample time.</span>
+<span class="sd">            - The buffer size is adjusted to ensure the generated waveform fits within one period</span>
+<span class="sd">              of the sine wave.</span>
+<span class="sd">            - The sine wave is scaled and offset to match the specified low and high levels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times_ms</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_time_samples_array</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">)</span>
+
+        <span class="n">amplitude</span> <span class="o">=</span> <span class="p">(</span><span class="n">high_level</span> <span class="o">-</span> <span class="n">low_level</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">high_level</span> <span class="o">+</span> <span class="n">low_level</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">offset</span> <span class="o">+</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq_hz</span> <span class="o">*</span> <span class="p">(</span><span class="n">t_ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="n">phase_shift_rad</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t_ms</span> <span class="ow">in</span> <span class="n">times_ms</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">sample_time_ms</span><span class="o">=</span><span class="n">calculate_sampling_time_ms</span><span class="p">(</span><span class="n">times_ms</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.generate_triangle_wave">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_triangle_wave">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_triangle_wave</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">low_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">high_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">phase_shift_rad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaveformData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a triangle wave based on the specified frequency and amplitude levels.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            freq_hz (float): The frequency of the triangle wave in Hertz (Hz).</span>
+<span class="sd">            low_level (float): The minimum value (low level) of the triangle wave.</span>
+<span class="sd">            high_level (float): The maximum value (high level) of the triangle wave.</span>
+<span class="sd">            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            WaveformData: An object containing the generated triangle wave data, including:</span>
+<span class="sd">                - values (List[float]): A list of amplitude values for the triangle wave at each time point.</span>
+<span class="sd">                - sample_time_ms (float): The time interval between samples in milliseconds (ms).</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - The method calculates an optimal sample time based on the desired frequency and the</span>
+<span class="sd">            hardware&#39;s base sample time.</span>
+<span class="sd">            - The waveform is normalized between -1 and 1, then scaled and offset to fit between</span>
+<span class="sd">            low_level and high_level.</span>
+<span class="sd">            - The waveform is generated over one full period.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times_ms</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_time_samples_array</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">)</span>  <span class="c1"># NumPy array in ms</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">times_ms</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Convert to seconds</span>
+
+        <span class="n">amplitude</span> <span class="o">=</span> <span class="p">(</span><span class="n">high_level</span> <span class="o">-</span> <span class="n">low_level</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">high_level</span> <span class="o">+</span> <span class="n">low_level</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">period_s</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">freq_hz</span>
+
+        <span class="c1"># Apply phase shift in time domain</span>
+        <span class="n">phase_shift_t</span> <span class="o">=</span> <span class="n">phase_shift_rad</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq_hz</span><span class="p">)</span>
+        <span class="n">t_shifted</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">phase_shift_t</span>
+
+        <span class="c1"># Generate normalized triangle wave in [-1, 1]</span>
+        <span class="n">normalized_t</span> <span class="o">=</span> <span class="p">((</span><span class="n">t_shifted</span> <span class="o">/</span> <span class="n">period_s</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span>
+        <span class="n">triangle</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">normalized_t</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">triangle</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">sample_time_ms</span><span class="o">=</span><span class="n">calculate_sampling_time_ms</span><span class="p">(</span><span class="n">times_ms</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="WaveformGenerator.generate_square_wave">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_square_wave">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_square_wave</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">low_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">high_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">phase_shift_rad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">duty_cycle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaveformData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a square wave (or PWM waveform) using NumPy for efficient computation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            freq_hz (float): Frequency of the waveform in Hz.</span>
+<span class="sd">            low_level (float): Output level during the &quot;low&quot; part of the cycle.</span>
+<span class="sd">            high_level (float): Output level during the &quot;high&quot; part of the cycle.</span>
+<span class="sd">            duty_cycle (float, optional): Duty cycle as a fraction between 0.0 and 1.0.</span>
+<span class="sd">                                        Defaults to 0.5 (i.e., 50%).</span>
+<span class="sd">            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            WaveformData: An object containing:</span>
+<span class="sd">                - values (List[float]): Amplitude values of the waveform.</span>
+<span class="sd">                - sample_time_ms (float): Time between samples in milliseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">duty_cycle</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Duty cycle must be between 0.0 (exclusive) and 1.0 (inclusive).&quot;</span><span class="p">)</span>
+
+        <span class="n">times_ms</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_time_samples_array</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">)</span>  <span class="c1"># NumPy array (ms)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">times_ms</span> <span class="o">/</span> <span class="mf">1000.0</span>  <span class="c1"># Convert to seconds</span>
+        <span class="n">period_s</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">freq_hz</span>
+
+        <span class="c1"># Apply phase shift in time domain</span>
+        <span class="n">phase_shift_t</span> <span class="o">=</span> <span class="n">phase_shift_rad</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq_hz</span><span class="p">)</span>
+        <span class="n">t_shifted</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">phase_shift_t</span>
+
+        <span class="c1"># Time within the period (0 to 1)</span>
+        <span class="n">normalized_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_shifted</span> <span class="o">/</span> <span class="n">period_s</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1.0</span>
+
+        <span class="c1"># Generate square wave with duty cycle</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">normalized_t</span> <span class="o">&lt;</span> <span class="n">duty_cycle</span><span class="p">,</span> <span class="n">high_level</span><span class="p">,</span> <span class="n">low_level</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">sample_time_ms</span><span class="o">=</span><span class="n">calculate_sampling_time_ms</span><span class="p">(</span><span class="n">times_ms</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="WaveformGenerator.generate_constant_wave">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_constant_wave">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_constant_wave</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">constant_level</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaveformData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a constant waveform at a specified frequency and level.</span>
+<span class="sd">        This method creates a waveform where all sample values are set to a constant level,</span>
+<span class="sd">        sampled at intervals determined by the specified frequency.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            freq_hz (float): The frequency in Hertz at which to generate the waveform samples.</span>
+<span class="sd">            constant_level (float): The constant value for all samples in the waveform.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            WaveformData: An object containing the generated constant waveform values and the sample time in milliseconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times_ms</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_time_samples_array</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">)</span>  <span class="c1"># NumPy array of time points in ms</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">times_ms</span><span class="p">,</span> <span class="n">constant_level</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">sample_time_ms</span><span class="o">=</span><span class="n">calculate_sampling_time_ms</span><span class="p">(</span><span class="n">times_ms</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+        
+
+<div class="viewcode-block" id="WaveformGenerator.generate_waveform">
+<a class="viewcode-back" href="../../api.html#nv200.waveform_generator.WaveformGenerator.generate_waveform">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_waveform</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">waveform_type</span><span class="p">:</span> <span class="n">WaveformType</span><span class="p">,</span>
+        <span class="n">freq_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">low_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">high_level</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">phase_shift_rad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">duty_cycle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaveformData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a waveform based on the specified type and parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            waveform_type (Waveform): The type of waveform to generate (SINE, TRIANGLE, SQUARE).</span>
+<span class="sd">            freq_hz (float): Frequency of the waveform in Hertz.</span>
+<span class="sd">            low_level (float): Minimum value of the waveform.</span>
+<span class="sd">            high_level (float): Maximum value of the waveform.</span>
+<span class="sd">            phase_shift_rad (float, optional): Phase shift in radians. Defaults to 0.0.</span>
+<span class="sd">            duty_cycle (float, optional): Duty cycle for square wave. Defaults to 0.5.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            WaveformData: The generated waveform data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">waveform_type</span> <span class="o">==</span> <span class="n">WaveformType</span><span class="o">.</span><span class="n">SINE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_sine_wave</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">,</span> <span class="n">low_level</span><span class="p">,</span> <span class="n">high_level</span><span class="p">,</span> <span class="n">phase_shift_rad</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">waveform_type</span> <span class="o">==</span> <span class="n">WaveformType</span><span class="o">.</span><span class="n">TRIANGLE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_triangle_wave</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">,</span> <span class="n">low_level</span><span class="p">,</span> <span class="n">high_level</span><span class="p">,</span> <span class="n">phase_shift_rad</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">waveform_type</span> <span class="o">==</span> <span class="n">WaveformType</span><span class="o">.</span><span class="n">SQUARE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_square_wave</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">,</span> <span class="n">low_level</span><span class="p">,</span> <span class="n">high_level</span><span class="p">,</span> <span class="n">phase_shift_rad</span><span class="p">,</span> <span class="n">duty_cycle</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">waveform_type</span> <span class="o">==</span> <span class="n">WaveformType</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_constant_wave</span><span class="p">(</span><span class="n">freq_hz</span><span class="p">,</span> <span class="n">high_level</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported waveform type: </span><span class="si">{</span><span class="n">waveform_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

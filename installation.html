@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Connecting to device" href="connecting.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-install">Quick Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-by-step-installation-guide">Step-by-Step Installation Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-install-virtualenv-if-not-already-installed">Step 1 - Install virtualenv (if not already installed)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-create-a-virtual-environment">Step 2 - Create a Virtual Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-activate-the-virtual-environment">Step 3 - Activate the Virtual Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-install-the-wheel">Step 4 - Install the Wheel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<section id="quick-install">
+<h2>Quick Install<a class="headerlink" href="#quick-install" title="Link to this heading"></a></h2>
+<p>If you’re already familiar with Python and just want to install the package quickly then:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>nv200
+</pre></div>
+</div>
+<p>or if you would like to install the package into a virtual environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># On Windows use: .venv\Scripts\activate</span>
+pip<span class="w"> </span>install<span class="w"> </span>nv200
+</pre></div>
+</div>
+</section>
+<section id="step-by-step-installation-guide">
+<h2>Step-by-Step Installation Guide<a class="headerlink" href="#step-by-step-installation-guide" title="Link to this heading"></a></h2>
+<p>This guide provides instructions for installing the <code class="xref any docutils literal notranslate"><span class="pre">nv200</span></code> package.</p>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h3>
+<p>Before installing the package, make sure that:</p>
+<ul class="simple">
+<li><p>You have Python installed (version &gt; 3.12 is required).</p></li>
+<li><p>You have <code class="xref any docutils literal notranslate"><span class="pre">pip</span></code> installed, which is the package installer for Python.</p></li>
+<li><p>You have <code class="xref any docutils literal notranslate"><span class="pre">virtualenv</span></code> installed, which can be used to create isolated Python environments.</p></li>
+</ul>
+</section>
+<section id="step-1-install-virtualenv-if-not-already-installed">
+<h3>Step 1 - Install virtualenv (if not already installed)<a class="headerlink" href="#step-1-install-virtualenv-if-not-already-installed" title="Link to this heading"></a></h3>
+<p>If you don’t have <code class="xref any docutils literal notranslate"><span class="pre">virtualenv</span></code> installed, you can install it by running the following command:</p>
+<div class="highlight-cmd notranslate"><div class="highlight"><pre><span></span>pip install virtualenv
+</pre></div>
+</div>
+</section>
+<section id="step-2-create-a-virtual-environment">
+<h3>Step 2 - Create a Virtual Environment<a class="headerlink" href="#step-2-create-a-virtual-environment" title="Link to this heading"></a></h3>
+<p>To create a new virtual environment, navigate to the directory where you want the environment to be created.
+Then, run the following command:</p>
+<div class="highlight-cmd notranslate"><div class="highlight"><pre><span></span>virtualenv .venv
+</pre></div>
+</div>
+<p>This will create a virtual environment named <code class="file docutils literal notranslate"><span class="pre">.venv</span></code> in the current directory. You can choose a
+different name for the environment if needed.</p>
+</section>
+<section id="step-3-activate-the-virtual-environment">
+<h3>Step 3 - Activate the Virtual Environment<a class="headerlink" href="#step-3-activate-the-virtual-environment" title="Link to this heading"></a></h3>
+<p>Once the virtual environment is created, you need to activate it. The activation command depends
+on your operating system.</p>
+<div class="highlight-cmd notranslate"><div class="highlight"><pre><span></span>.venv\Scripts\activate
+</pre></div>
+</div>
+</section>
+<section id="step-4-install-the-wheel">
+<h3>Step 4 - Install the Wheel<a class="headerlink" href="#step-4-install-the-wheel" title="Link to this heading"></a></h3>
+<p>With the virtual environment activated, you can now install the NV200 package.</p>
+<div class="highlight-cmd notranslate"><div class="highlight"><pre><span></span>pip install nv200
+</pre></div>
+</div>
+</section>
+<section id="summary">
+<h3>Summary<a class="headerlink" href="#summary" title="Link to this heading"></a></h3>
+<p>So to install the NV200 package into a virtual environment, you execute the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># On Windows use: .venv\Scripts\activate</span>
+pip<span class="w"> </span>install<span class="w"> </span>nv200
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="connecting.html" class="btn btn-neutral float-right" title="Connecting to device" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

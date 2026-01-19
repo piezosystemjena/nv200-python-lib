@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nv200.spibox_device &mdash; NV200 Python Library</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5349f25f" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/style_override.css?v=6a36a437" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style_override_css/color_roles.css?v=7881a399" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            NV200 Python Library
+              <img src="../../_static/piezosystem_logo_white.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connecting.html">Connecting to device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started with the API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pid_and_filters.html">PID Controller and Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_recorder.html">Data Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trigger_io.html">Trigger In and Trigger Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveform_generator.html">Waveform Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analysis.html">Resonance Measurement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spi_box.html">SPI Controller Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NV200 Python Library</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">nv200.spibox_device</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for nv200.spibox_device</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.device_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PiezoDeviceBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.serial_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">SerialProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.transport_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportProtocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nv200.waveform_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaveformGenerator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="parse_hex_to_floats_percent">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.parse_hex_to_floats_percent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_hex_to_floats_percent</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a string of 4-character hexadecimal values into a float.</span>
+<span class="sd">    </span>
+<span class="sd">    The hex values are interpreted as unsigned 16-bit integers and converted to floats.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (str): A string of comma-separated 4-character hex values (e.g., &quot;0000,FFFD,FFFD&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[float]: A list of float representations of the parsed unsigned integers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MAX_VALID_HEX</span> <span class="o">=</span> <span class="mh">0xFFFE</span>
+    <span class="n">int_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">int_val</span> <span class="o">&gt;</span> <span class="n">MAX_VALID_HEX</span><span class="p">:</span>
+        <span class="n">int_val</span> <span class="o">=</span> <span class="n">MAX_VALID_HEX</span>  <span class="c1"># Clip to max valid value</span>
+
+    <span class="n">percent</span> <span class="o">=</span> <span class="p">(</span><span class="n">int_val</span> <span class="o">/</span> <span class="n">MAX_VALID_HEX</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+    <span class="k">return</span> <span class="n">percent</span></div>
+
+
+
+<div class="viewcode-block" id="percent_to_hex">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.percent_to_hex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">percent_to_hex</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a percentage value (0.0 to 100.0) to a 4-digit hexadecimal string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Clip value to range [0.0, 100.0]</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">))</span>
+    <span class="c1"># Scale to [0x0000, 0xFFFE]</span>
+    <span class="n">int_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">*</span> <span class="mh">0xFFFE</span><span class="p">))</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">int_val</span><span class="si">:</span><span class="s2">04x</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+
+<div class="viewcode-block" id="SpiBoxDevice">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpiBoxDevice</span><span class="p">(</span><span class="n">PiezoDeviceBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A high-level asynchronous client for communicating with NV200 piezo controllers.</span>
+<span class="sd">    This class extends the `PiezoDeviceBase` base class and provides high-level methods</span>
+<span class="sd">    for setting and getting various device parameters, such as PID mode, setpoint,</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEVICE_ID</span> <span class="o">=</span> <span class="s2">&quot;SPI Controller Box&quot;</span>
+
+<div class="viewcode-block" id="SpiBoxDevice.WaveformState">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.WaveformState">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">WaveformState</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">STOPPED</span>          <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">RUNNING</span>          <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">RUNNING_INFINITE</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.__init__">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__is_connected_via_usb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the device is connected via USB.</span>
+<span class="sd">        This method is a placeholder and should be implemented based on actual connection checks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="p">,</span> <span class="n">SerialProtocol</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_data_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the command to get data based on the connection type.</span>
+<span class="sd">        This method is a placeholder and should be implemented based on actual connection checks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;set&quot;</span>
+    
+<div class="viewcode-block" id="SpiBoxDevice.connect">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.connect">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_adjust_comm_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Establishes a connection using the transport layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport_protocol</span><span class="o">.</span><span class="n">rx_delimiter</span> <span class="o">=</span> <span class="n">TransportProtocol</span><span class="o">.</span><span class="n">LF</span>
+        <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">auto_adjust_comm_params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.set_waveform_sample_factors">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.set_waveform_sample_factors">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform_sample_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+        <span class="n">ch1_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">ch2_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">ch3_factor</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the waveform sample factors for each channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ch1_factor (int): Sample factor for channel 1.</span>
+<span class="sd">            ch2_factor (int): Sample factor for channel 2.</span>
+<span class="sd">            ch3_factor (int): Sample factor for channel 3.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wfsfactor,</span><span class="si">{</span><span class="n">ch1_factor</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">ch2_factor</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">ch3_factor</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.get_waveform_sample_factors">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_waveform_sample_factors">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_waveform_sample_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the waveform sample factors for each channel.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[int]: A list containing the sample factors for each channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfsfactor&#39;</span><span class="p">)</span>
+        <span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">factors</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.get_setpoints_percent">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_setpoints_percent">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_setpoints_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get device setpoints as percentages (0.0 to 100.0) for 3 channels.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[float]: A list containing the setpoints for each channel as percentages.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_data_cmd</span><span class="p">()</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Read the setpoints 3 times to ensure we get the correct SPI response</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_hex_set</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.set_setpoints_percent">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.set_setpoints_percent">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_setpoints_percent</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ch1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">ch2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">ch3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set device setpoints as percentages (0.0 to 100.0) for 3 channels.</span>
+
+<span class="sd">        Converts percent values to 16-bit hex strings and sends them as a formatted command.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ch1 (float): Setpoint for channel 1 (0.0 to 100.0).</span>
+<span class="sd">            ch2 (float): Setpoint for channel 2 (0.0 to 100.0).</span>
+<span class="sd">            ch3 (float): Setpoint for channel 3 (0.0 to 100.0).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_data_cmd</span><span class="p">()</span>
+        <span class="n">hex1</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch1</span><span class="p">)</span>
+        <span class="n">hex2</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch2</span><span class="p">)</span>
+        <span class="n">hex3</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch3</span><span class="p">)</span>
+
+        <span class="n">full_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex1</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex2</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex3</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">full_cmd</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_setpoints_percent</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.set_waveform_cycles">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.set_waveform_cycles">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform_cycles</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ch1_cycles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">ch2_cycles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">ch3_cycles</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the number of waveform cycles for each channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ch1_cycles (int): Number of cycles for channel 1.</span>
+<span class="sd">            ch2_cycles (int): Number of cycles for channel 2.</span>
+<span class="sd">            ch3_cycles (int): Number of cycles for channel 3.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wfcycle,</span><span class="si">{</span><span class="n">ch1_cycles</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">ch2_cycles</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">ch3_cycles</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.get_waveform_cycles">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_waveform_cycles">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_waveform_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the number of waveform cycles for each channel.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[int]: A list containing the number of cycles for each channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfcycle&#39;</span><span class="p">)</span>
+        <span class="n">cycles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cycles</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.upload_waveform_samples">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.upload_waveform_samples">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">upload_waveform_samples</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ch1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">ch2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">ch3</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">on_progress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upload waveform samples for each channel.</span>
+
+<span class="sd">        Uploads the samples to the device after setting the sample counts.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ch1 (np.ndarray): Waveform samples for channel 1.</span>
+<span class="sd">            ch2 (np.ndarray): Waveform samples for channel 2.</span>
+<span class="sd">            ch3 (np.ndarray): Waveform samples for channel 3.</span>
+<span class="sd">            on_progress (callable, optional): A callback function that receives progress updates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="k">if</span> <span class="n">ch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ch1</span><span class="p">,</span> <span class="n">ch2</span><span class="p">,</span> <span class="n">ch3</span><span class="p">)]</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wfscount,</span><span class="si">{</span><span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">lengths</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">lengths</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_waveform_samples</span><span class="p">(</span>
+            <span class="n">ch1</span> <span class="k">if</span> <span class="n">ch1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+            <span class="n">ch2</span> <span class="k">if</span> <span class="n">ch2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+            <span class="n">ch3</span> <span class="k">if</span> <span class="n">ch3</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+            <span class="n">on_progress</span><span class="o">=</span><span class="n">on_progress</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.start_waveforms">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.start_waveforms">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start_waveforms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start the waveform playback.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfrun,1&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpiBoxDevice.stop_waveforms">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.stop_waveforms">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop_waveforms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop any running waveforms on the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfrun,0&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.set_waveform_samples">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.set_waveform_samples">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_waveform_samples</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ch1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">ch2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">ch3</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">on_progress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add waveform samples for each channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_samples</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ch1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch2</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch3</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_samples</span><span class="p">):</span>
+            <span class="n">hex1</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch1</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;0000&quot;</span>
+            <span class="n">hex2</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch2</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;0000&quot;</span>
+            <span class="n">hex3</span> <span class="o">=</span> <span class="n">percent_to_hex</span><span class="p">(</span><span class="n">ch3</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch3</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;0000&quot;</span>
+
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;wfset,</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex1</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex2</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">hex3</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">on_progress</span><span class="p">:</span>
+                <span class="n">on_progress</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_samples</span><span class="p">)</span></div>
+
+                
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__parse_wave_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse a waveform response string from the device into three numpy arrays for each channel.</span>
+
+<span class="sd">        The response string is expected to be a comma-separated list of hexadecimal values,</span>
+<span class="sd">        where each set of three values corresponds to the readings from channels 1, 2 and 3.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response_str (str): The response string from the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_hex_set</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__parse_hex_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hex_set</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse a single set of comma-separated hexadecimal values into a list of floats.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hex_set (List[str]): A list of hexadecimal strings.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[float]: A list of float values parsed from the hex strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">hex_val</span> <span class="ow">in</span> <span class="n">hex_set</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parse_hex_to_floats_percent</span><span class="p">(</span><span class="n">hex_val</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+<div class="viewcode-block" id="SpiBoxDevice.get_waveform_response">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_waveform_response">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_waveform_response</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">step_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">max_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">on_progress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current waveform response from the device.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step_size (int): The step size for sampling the waveform response.</span>
+<span class="sd">            max_samples (int, optional): The maximum number of samples to retrieve. If None, retrieves all available samples.</span>
+<span class="sd">            on_progress (callable, optional): A callback function that receives progress updates.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list containing three numpy arrays, one for each channel, with the waveform data. </span>
+<span class="sd">            If no samples are available, returns None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[],</span>
+            <span class="p">[],</span>
+            <span class="p">[]</span>
+        <span class="p">]</span>
+        
+        <span class="c1"># Get the number of samples</span>
+        <span class="n">available_sample_count</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response_samples_count</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">available_sample_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        
+        <span class="n">sample_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">max_samples</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_samples</span><span class="p">,</span> <span class="n">available_sample_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">available_sample_count</span>
+
+        <span class="c1"># Start from 2 because of delayed spi data</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">available_sample_count</span><span class="p">,</span> <span class="n">step_size</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response_sample</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">on_progress</span><span class="p">:</span>
+                <span class="n">on_progress</span><span class="p">(</span><span class="n">sample_count</span><span class="p">,</span> <span class="n">max_samples</span><span class="p">)</span>
+
+            <span class="n">sample_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Respect max samples limit if provided</span>
+            <span class="k">if</span> <span class="n">sample_count</span> <span class="o">&gt;=</span> <span class="n">max_samples</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">sample_time_ms</span> <span class="o">=</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">NV200_BASE_SAMPLE_TIME_US</span> <span class="o">/</span> <span class="mi">1000</span>
+            <span class="p">),</span>
+            <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">sample_time_ms</span> <span class="o">=</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">NV200_BASE_SAMPLE_TIME_US</span> <span class="o">/</span> <span class="mi">1000</span>
+            <span class="p">),</span>
+            <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">WaveformData</span><span class="p">(</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="n">sample_time_ms</span> <span class="o">=</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">WaveformGenerator</span><span class="o">.</span><span class="n">NV200_BASE_SAMPLE_TIME_US</span> <span class="o">/</span> <span class="mi">1000</span>
+            <span class="p">)</span>
+        <span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.get_response_samples_count">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_response_samples_count">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_response_samples_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the number of available response samples from the device.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: The number of available response samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfrcount&#39;</span><span class="p">)</span>
+        <span class="n">sample_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">sample_count</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.get_response_sample">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_response_sample">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_response_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single response sample at the specified index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): The index of the sample to retrieve.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[float]: A list containing the waveform data for each channel at the specified index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wfget,</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_wave_response</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.await_waveform_completion">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.await_waveform_completion">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">await_waveform_completion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Waits until the waveform has completed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfrun&#39;</span><span class="p">)</span>
+
+            <span class="n">is_running</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="SpiBoxDevice.get_waveform_status">
+<a class="viewcode-back" href="../../spi_box.html#nv200.spibox_device.SpiBoxDevice.get_waveform_status">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_waveform_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current waveform status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfrun&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Check if waveform is stopped</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SpiBoxDevice</span><span class="o">.</span><span class="n">WaveformState</span><span class="o">.</span><span class="n">STOPPED</span>
+        
+        <span class="c1"># If waveform is running, check if it&#39;s infinite or finite</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;wfcycle&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SpiBoxDevice</span><span class="o">.</span><span class="n">WaveformState</span><span class="o">.</span><span class="n">RUNNING_INFINITE</span>
+        
+        <span class="k">return</span> <span class="n">SpiBoxDevice</span><span class="o">.</span><span class="n">WaveformState</span><span class="o">.</span><span class="n">RUNNING</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, piezosystem Jena.
+      <span class="lastupdated">Last updated on Jan 19, 2026 08:59.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

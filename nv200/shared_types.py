@@ -59,6 +59,60 @@ class PidLoopMode(Enum):
     CLOSED_LOOP = 1
 
 
+class TriggerInFunction(Enum):
+    """
+    Enumeration for Trigger Input Functions.
+    Defines the behavior of the trigger input on the device.
+    """
+    
+    DISABLED = 0
+    """Trigger input is disabled."""
+
+    WAVEFORM_START = 1
+    """Trigger input starts waveform playback."""
+
+    WAVEFORM_STEP = 2
+    """Trigger input stops waveform playback."""
+
+    WAVEFORM_SYNC = 3
+    """Trigger input sets the waveform generator index to the start value."""
+
+    ILC_SYNC = 4
+    """Set the ILC counter to the beginning of the setpoint curve."""
+
+    DATARECORDER_START = 5
+    """Start the data recorder."""
+
+
+class TriggerOutEdge(Enum):
+    """
+    Enumeration for Trigger Output Edge Types.
+    Defines the edge type for trigger output signals.
+    """
+    
+    RISING_EDGE = 0
+    """Trigger output on rising edge."""
+
+    FALLING_EDGE = 1
+    """Trigger output on falling edge."""
+
+    BOTH = 2
+    """Trigger output on both rising and falling edges."""
+
+
+class TriggerOutSource(Enum):
+    """
+    Enumeration for Trigger Output Sources.
+    Defines the source of the trigger output signal.
+    """
+    
+    POSITION = 0
+    """Trigger output based on position."""
+
+    SETPOINT = 1
+    """Trigger output based on setpoint."""
+
+
 class CtrlMode(Enum):
     """
     Enumeration for Controller Operation Modes.

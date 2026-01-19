@@ -72,7 +72,7 @@ class TriggerInFunction(Enum):
     """Trigger input starts waveform playback."""
 
     WAVEFORM_STEP = 2
-    """Trigger input stops waveform playback."""
+    """Trigger input steps waveform playback."""
 
     WAVEFORM_SYNC = 3
     """Trigger input sets the waveform generator index to the start value."""

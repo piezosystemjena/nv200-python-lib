@@ -555,6 +555,9 @@ class NV200Device(PiezoDeviceBase):
     
     async def set_trigger_step_size(self, step_size: float):
         """Sets the trigger step size."""
+        if step_size <= 0:
+            raise ValueError("Trigger step size must be a positive value.")
+
         await self.write_value("trgsi", step_size)
 
     async def get_trigger_step_size(self) -> float:
@@ -563,7 +566,14 @@ class NV200Device(PiezoDeviceBase):
     
     async def set_trigger_pulse_length(self, length: int):
         """Sets the trigger pulse length in samples."""
+        if not (0 <= length <= 255):
+            raise ValueError("Trigger pulse length must be between 0 and 255 samples.")
+
         await self.write_value("trglen", length)
+
+    async def get_trigger_pulse_length(self) -> int:
+        """Retrieves the current trigger pulse length in samples."""
+        return await self.read_int_value('trglen')
     
     async def move_to_position(self, position: float):
         """Moves the device to the specified position in closed loop"""

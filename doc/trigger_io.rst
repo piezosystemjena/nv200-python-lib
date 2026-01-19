@@ -9,6 +9,8 @@ based on a selected signal source (position or setpoint) and user-defined thresh
 The following example demonstrates how to configure Trigger In and Trigger Out on an
 :class:`NV200Device <nv200.nv200_device.NV200Device>`. It sets up an external trigger to
 start the data recorder and configures Trigger Out pulses based on the setpoint.
+When using this example, ensure that you set the start/stop positions and step size
+according to your device's movement range.
 
 .. code-block:: python
 
